@@ -22,8 +22,6 @@
         
         <!-- Cabeçalho com Logo -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center bg-white p-5 rounded-xl shadow-sm border border-slate-200/80 gap-4">
-            
-            <!-- LOGO DA EMPRESA + TÍTULO -->
             <div class="flex items-center gap-4">
                 <img src="Logo.png" alt="Logo da Empresa" class="h-12 w-auto object-contain">
                 <div>
@@ -36,7 +34,6 @@
             <div class="flex items-center gap-3">
                 <span id="ultima-atualizacao" class="text-xs text-slate-400 font-medium hidden sm:inline"></span>
                 
-                <!-- Botão de Novo Registro -->
                 <button onclick="abrirModal()" class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-all shadow-sm active:scale-95">
                     <i class="fa-solid fa-plus"></i>
                     <span>Novo Registro</span>
@@ -164,6 +161,7 @@
                             <th class="p-3">Componente</th>
                             <th class="p-3">Ação Tomada</th>
                             <th class="p-3">Status</th>
+                            <th class="p-3 text-center">Ações</th>
                         </tr>
                     </thead>
                     <tbody id="tabela-corpo" class="divide-y divide-slate-100"></tbody>
@@ -219,6 +217,14 @@
                     </select>
                 </div>
 
+                <!-- CAMPO DE SENHA DE SEGURANÇA -->
+                <div class="md:col-span-2">
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">
+                        <i class="fa-solid fa-lock text-slate-400 mr-1"></i>Senha de Autorização
+                    </label>
+                    <input type="password" id="add-senha" required placeholder="Digite a senha para salvar" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
+                </div>
+
                 <div class="md:col-span-2 flex justify-end gap-3 pt-3 border-t border-slate-100">
                     <button type="button" onclick="fecharModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg font-medium">Cancelar</button>
                     <button type="submit" id="btn-salvar" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold flex items-center gap-2">
@@ -233,8 +239,11 @@
     <script>
         const URL_GOOGLE_SHEETS_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSaXyWBuLvG8G3VrwGcmMqk98vRk0V4L2Tv4rZnJispuDpLQIrjFmBC9UKLz0IrUDZxFhqqXZM-BB6s/pub?gid=0&single=true&output=csv";
         
-        // URL DO SEU GOOGLE APPS SCRIPT
-        const URL_APPS_SCRIPT_WEBAPP = "https://script.google.com/macros/s/AKfycbxmekb18l1fnHw9PT9wOyzHWjuikK8IhBwLg5LkunQrccyeaDH1bpKWpYZRSzvShm9iYA/exec";
+        // NOVO LINK DO APPS SCRIPT
+        const URL_APPS_SCRIPT_WEBAPP = "https://script.google.com/macros/s/AKfycbxNRfqOPNrMq-iIotevwE3TTZbXCGBKma_r2BSh8LPXCrmpWkKTdIc1FjtOS9ay7e02Ow/exec";
+        
+        // SENHA DE SEGURANÇA
+        const SENHA_AUTORIZACAO = "1234";
 
         let dadosBrutos = [];
         let chart1 = null, chart2 = null, chart3 = null, chart4 = null;
@@ -264,6 +273,14 @@
 
         async function enviarNovoRegistro(e) {
             e.preventDefault();
+
+            const senhaDigitada = document.getElementById('add-senha').value;
+            if (senhaDigitada !== SENHA_AUTORIZACAO) {
+                alert("Senha incorreta! Registro não autorizado.");
+                document.getElementById('add-senha').focus();
+                return;
+            }
+
             const btn = document.getElementById('btn-salvar');
             btn.disabled = true;
             btn.innerText = "Salvando...";
@@ -289,13 +306,41 @@
 
                 alert("Ocorrência gravada com sucesso!");
                 fecharModal();
-                setTimeout(carregarDadosPlanilha, 1500); // Recarrega os dados do painel
+                setTimeout(carregarDadosPlanilha, 1500);
             } catch (erro) {
                 console.error("Erro ao salvar:", erro);
                 alert("Erro ao gravar dados na planilha.");
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> <span>Salvar Registro</span>`;
+            }
+        }
+
+        async function excluirRegistro(rowIndex) {
+            const senha = prompt("Digite a senha de autorização para excluir este registro:");
+            
+            if (senha === null) return; // Usuário cancelou
+
+            if (senha !== SENHA_AUTORIZACAO) {
+                alert("Senha incorreta! Exclusão não autorizada.");
+                return;
+            }
+
+            if (!confirm("Tem certeza que deseja apagar este registro da planilha?")) return;
+
+            try {
+                await fetch(URL_APPS_SCRIPT_WEBAPP, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: "delete", rowIndex: rowIndex })
+                });
+
+                alert("Registro excluído com sucesso!");
+                setTimeout(carregarDadosPlanilha, 1500);
+            } catch (erro) {
+                console.error("Erro ao excluir:", erro);
+                alert("Erro ao excluir o registro da planilha.");
             }
         }
 
@@ -313,7 +358,11 @@
                     header: true,
                     skipEmptyLines: true,
                     complete: function(results) {
-                        dadosBrutos = results.data;
+                        // Mapeia adicionando o índice da linha original da planilha
+                        dadosBrutos = results.data.map((row, index) => ({
+                            ...row,
+                            _rowIndex: index + 2 // +2 compensa o cabeçalho e base 1
+                        }));
                         preencherOpcoesFiltros(dadosBrutos);
                         aplicarFiltros();
                         const agora = new Date();
@@ -329,7 +378,7 @@
 
         function preencherOpcoesFiltros(dados) {
             if (dados.length === 0) return;
-            const chaves = Object.keys(dados[0]);
+            const chaves = Object.keys(dados[0]).filter(k => k !== '_rowIndex');
 
             const colModelo = chaves.find(k => k.toLowerCase().includes("modelo") || k.toLowerCase().includes("equipamento")) || chaves[0];
             const colCliente = chaves.find(k => k.toLowerCase().includes("cliente")) || chaves[1];
@@ -365,7 +414,7 @@
             const defeitoFiltro = document.getElementById('select-defeito').value;
             const componenteFiltro = document.getElementById('select-componente').value;
 
-            const chaves = dadosBrutos.length > 0 ? Object.keys(dadosBrutos[0]) : [];
+            const chaves = dadosBrutos.length > 0 ? Object.keys(dadosBrutos[0]).filter(k => k !== '_rowIndex') : [];
             const colModelo = chaves.find(k => k.toLowerCase().includes("modelo") || k.toLowerCase().includes("equipamento")) || chaves[0];
             const colCliente = chaves.find(k => k.toLowerCase().includes("cliente")) || chaves[1];
             const colDefeito = chaves.find(k => k.toLowerCase().includes("defeito") || k.toLowerCase().includes("falha")) || chaves[2];
@@ -427,7 +476,7 @@
             const total = dados.length;
             document.getElementById('card-total').innerText = total;
 
-            const chaves = total > 0 ? Object.keys(dados[0]) : [];
+            const chaves = total > 0 ? Object.keys(dados[0]).filter(k => k !== '_rowIndex') : [];
             const colModelo = chaves.find(k => k.toLowerCase().includes("modelo") || k.toLowerCase().includes("equipamento")) || chaves[0];
             const colCliente = chaves.find(k => k.toLowerCase().includes("cliente")) || chaves[1];
             const colDefeito = chaves.find(k => k.toLowerCase().includes("defeito") || k.toLowerCase().includes("falha")) || chaves[2];
@@ -464,12 +513,13 @@
             corpo.innerHTML = "";
 
             if (dados.length === 0) {
-                corpo.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-slate-400">Nenhum registro encontrado.</td></tr>`;
+                corpo.innerHTML = `<tr><td colspan="9" class="p-4 text-center text-slate-400">Nenhum registro encontrado.</td></tr>`;
                 return;
             }
 
             dados.forEach(item => {
-                const vals = Object.values(item);
+                const { _rowIndex, ...colunas } = item;
+                const vals = Object.values(colunas);
                 corpo.innerHTML += `
                     <tr class="hover:bg-slate-50 transition-colors">
                         <td class="p-3 font-medium text-slate-700">${padronizarTexto(vals[0]) || '-'}</td>
@@ -480,6 +530,11 @@
                         <td class="p-3 text-amber-600">${padronizarTexto(vals[5]) || '-'}</td>
                         <td class="p-3">${padronizarTexto(vals[6]) || '-'}</td>
                         <td class="p-3"><span class="px-2 py-1 bg-slate-100 rounded text-slate-600 text-xs">${padronizarTexto(vals[7]) || '-'}</span></td>
+                        <td class="p-3 text-center">
+                            <button onclick="excluirRegistro(${_rowIndex})" title="Excluir Registro" class="text-slate-400 hover:text-rose-600 p-1 transition-colors">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </td>
                     </tr>
                 `;
             });
