@@ -156,10 +156,17 @@
         let dadosBrutos = [];
         let chart1 = null, chart2 = null, chart3 = null, chart4 = null;
 
+        // Padronização padrão (Primeira letra Maiúscula)
         function padronizarTexto(texto) {
             if (!texto) return "";
-            let t = texto.trim().toUpperCase();
+            let t = texto.trim();
             return t.charAt(0).toUpperCase() + t.slice(1).toLowerCase();
+        }
+
+        // Padronização exclusiva para MODELOS (Tudo em Maiúsculas)
+        function padronizarModelo(texto) {
+            if (!texto) return "";
+            return texto.trim().toUpperCase();
         }
 
         async function carregarDadosPlanilha() {
@@ -235,10 +242,10 @@
             aplicarFiltros();
         }
 
-        function contarOcorrencias(dados, coluna) {
+        function contarOcorrencias(dados, coluna, eModelo = false) {
             const contagem = {};
             dados.forEach(item => {
-                const valor = padronizarTexto(item[coluna]);
+                const valor = eModelo ? padronizarModelo(item[coluna]) : padronizarTexto(item[coluna]);
                 if (valor) contagem[valor] = (contagem[valor] || 0) + 1;
             });
             return contagem;
@@ -271,7 +278,8 @@
             const colDefeito = chaves.find(k => k.toLowerCase().includes("defeito") || k.toLowerCase().includes("falha")) || chaves[2];
             const colComponente = chaves.find(k => k.toLowerCase().includes("componente") || k.toLowerCase().includes("peça")) || chaves[3];
 
-            const contModelo = contarOcorrencias(dados, colModelo);
+            // Apenas para modelo passamos o flag eModelo = true
+            const contModelo = contarOcorrencias(dados, colModelo, true);
             const contCliente = contarOcorrencias(dados, colCliente);
             const contDefeito = contarOcorrencias(dados, colDefeito);
             const contComponente = contarOcorrencias(dados, colComponente);
@@ -296,14 +304,14 @@
                 const vals = Object.values(item);
                 corpo.innerHTML += `
                     <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="p-3 font-medium text-slate-700">${vals[0] || '-'}</td>
-                        <td class="p-3">${vals[1] || '-'}</td>
-                        <td class="p-3">${vals[2] || '-'}</td>
-                        <td class="p-3 text-rose-600 font-medium">${vals[3] || '-'}</td>
-                        <td class="p-3">${vals[4] || '-'}</td>
-                        <td class="p-3 text-amber-600">${vals[5] || '-'}</td>
-                        <td class="p-3">${vals[6] || '-'}</td>
-                        <td class="p-3"><span class="px-2 py-1 bg-slate-100 rounded text-slate-600 text-xs">${vals[7] || '-'}</span></td>
+                        <td class="p-3 font-medium text-slate-700">${padronizarTexto(vals[0]) || '-'}</td>
+                        <td class="p-3">${padronizarTexto(vals[1]) || '-'}</td>
+                        <td class="p-3 font-semibold text-slate-800">${padronizarModelo(vals[2]) || '-'}</td>
+                        <td class="p-3 text-rose-600 font-medium">${padronizarTexto(vals[3]) || '-'}</td>
+                        <td class="p-3">${padronizarTexto(vals[4]) || '-'}</td>
+                        <td class="p-3 text-amber-600">${padronizarTexto(vals[5]) || '-'}</td>
+                        <td class="p-3">${padronizarTexto(vals[6]) || '-'}</td>
+                        <td class="p-3"><span class="px-2 py-1 bg-slate-100 rounded text-slate-600 text-xs">${padronizarTexto(vals[7]) || '-'}</span></td>
                     </tr>
                 `;
             });
