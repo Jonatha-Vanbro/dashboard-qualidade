@@ -20,6 +20,25 @@
         body { 
             background-color: #e6ecf3; 
             font-family: 'Inter', system-ui, -apple-system, sans-serif; 
+            transition: background-color 0.3s ease;
+        }
+
+        body.dark-mode {
+            background-color: #1e293b;
+            color: #f1f5f9;
+        }
+
+        body.dark-mode .skeuo-card {
+            background: linear-gradient(145deg, #334155, #1e293b);
+            box-shadow: 6px 6px 14px #0f172a, -6px -6px 14px #334155;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        body.dark-mode .skeuo-input {
+            background: #0f172a;
+            color: #f8fafc;
+            box-shadow: inset 2px 2px 5px #020617, inset -2px -2px 5px #334155;
+            border-color: #334155;
         }
 
         /* Estilização Skeuomórfica (Efeito 3D Suave) */
@@ -59,22 +78,41 @@
 </head>
 <body class="text-slate-800 flex min-h-screen">
 
-    <!-- MENU LATERAL DA ESQUERDA -->
-    <aside class="w-16 bg-slate-200/60 border-r border-slate-300/60 flex flex-col items-center py-5 justify-between shadow-inner hidden md:flex">
+    <!-- MENU LATERAL DA ESQUERDA COM AÇÕES HABILITADAS -->
+    <aside class="w-16 bg-slate-200/60 border-r border-slate-300/60 flex flex-col items-center py-5 justify-between shadow-inner hidden md:flex sticky top-0 h-screen">
         <div class="space-y-6 text-slate-500 text-lg">
-            <div class="p-2 bg-slate-300/50 rounded-lg text-slate-700"><i class="fa-solid fa-shapes"></i></div>
-            <div class="p-2 hover:text-slate-800 cursor-pointer"><i class="fa-solid fa-chart-simple"></i></div>
-            <div class="p-2 hover:text-slate-800 cursor-pointer"><i class="fa-solid fa-arrow-rotate-left"></i></div>
-            <div class="p-2 hover:text-slate-800 cursor-pointer"><i class="fa-solid fa-sliders"></i></div>
+            <!-- Visão Geral -->
+            <button onclick="irParaSecao('topo')" title="Visão Geral (Início)" class="p-2 bg-slate-300/50 hover:bg-slate-300 rounded-lg text-slate-700 transition-all active:scale-95 flex items-center justify-center">
+                <i class="fa-solid fa-shapes"></i>
+            </button>
+            <!-- Ir para Gráficos -->
+            <button onclick="irParaSecao('secao-graficos')" title="Ir para Gráficos" class="p-2 hover:text-slate-900 transition-all active:scale-95 flex items-center justify-center">
+                <i class="fa-solid fa-chart-simple"></i>
+            </button>
+            <!-- Ir para Registros -->
+            <button onclick="irParaSecao('secao-tabela')" title="Ir para Tabela de Ocorrências" class="p-2 hover:text-slate-900 transition-all active:scale-95 flex items-center justify-center">
+                <i class="fa-solid fa-arrow-rotate-left"></i>
+            </button>
+            <!-- Focar na Pesquisa -->
+            <button onclick="focarBusca()" title="Focar Campo de Busca" class="p-2 hover:text-slate-900 transition-all active:scale-95 flex items-center justify-center">
+                <i class="fa-solid fa-sliders"></i>
+            </button>
         </div>
+
         <div class="space-y-4 text-slate-500 text-lg">
-            <div class="p-2 hover:text-slate-800 cursor-pointer"><i class="fa-solid fa-gear"></i></div>
-            <div class="p-2 hover:text-slate-800 cursor-pointer"><i class="fa-regular fa-face-smile"></i></div>
+            <!-- Sincronizar Dados -->
+            <button onclick="carregarDadosPlanilha()" title="Sincronizar Planilha" class="p-2 hover:text-slate-900 transition-all active:scale-95 flex items-center justify-center">
+                <i class="fa-solid fa-gear"></i>
+            </button>
+            <!-- Alternar Tema Modesto -->
+            <button onclick="alternarModoEscuro()" title="Alternar Contraste" class="p-2 hover:text-slate-900 transition-all active:scale-95 flex items-center justify-center">
+                <i class="fa-regular fa-face-smile"></i>
+            </button>
         </div>
     </aside>
 
     <!-- CONTEÚDO PRINCIPAL -->
-    <main class="flex-1 p-4 md:p-6 space-y-6 max-w-[1600px] mx-auto w-full">
+    <main id="topo" class="flex-1 p-4 md:p-6 space-y-6 max-w-[1600px] mx-auto w-full">
         
         <!-- CABEÇALHO -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -86,7 +124,7 @@
                 </div>
             </div>
 
-            <!-- CONTROLES DO TOPO COM ACABAMENTO SKEUOMÓRFICO -->
+            <!-- CONTROLES DO TOPO -->
             <div class="skeuo-card p-2 px-4 flex items-center gap-3">
                 <i class="fa-regular fa-calendar-days text-slate-500"></i>
                 <span id="ultima-atualizacao" class="text-xs text-slate-500 font-medium">Atualizado recentemente</span>
@@ -103,7 +141,7 @@
             </div>
         </div>
 
-        <!-- BARRA DE PESQUISA E FILTROS EMBUTIDOS -->
+        <!-- BARRA DE PESQUISA E FILTROS -->
         <div class="skeuo-card p-4 space-y-3">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
                 <div class="md:col-span-3 relative">
@@ -134,7 +172,7 @@
             </div>
         </div>
 
-        <!-- CARDS DE MÉTRICAS COM BORDA LATERAL COLORIDA -->
+        <!-- CARDS DE MÉTRICAS -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
             <div class="skeuo-card p-5 border-l-8 border-l-blue-500">
                 <div class="flex justify-between items-center">
@@ -162,7 +200,7 @@
         </div>
 
         <!-- PAINEL DE GRÁFICOS -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div id="secao-graficos" class="grid grid-cols-1 md:grid-cols-2 gap-6 scroll-mt-6">
             <div class="skeuo-card p-5">
                 <h2 class="text-xs font-extrabold text-slate-700 mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-cube text-blue-500"></i> Ocorrências por Modelo (Top 8)
@@ -193,7 +231,7 @@
         </div>
 
         <!-- TABELA DE REGISTROS -->
-        <div class="skeuo-card p-5">
+        <div id="secao-tabela" class="skeuo-card p-5 scroll-mt-6">
             <h2 class="text-xs font-extrabold text-slate-700 mb-4 flex items-center justify-between">
                 <span><i class="fa-solid fa-table text-slate-500 mr-2"></i>Registros Encontrados</span>
                 <span id="contador-tabela" class="text-xs font-normal text-slate-500"></span>
@@ -220,7 +258,7 @@
 
     </main>
 
-    <!-- MODAL DE REGISTRO COM EFEITO ELEVADO -->
+    <!-- MODAL DE REGISTRO -->
     <div id="modal-registro" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
         <div class="skeuo-card max-w-2xl w-full p-6 space-y-4 bg-slate-100">
             <div class="flex justify-between items-center border-b border-slate-300/60 pb-3">
@@ -284,7 +322,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT DE LÓGICA MANTIDO INTEGRALMENTE -->
+    <!-- SCRIPT DE LÓGICA -->
     <script>
         const URL_GOOGLE_SHEETS_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSaXyWBuLvG8G3VrwGcmMqk98vRk0V4L2Tv4rZnJispuDpLQIrjFmBC9UKLz0IrUDZxFhqqXZM-BB6s/pub?gid=0&single=true&output=csv";
         const URL_APPS_SCRIPT_WEBAPP = "https://script.google.com/macros/s/AKfycbxNRfqOPNrMq-iIotevwE3TTZbXCGBKma_r2BSh8LPXCrmpWkKTdIc1FjtOS9ay7e02Ow/exec";
@@ -293,6 +331,23 @@
         let dadosBrutos = [];
         let chart1 = null, chart2 = null, chart3 = null, chart4 = null;
 
+        /* NOVAS FUNÇÕES DA BARRA LATERAL */
+        function irParaSecao(id) {
+            if (id === 'topo') limparFiltros();
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function focarBusca() {
+            const input = document.getElementById('input-busca');
+            input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => input.focus(), 300);
+        }
+
+        function alternarModoEscuro() {
+            document.body.classList.toggle('dark-mode');
+        }
+
+        /* FUNÇÕES PADRÃO DO DASHBOARD */
         function padronizarTexto(texto) {
             if (!texto) return "";
             let t = texto.trim();
