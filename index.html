@@ -35,17 +35,22 @@
             <!-- CONTROLES DO TOPO -->
             <div class="flex items-center gap-3">
                 <span id="ultima-atualizacao" class="text-xs text-slate-400 font-medium hidden sm:inline"></span>
+                
+                <!-- Botão de Novo Registro -->
+                <button onclick="abrirModal()" class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-all shadow-sm active:scale-95">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Novo Registro</span>
+                </button>
+
                 <button onclick="carregarDadosPlanilha()" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-all shadow-sm active:scale-95">
                     <i class="fa-solid fa-rotate" id="icon-sync"></i>
-                    <span>Sincronizar Agora</span>
+                    <span>Sincronizar</span>
                 </button>
             </div>
         </div>
 
         <!-- BARRA DE PESQUISA E FILTROS -->
         <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200/80 space-y-3">
-            
-            <!-- Linha 1: Busca Livre + Botão Limpar -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
                 <div class="md:col-span-3 relative">
                     <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400"></i>
@@ -59,7 +64,6 @@
                 </div>
             </div>
 
-            <!-- Linha 2: Filtros Específicos (Cliente, Equipamento, Defeito, Componente) -->
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 pt-1 border-t border-slate-100">
                 <div>
                     <select id="select-cliente" onchange="aplicarFiltros()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -82,7 +86,6 @@
                     </select>
                 </div>
             </div>
-
         </div>
 
         <!-- Cards de Métricas -->
@@ -163,17 +166,75 @@
                             <th class="p-3">Status</th>
                         </tr>
                     </thead>
-                    <tbody id="tabela-corpo" class="divide-y divide-slate-100">
-                        <!-- Alimentado via JavaScript -->
-                    </tbody>
+                    <tbody id="tabela-corpo" class="divide-y divide-slate-100"></tbody>
                 </table>
             </div>
         </div>
 
     </div>
 
+    <!-- MODAL DE NOVO REGISTRO -->
+    <div id="modal-registro" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-xl shadow-xl max-w-2xl w-full p-6 space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 class="text-lg font-bold text-slate-800"><i class="fa-solid fa-pen-to-square text-emerald-600 mr-2"></i>Nova Ocorrência</h3>
+                <button onclick="fecharModal()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <form id="form-ocorrencia" onsubmit="enviarNovoRegistro(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Data</label>
+                    <input type="date" id="add-data" required class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Cliente</label>
+                    <input type="text" id="add-cliente" required placeholder="Ex: Cliente X" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Equipamento / Modelo</label>
+                    <input type="text" id="add-equipamento" required placeholder="Ex: PUMPER 500" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Defeito</label>
+                    <input type="text" id="add-defeito" required placeholder="Ex: Baixa Pressão" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Causa Raiz</label>
+                    <input type="text" id="add-causa" placeholder="Ex: Desgastada" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Componente</label>
+                    <input type="text" id="add-componente" required placeholder="Ex: Rotor" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Ação Tomada</label>
+                    <input type="text" id="add-acao" placeholder="Ex: Substituição efetuada" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Status</label>
+                    <select id="add-status" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
+                        <option value="Concluído">Concluído</option>
+                        <option value="Em Análise">Em Análise</option>
+                        <option value="Pendente">Pendente</option>
+                    </select>
+                </div>
+
+                <div class="md:col-span-2 flex justify-end gap-3 pt-3 border-t border-slate-100">
+                    <button type="button" onclick="fecharModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg font-medium">Cancelar</button>
+                    <button type="submit" id="btn-salvar" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold flex items-center gap-2">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        <span>Salvar Registro</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
-        const URL_GOOGLE_SHEETS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSaXyWBuLvG8G3VrwGcmMqk98vRk0V4L2Tv4rZnJispuDpLQIrjFmBC9UKLz0IrUDZxFhqqXZM-BB6s/pub?gid=0&single=true&output=csv";
+        const URL_GOOGLE_SHEETS_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSaXyWBuLvG8G3VrwGcmMqk98vRk0V4L2Tv4rZnJispuDpLQIrjFmBC9UKLz0IrUDZxFhqqXZM-BB6s/pub?gid=0&single=true&output=csv";
+        
+        // URL DO SEU GOOGLE APPS SCRIPT
+        const URL_APPS_SCRIPT_WEBAPP = "https://script.google.com/macros/s/AKfycbxmekb18l1fnHw9PT9wOyzHWjuikK8IhBwLg5LkunQrccyeaDH1bpKWpYZRSzvShm9iYA/exec";
 
         let dadosBrutos = [];
         let chart1 = null, chart2 = null, chart3 = null, chart4 = null;
@@ -189,12 +250,61 @@
             return texto.trim().toUpperCase();
         }
 
+        function abrirModal() {
+            document.getElementById('modal-registro').classList.remove('hidden');
+            document.getElementById('modal-registro').classList.add('flex');
+            document.getElementById('add-data').valueAsDate = new Date();
+        }
+
+        function fecharModal() {
+            document.getElementById('modal-registro').classList.add('hidden');
+            document.getElementById('modal-registro').classList.remove('flex');
+            document.getElementById('form-ocorrencia').reset();
+        }
+
+        async function enviarNovoRegistro(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-salvar');
+            btn.disabled = true;
+            btn.innerText = "Salvando...";
+
+            const payload = {
+                data: document.getElementById('add-data').value,
+                cliente: document.getElementById('add-cliente').value,
+                equipamento: document.getElementById('add-equipamento').value,
+                defeito: document.getElementById('add-defeito').value,
+                causa: document.getElementById('add-causa').value,
+                componente: document.getElementById('add-componente').value,
+                acao: document.getElementById('add-acao').value,
+                status: document.getElementById('add-status').value
+            };
+
+            try {
+                await fetch(URL_APPS_SCRIPT_WEBAPP, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                alert("Ocorrência gravada com sucesso!");
+                fecharModal();
+                setTimeout(carregarDadosPlanilha, 1500); // Recarrega os dados do painel
+            } catch (erro) {
+                console.error("Erro ao salvar:", erro);
+                alert("Erro ao gravar dados na planilha.");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> <span>Salvar Registro</span>`;
+            }
+        }
+
         async function carregarDadosPlanilha() {
             const icon = document.getElementById('icon-sync');
             if (icon) icon.classList.add('fa-spin');
 
             try {
-                const resposta = await fetch(`${URL_GOOGLE_SHEETS}&t=${new Date().getTime()}`);
+                const resposta = await fetch(`${URL_GOOGLE_SHEETS_CSV}&t=${new Date().getTime()}`);
                 if (!resposta.ok) throw new Error("Erro na requisição");
                 
                 const textoCsv = await resposta.text();
@@ -212,7 +322,6 @@
                 });
             } catch (erro) {
                 console.error("Erro ao carregar dados:", erro);
-                alert("Erro ao carregar a planilha.");
             } finally {
                 if (icon) icon.classList.remove('fa-spin');
             }
@@ -329,7 +438,6 @@
             const contDefeito = contarOcorrencias(dados, colDefeito);
             const contComponente = contarOcorrencias(dados, colComponente);
 
-            // Cálculo dos maiores + percentuais em fonte menor e cor cinza claro
             const maiorDef = obterMaior(contDefeito);
             const maiorComp = obterMaior(contComponente);
 
