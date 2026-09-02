@@ -3,83 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Qualidade</title>
+    <title>Painel de Controle - Qualidade</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- PapaParse para ler o CSV -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <!-- FontAwesome para Ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f3f4f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+    </style>
 </head>
-<body class="bg-gray-100 font-sans p-6">
+<body class="p-6">
 
     <div class="max-w-7xl mx-auto space-y-6">
         
         <!-- Cabeçalho -->
-        <div class="flex flex-col md:flex-row justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-200 gap-4">
+        <div class="flex flex-col md:flex-row justify-between items-center bg-white p-6 rounded-xl shadow-sm border border-gray-100">
             <div>
                 <h1 class="text-2xl font-bold text-gray-800">Painel de Controle - Qualidade</h1>
                 <p class="text-sm text-gray-500">Acompanhamento e melhoria contínua</p>
             </div>
-            
-            <div class="flex items-center gap-3">
-                <button onclick="carregarDadosPlanilha()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg text-sm cursor-pointer transition flex items-center gap-2">
-                    🔄 Sincronizar Agora
-                </button>
+            <button onclick="carregarDadosPlanilha()" class="mt-4 md:mt-0 flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg transition-all shadow-sm">
+                <i class="fa-solid fa-rotate"></i>
+                <span>Sincronizar Agora</span>
+            </button>
+        </div>
+
+        <!-- Cards de Métricas Principais -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-blue-500">
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">TOTAL DE REGISTROS</p>
+                <p id="card-total" class="text-3xl font-extrabold text-gray-800 mt-2">0</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-red-500">
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">PRINCIPAL DEFEITO</p>
+                <p id="card-defeito" class="text-xl font-bold text-red-600 mt-2 truncate">-</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-amber-500">
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">COMPONENTE MAIS AFETADO</p>
+                <p id="card-componente" class="text-xl font-bold text-amber-600 mt-2 truncate">-</p>
             </div>
         </div>
 
-        <!-- Indicadores KPIs Atualizados -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-blue-600">
-                <p class="text-xs text-gray-500 font-bold uppercase">Total de Registros</p>
-                <p class="text-3xl font-extrabold text-gray-800 mt-1" id="kpi-total">0</p>
-            </div>
-            <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-red-500">
-                <p class="text-xs text-gray-500 font-bold uppercase">Principal Defeito</p>
-                <p class="text-xl font-bold text-red-600 mt-1 truncate" id="kpi-principal-defeito">-</p>
-            </div>
-            <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-yellow-500">
-                <p class="text-xs text-gray-500 font-bold uppercase">Maior Índice de Defeitos</p>
-                <p class="text-xl font-bold text-yellow-600 mt-1 truncate" id="kpi-maior-componente">-</p>
-            </div>
-        </div>
-
-        <!-- Gráficos -->
+        <!-- Seção de Gráficos (Grid 2x2) -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
-                <h2 class="text-md font-bold text-gray-700 mb-4">Modelos dos Equipamentos</h2>
-                <canvas id="chartEquipamentos"></canvas>
+            
+            <div class="bg-white p-6 rounded-xl shadow-sm">
+                <h2 class="text-md font-bold text-gray-700 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-cube text-blue-500"></i> Modelos de Equipamento
+                </h2>
+                <div class="relative h-64">
+                    <canvas id="chartModelos"></canvas>
+                </div>
             </div>
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
-                <h2 class="text-md font-bold text-gray-700 mb-4">Clientes</h2>
-                <canvas id="chartClientes"></canvas>
+
+            <div class="bg-white p-6 rounded-xl shadow-sm">
+                <h2 class="text-md font-bold text-gray-700 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-users text-green-500"></i> Ocorrências por Cliente
+                </h2>
+                <div class="relative h-64">
+                    <canvas id="chartClientes"></canvas>
+                </div>
             </div>
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
-                <h2 class="text-md font-bold text-gray-700 mb-4">Tipos de Defeitos</h2>
-                <canvas id="chartDefeitos"></canvas>
+
+            <div class="bg-white p-6 rounded-xl shadow-sm">
+                <h2 class="text-md font-bold text-gray-700 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-triangle-exclamation text-red-500"></i> Tipos de Defeito
+                </h2>
+                <div class="relative h-64">
+                    <canvas id="chartDefeitos"></canvas>
+                </div>
             </div>
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
-                <h2 class="text-md font-bold text-gray-700 mb-4">Componentes Afetados</h2>
-                <canvas id="chartComponentes"></canvas>
+
+            <div class="bg-white p-6 rounded-xl shadow-sm">
+                <h2 class="text-md font-bold text-gray-700 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-microchip text-amber-500"></i> Componentes Afetados
+                </h2>
+                <div class="relative h-64">
+                    <canvas id="chartComponentes"></canvas>
+                </div>
             </div>
+
         </div>
 
     </div>
 
     <script>
-        // COLE O SEU LINK PUBLICADO DO GOOGLE SHEETS ENTRE AS ASPAS:
         const URL_GOOGLE_SHEETS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSaXyWBuLvG8G3VrwGcmMqk98vRk0V4L2Tv4rZnJispuDpLQIrjFmBC9UKLz0IrUDZxFhqqXZM-BB6s/pub?gid=0&single=true&output=csv";
 
-        let chart1, chart2, chart3, chart4;
+        let chart1 = null, chart2 = null, chart3 = null, chart4 = null;
 
         async function carregarDadosPlanilha() {
-            if (!URL_GOOGLE_SHEETS || URL_GOOGLE_SHEETS.includes("https://docs.google.com/spreadsheets/d/e/2PACX-1vSaXyWBuLvG8G3VrwGcmMqk98vRk0V4L2Tv4rZnJispuDpLQIrjFmBC9UKLz0IrUDZxFhqqXZM-BB6s/pub?gid=0&single=true&output=csv")) {
-                alert("Por favor, adicione o link publicado do Google Sheets na variável URL_GOOGLE_SHEETS.");
-                return;
-            }
-
             try {
-                // Utiliza fetch com o serviço AllOrigins para evitar o erro CORS ao executar como arquivo local
-                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(URL_GOOGLE_SHEETS)}&timestamp=${new Date().getTime()}`;
-                const resposta = await fetch(proxyUrl);
+                const resposta = await fetch(`${URL_GOOGLE_SHEETS}&t=${new Date().getTime()}`);
+                if (!resposta.ok) throw new Error("Não foi possível carregar os dados");
+                
                 const textoCsv = await resposta.text();
 
                 Papa.parse(textoCsv, {
@@ -91,19 +117,14 @@
                 });
             } catch (erro) {
                 console.error("Erro ao carregar os dados:", erro);
-                alert("Não foi possível carregar os dados. Verifique a sua conexão ou a publicação da planilha.");
+                alert("Erro ao carregar a planilha. Verifique se a publicação na web permanece ativa.");
             }
         }
 
-        function obterValorColuna(item, nomeBuscado) {
-            const chave = Object.keys(item).find(k => k.trim().toLowerCase() === nomeBuscado.toLowerCase());
-            return chave ? item[chave].trim() : '';
-        }
-
-        function contarOcorrencias(dados, nomeColuna) {
+        function contarOcorrencias(dados, coluna) {
             const contagem = {};
             dados.forEach(item => {
-                const valor = obterValorColuna(item, nomeColuna);
+                const valor = item[coluna] ? item[coluna].trim() : "";
                 if (valor) {
                     contagem[valor] = (contagem[valor] || 0) + 1;
                 }
@@ -111,65 +132,91 @@
             return contagem;
         }
 
-        function obterMaisFrequente(objContagem) {
-            let maxChave = '-';
-            let maxValor = 0;
-            for (const [chave, valor] of Object.entries(objContagem)) {
-                if (valor > maxValor) {
-                    maxValor = valor;
-                    maxChave = chave;
+        function obterMaior(contagem) {
+            let maiorChave = "-";
+            let maiorValor = 0;
+            for (const [chave, valor] of Object.entries(contagem)) {
+                if (valor > maiorValor) {
+                    maiorValor = valor;
+                    maiorChave = chave;
                 }
             }
-            return maxValor > 0 ? `${maxChave} (${maxValor})` : '-';
+            return { chave: maiorChave, valor: maiorValor };
         }
 
         function processarDados(dados) {
-            document.getElementById('kpi-total').innerText = dados.length;
-            
-            const contagemDefeitos = contarOcorrencias(dados, 'Tipo de defeito');
-            const contagemComponentes = contarOcorrencias(dados, 'Componente afetado');
+            document.getElementById('card-total').innerText = dados.length;
 
-            document.getElementById('kpi-principal-defeito').innerText = obterMaisFrequente(contagemDefeitos);
-            document.getElementById('kpi-maior-componente').innerText = obterMaisFrequente(contagemComponentes);
+            // Mapeamento automático por nomes das colunas
+            const chaves = dados.length > 0 ? Object.keys(dados[0]) : [];
+            const colModelo = chaves.find(k => k.toLowerCase().includes("modelo") || k.toLowerCase().includes("equipamento")) || chaves[0];
+            const colCliente = chaves.find(k => k.toLowerCase().includes("cliente")) || chaves[1];
+            const colDefeito = chaves.find(k => k.toLowerCase().includes("defeito") || k.toLowerCase().includes("falha")) || chaves[2];
+            const colComponente = chaves.find(k => k.toLowerCase().includes("componente") || k.toLowerCase().includes("peça")) || chaves[3];
 
-            renderGraficoBarras('chartEquipamentos', contarOcorrencias(dados, 'Equipamento'), '#2563eb', chart1, g => chart1 = g);
-            renderGraficoBarras('chartClientes', contarOcorrencias(dados, 'Cliente'), '#0d9488', chart2, g => chart2 = g);
-            renderGraficoRosca('chartDefeitos', contagemDefeitos, chart3, g => chart3 = g);
-            renderGraficoRosca('chartComponentes', contagemComponentes, chart4, g => chart4 = g);
+            const contModelo = contarOcorrencias(dados, colModelo);
+            const contCliente = contarOcorrencias(dados, colCliente);
+            const contDefeito = contarOcorrencias(dados, colDefeito);
+            const contComponente = contarOcorrencias(dados, colComponente);
+
+            const principalDefeito = obterMaior(contDefeito);
+            const principalComponente = obterMaior(contComponente);
+
+            document.getElementById('card-defeito').innerText = principalDefeito.chave;
+            document.getElementById('card-componente').innerText = principalComponente.chave;
+
+            renderizarGraficos(contModelo, contCliente, contDefeito, contComponente);
         }
 
-        function renderGraficoBarras(id, objDados, cor, instancia, salvarInstancia) {
-            if (instancia) instancia.destroy();
-            const ctx = document.getElementById(id).getContext('2d');
-            const novoChart = new Chart(ctx, {
+        function renderizarGraficos(modelos, clientes, defeitos, componentes) {
+            const cores = ['#3b82f6', '#10b981', '#ef4444', '#f59e0b', '#8b5cf6', '#ec4899', '#6366f1'];
+
+            // Gráfico 1 - Modelos
+            if (chart1) chart1.destroy();
+            chart1 = new Chart(document.getElementById('chartModelos'), {
                 type: 'bar',
                 data: {
-                    labels: Object.keys(objDados),
-                    datasets: [{ label: 'Quantidade', data: Object.values(objDados), backgroundColor: cor }]
+                    labels: Object.keys(modelos),
+                    datasets: [{ label: 'Qtd', data: Object.values(modelos), backgroundColor: '#3b82f6' }]
                 },
-                options: { responsive: true, plugins: { legend: { display: false } } }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
-            salvarInstancia(novoChart);
-        }
 
-        function renderGraficoRosca(id, objDados, instancia, salvarInstancia) {
-            if (instancia) instancia.destroy();
-            const ctx = document.getElementById(id).getContext('2d');
-            const novoChart = new Chart(ctx, {
+            // Gráfico 2 - Clientes
+            if (chart2) chart2.destroy();
+            chart2 = new Chart(document.getElementById('chartClientes'), {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(clientes),
+                    datasets: [{ data: Object.values(clientes), backgroundColor: cores }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            // Gráfico 3 - Defeitos
+            if (chart3) chart3.destroy();
+            chart3 = new Chart(document.getElementById('chartDefeitos'), {
                 type: 'doughnut',
                 data: {
-                    labels: Object.keys(objDados),
-                    datasets: [{
-                        data: Object.values(objDados),
-                        backgroundColor: ['#ef4444', '#f59e0b', '#3b82f6', '#10b981', '#8b5cf6', '#64748b']
-                    }]
+                    labels: Object.keys(defeitos),
+                    datasets: [{ data: Object.values(defeitos), backgroundColor: cores }]
                 },
-                options: { responsive: true }
+                options: { responsive: true, maintainAspectRatio: false }
             });
-            salvarInstancia(novoChart);
+
+            // Gráfico 4 - Componentes
+            if (chart4) chart4.destroy();
+            chart4 = new Chart(document.getElementById('chartComponentes'), {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(componentes),
+                    datasets: [{ label: 'Qtd', data: Object.values(componentes), backgroundColor: '#f59e0b' }]
+                },
+                options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
         }
 
-        // Carrega os dados automaticamente assim que a página é aberta
+        // Carrega automaticamente ao abrir a página
         window.onload = carregarDadosPlanilha;
     </script>
 </body>
