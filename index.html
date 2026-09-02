@@ -19,29 +19,85 @@
     <style>
         body { 
             background-color: #e6ecf3; 
+            color: #1e293b;
             font-family: 'Inter', system-ui, -apple-system, sans-serif; 
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
+        /* --- ESTILOS DO MODO ESCURO COM ALTO CONTRASTE --- */
         body.dark-mode {
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+
+        body.dark-mode aside {
             background-color: #1e293b;
-            color: #f1f5f9;
+            border-color: #334155;
+        }
+
+        body.dark-mode aside button {
+            color: #cbd5e1;
+        }
+
+        body.dark-mode aside button:hover {
+            color: #ffffff;
+            background-color: #334155;
+        }
+
+        body.dark-mode h1, 
+        body.dark-mode h2, 
+        body.dark-mode h3 {
+            color: #ffffff !important;
+        }
+
+        body.dark-mode p, 
+        body.dark-mode span, 
+        body.dark-mode label {
+            color: #cbd5e1;
         }
 
         body.dark-mode .skeuo-card {
-            background: linear-gradient(145deg, #334155, #1e293b);
-            box-shadow: 6px 6px 14px #0f172a, -6px -6px 14px #334155;
-            border-color: rgba(255, 255, 255, 0.1);
+            background: #1e293b;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            border: 1px solid #334155;
         }
 
         body.dark-mode .skeuo-input {
             background: #0f172a;
-            color: #f8fafc;
-            box-shadow: inset 2px 2px 5px #020617, inset -2px -2px 5px #334155;
+            color: #ffffff;
+            border: 1px solid #475569;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        body.dark-mode .skeuo-input option {
+            background: #0f172a;
+            color: #ffffff;
+        }
+
+        body.dark-mode .skeuo-button-neutral {
+            background: #334155;
+            color: #ffffff;
+            border-color: #475569;
+        }
+
+        body.dark-mode table thead {
+            background-color: #334155 !important;
+            color: #f8fafc !important;
+        }
+
+        body.dark-mode table tbody tr {
             border-color: #334155;
         }
 
-        /* Estilização Skeuomórfica (Efeito 3D Suave) */
+        body.dark-mode table tbody tr:hover {
+            background-color: #334155/50;
+        }
+
+        body.dark-mode table td {
+            color: #e2e8f0;
+        }
+
+        /* ESTILOS SKEUOMÓRFICOS (MODO CLARO PADRÃO) */
         .skeuo-card {
             background: linear-gradient(145deg, #ffffff, #e6ecf0);
             box-shadow: 6px 6px 14px #cbd5e1, -6px -6px 14px #ffffff;
@@ -58,7 +114,7 @@
 
         .skeuo-button {
             background: linear-gradient(180deg, #1091a1, #085f6a);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.3);
             border-radius: 10px;
         }
 
@@ -76,37 +132,31 @@
         }
     </style>
 </head>
-<body class="text-slate-800 flex min-h-screen">
+<body class="flex min-h-screen">
 
-    <!-- MENU LATERAL DA ESQUERDA COM AÇÕES HABILITADAS -->
-    <aside class="w-16 bg-slate-200/60 border-r border-slate-300/60 flex flex-col items-center py-5 justify-between shadow-inner hidden md:flex sticky top-0 h-screen">
+    <!-- MENU LATERAL DA ESQUERDA -->
+    <aside class="w-16 bg-slate-200/60 border-r border-slate-300/60 flex flex-col items-center py-5 justify-between shadow-inner hidden md:flex sticky top-0 h-screen transition-colors">
         <div class="space-y-6 text-slate-500 text-lg">
-            <!-- Visão Geral -->
-            <button onclick="irParaSecao('topo')" title="Visão Geral (Início)" class="p-2 bg-slate-300/50 hover:bg-slate-300 rounded-lg text-slate-700 transition-all active:scale-95 flex items-center justify-center">
+            <button onclick="irParaSecao('topo')" title="Visão Geral (Início)" class="p-2 hover:bg-slate-300 rounded-lg transition-all active:scale-95 flex items-center justify-center">
                 <i class="fa-solid fa-shapes"></i>
             </button>
-            <!-- Ir para Gráficos -->
-            <button onclick="irParaSecao('secao-graficos')" title="Ir para Gráficos" class="p-2 hover:text-slate-900 transition-all active:scale-95 flex items-center justify-center">
+            <button onclick="irParaSecao('secao-graficos')" title="Ir para Gráficos" class="p-2 hover:bg-slate-300 rounded-lg transition-all active:scale-95 flex items-center justify-center">
                 <i class="fa-solid fa-chart-simple"></i>
             </button>
-            <!-- Ir para Registros -->
-            <button onclick="irParaSecao('secao-tabela')" title="Ir para Tabela de Ocorrências" class="p-2 hover:text-slate-900 transition-all active:scale-95 flex items-center justify-center">
+            <button onclick="irParaSecao('secao-tabela')" title="Ir para Tabela de Ocorrências" class="p-2 hover:bg-slate-300 rounded-lg transition-all active:scale-95 flex items-center justify-center">
                 <i class="fa-solid fa-arrow-rotate-left"></i>
             </button>
-            <!-- Focar na Pesquisa -->
-            <button onclick="focarBusca()" title="Focar Campo de Busca" class="p-2 hover:text-slate-900 transition-all active:scale-95 flex items-center justify-center">
+            <button onclick="focarBusca()" title="Focar Campo de Busca" class="p-2 hover:bg-slate-300 rounded-lg transition-all active:scale-95 flex items-center justify-center">
                 <i class="fa-solid fa-sliders"></i>
             </button>
         </div>
 
         <div class="space-y-4 text-slate-500 text-lg">
-            <!-- Sincronizar Dados -->
-            <button onclick="carregarDadosPlanilha()" title="Sincronizar Planilha" class="p-2 hover:text-slate-900 transition-all active:scale-95 flex items-center justify-center">
+            <button onclick="carregarDadosPlanilha()" title="Sincronizar Planilha" class="p-2 hover:bg-slate-300 rounded-lg transition-all active:scale-95 flex items-center justify-center">
                 <i class="fa-solid fa-gear"></i>
             </button>
-            <!-- Alternar Tema Modesto -->
-            <button onclick="alternarModoEscuro()" title="Alternar Contraste" class="p-2 hover:text-slate-900 transition-all active:scale-95 flex items-center justify-center">
-                <i class="fa-regular fa-face-smile"></i>
+            <button onclick="alternarModoEscuro()" title="Alternar Modo Escuro" class="p-2 hover:bg-slate-300 rounded-lg transition-all active:scale-95 flex items-center justify-center">
+                <i class="fa-solid fa-moon"></i>
             </button>
         </div>
     </aside>
@@ -124,9 +174,8 @@
                 </div>
             </div>
 
-            <!-- CONTROLES DO TOPO -->
             <div class="skeuo-card p-2 px-4 flex items-center gap-3">
-                <i class="fa-regular fa-calendar-days text-slate-500"></i>
+                <i class="fa-regular fa-calendar-days text-slate-400"></i>
                 <span id="ultima-atualizacao" class="text-xs text-slate-500 font-medium">Atualizado recentemente</span>
                 
                 <button onclick="abrirModal()" class="skeuo-button text-white text-xs font-bold px-4 py-2 transition-all active:scale-95 flex items-center gap-2">
@@ -145,11 +194,11 @@
         <div class="skeuo-card p-4 space-y-3">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
                 <div class="md:col-span-3 relative">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400"></i>
-                    <input type="text" id="input-busca" oninput="aplicarFiltros()" placeholder="Buscar por palavra-chave..." class="w-full pl-9 pr-4 py-2.5 skeuo-input text-xs text-slate-700 focus:outline-none">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-slate-400"></i>
+                    <input type="text" id="input-busca" oninput="aplicarFiltros()" placeholder="Buscar por palavra-chave..." class="w-full pl-9 pr-4 py-2.5 skeuo-input text-xs focus:outline-none">
                 </div>
                 <div>
-                    <button onclick="limparFiltros()" class="w-full py-2.5 px-4 skeuo-button-neutral text-slate-600 text-xs font-bold transition-all flex items-center justify-center gap-2">
+                    <button onclick="limparFiltros()" class="w-full py-2.5 px-4 skeuo-button-neutral text-xs font-bold transition-all flex items-center justify-center gap-2">
                         <i class="fa-solid fa-filter-circle-xmark"></i>
                         <span>Limpar Filtros</span>
                     </button>
@@ -157,16 +206,16 @@
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 pt-1">
-                <select id="select-cliente" onchange="aplicarFiltros()" class="w-full py-2 px-3 skeuo-input text-xs text-slate-700 focus:outline-none">
+                <select id="select-cliente" onchange="aplicarFiltros()" class="w-full py-2 px-3 skeuo-input text-xs focus:outline-none">
                     <option value="">Todos os Clientes</option>
                 </select>
-                <select id="select-equipamento" onchange="aplicarFiltros()" class="w-full py-2 px-3 skeuo-input text-xs text-slate-700 focus:outline-none">
+                <select id="select-equipamento" onchange="aplicarFiltros()" class="w-full py-2 px-3 skeuo-input text-xs focus:outline-none">
                     <option value="">Todos os Equipamentos</option>
                 </select>
-                <select id="select-defeito" onchange="aplicarFiltros()" class="w-full py-2 px-3 skeuo-input text-xs text-slate-700 focus:outline-none">
+                <select id="select-defeito" onchange="aplicarFiltros()" class="w-full py-2 px-3 skeuo-input text-xs focus:outline-none">
                     <option value="">Todos os Defeitos</option>
                 </select>
-                <select id="select-componente" onchange="aplicarFiltros()" class="w-full py-2 px-3 skeuo-input text-xs text-slate-700 focus:outline-none">
+                <select id="select-componente" onchange="aplicarFiltros()" class="w-full py-2 px-3 skeuo-input text-xs focus:outline-none">
                     <option value="">Todos os Componentes</option>
                 </select>
             </div>
@@ -176,54 +225,54 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
             <div class="skeuo-card p-5 border-l-8 border-l-blue-500">
                 <div class="flex justify-between items-center">
-                    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Ocorrência registrada</p>
-                    <div class="p-2 bg-blue-100/70 text-blue-600 rounded-lg text-xs"><i class="fa-solid fa-clipboard-list"></i></div>
+                    <p class="text-xs font-bold uppercase tracking-wider">Total Registrado</p>
+                    <div class="p-2 bg-blue-500/10 text-blue-500 rounded-lg text-xs"><i class="fa-solid fa-clipboard-list"></i></div>
                 </div>
-                <p id="card-total" class="text-3xl font-black text-slate-800 mt-2">0</p>
+                <p id="card-total" class="text-3xl font-black mt-2">0</p>
             </div>
 
             <div class="skeuo-card p-5 border-l-8 border-l-rose-500">
                 <div class="flex justify-between items-center">
-                    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Principal Defeito</p>
-                    <div class="p-2 bg-rose-100/70 text-rose-600 rounded-lg text-xs"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                    <p class="text-xs font-bold uppercase tracking-wider">Principal Defeito</p>
+                    <div class="p-2 bg-rose-500/10 text-rose-500 rounded-lg text-xs"><i class="fa-solid fa-triangle-exclamation"></i></div>
                 </div>
-                <p id="card-defeito" class="text-lg font-black text-rose-700 mt-2 truncate uppercase">-</p>
+                <p id="card-defeito" class="text-lg font-black text-rose-500 mt-2 truncate uppercase">-</p>
             </div>
 
             <div class="skeuo-card p-5 border-l-8 border-l-amber-500">
                 <div class="flex justify-between items-center">
-                    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Componente Mais Afetado</p>
-                    <div class="p-2 bg-amber-100/70 text-amber-600 rounded-lg text-xs"><i class="fa-solid fa-microchip"></i></div>
+                    <p class="text-xs font-bold uppercase tracking-wider">Componente Mais Afetado</p>
+                    <div class="p-2 bg-amber-500/10 text-amber-500 rounded-lg text-xs"><i class="fa-solid fa-microchip"></i></div>
                 </div>
-                <p id="card-componente" class="text-lg font-black text-amber-700 mt-2 truncate uppercase">-</p>
+                <p id="card-componente" class="text-lg font-black text-amber-500 mt-2 truncate uppercase">-</p>
             </div>
         </div>
 
         <!-- PAINEL DE GRÁFICOS -->
         <div id="secao-graficos" class="grid grid-cols-1 md:grid-cols-2 gap-6 scroll-mt-6">
             <div class="skeuo-card p-5">
-                <h2 class="text-xs font-extrabold text-slate-700 mb-4 flex items-center gap-2">
+                <h2 class="text-xs font-extrabold mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-cube text-blue-500"></i> Ocorrências por Modelo (Top 8)
                 </h2>
                 <div class="relative h-64"><canvas id="chartModelos"></canvas></div>
             </div>
 
             <div class="skeuo-card p-5">
-                <h2 class="text-xs font-extrabold text-slate-700 mb-4 flex items-center gap-2">
+                <h2 class="text-xs font-extrabold mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-users text-emerald-500"></i> Ocorrências por Cliente
                 </h2>
                 <div class="relative h-64"><canvas id="chartClientes"></canvas></div>
             </div>
 
             <div class="skeuo-card p-5">
-                <h2 class="text-xs font-extrabold text-slate-700 mb-4 flex items-center gap-2">
+                <h2 class="text-xs font-extrabold mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-circle-exclamation text-rose-500"></i> Tipos de Defeitos
                 </h2>
                 <div class="relative h-64"><canvas id="chartDefeitos"></canvas></div>
             </div>
 
             <div class="skeuo-card p-5">
-                <h2 class="text-xs font-extrabold text-slate-700 mb-4 flex items-center gap-2">
+                <h2 class="text-xs font-extrabold mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-gears text-amber-500"></i> Componentes Afetados
                 </h2>
                 <div class="relative h-64"><canvas id="chartComponentes"></canvas></div>
@@ -232,13 +281,13 @@
 
         <!-- TABELA DE REGISTROS -->
         <div id="secao-tabela" class="skeuo-card p-5 scroll-mt-6">
-            <h2 class="text-xs font-extrabold text-slate-700 mb-4 flex items-center justify-between">
-                <span><i class="fa-solid fa-table text-slate-500 mr-2"></i>Registros Encontrados</span>
-                <span id="contador-tabela" class="text-xs font-normal text-slate-500"></span>
+            <h2 class="text-xs font-extrabold mb-4 flex items-center justify-between">
+                <span><i class="fa-solid fa-table text-slate-400 mr-2"></i>Registros Encontrados</span>
+                <span id="contador-tabela" class="text-xs font-normal"></span>
             </h2>
             <div class="overflow-x-auto max-h-96">
-                <table class="w-full text-left text-xs text-slate-600 border-collapse">
-                    <thead class="bg-slate-200/50 sticky top-0 text-slate-700 font-bold">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead class="bg-slate-200/80 sticky top-0 font-bold text-slate-700">
                         <tr>
                             <th class="p-3">Data</th>
                             <th class="p-3">Cliente</th>
@@ -251,7 +300,7 @@
                             <th class="p-3 text-center">Ações</th>
                         </tr>
                     </thead>
-                    <tbody id="tabela-corpo" class="divide-y divide-slate-200/60"></tbody>
+                    <tbody id="tabela-corpo" class="divide-y divide-slate-200/40"></tbody>
                 </table>
             </div>
         </div>
@@ -259,44 +308,44 @@
     </main>
 
     <!-- MODAL DE REGISTRO -->
-    <div id="modal-registro" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-        <div class="skeuo-card max-w-2xl w-full p-6 space-y-4 bg-slate-100">
-            <div class="flex justify-between items-center border-b border-slate-300/60 pb-3">
-                <h3 class="text-base font-bold text-slate-800"><i class="fa-solid fa-pen-to-square text-emerald-600 mr-2"></i>Nova Ocorrência</h3>
-                <button onclick="fecharModal()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+    <div id="modal-registro" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="skeuo-card max-w-2xl w-full p-6 space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-300/40 pb-3">
+                <h3 class="text-base font-bold"><i class="fa-solid fa-pen-to-square text-emerald-500 mr-2"></i>Nova Ocorrência</h3>
+                <button onclick="fecharModal()" class="text-slate-400 hover:text-slate-200 text-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
             <form id="form-ocorrencia" onsubmit="enviarNovoRegistro(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Data</label>
+                    <label class="block text-xs font-semibold mb-1">Data</label>
                     <input type="date" id="add-data" required class="w-full p-2 skeuo-input text-xs outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Cliente</label>
+                    <label class="block text-xs font-semibold mb-1">Cliente</label>
                     <input type="text" id="add-cliente" required placeholder="Ex: Cliente X" class="w-full p-2 skeuo-input text-xs outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Equipamento / Modelo</label>
+                    <label class="block text-xs font-semibold mb-1">Equipamento / Modelo</label>
                     <input type="text" id="add-equipamento" required placeholder="Ex: PUMPER 500" class="w-full p-2 skeuo-input text-xs outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Defeito</label>
+                    <label class="block text-xs font-semibold mb-1">Defeito</label>
                     <input type="text" id="add-defeito" required placeholder="Ex: Baixa Pressão" class="w-full p-2 skeuo-input text-xs outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Causa Raiz</label>
+                    <label class="block text-xs font-semibold mb-1">Causa Raiz</label>
                     <input type="text" id="add-causa" placeholder="Ex: Desgastada" class="w-full p-2 skeuo-input text-xs outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Componente</label>
+                    <label class="block text-xs font-semibold mb-1">Componente</label>
                     <input type="text" id="add-componente" required placeholder="Ex: Rotor" class="w-full p-2 skeuo-input text-xs outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Ação Tomada</label>
+                    <label class="block text-xs font-semibold mb-1">Ação Tomada</label>
                     <input type="text" id="add-acao" placeholder="Ex: Substituição efetuada" class="w-full p-2 skeuo-input text-xs outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Status</label>
+                    <label class="block text-xs font-semibold mb-1">Status</label>
                     <select id="add-status" class="w-full p-2 skeuo-input text-xs outline-none">
                         <option value="Concluído">Concluído</option>
                         <option value="Em Análise">Em Análise</option>
@@ -305,14 +354,14 @@
                 </div>
 
                 <div class="md:col-span-2">
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">
+                    <label class="block text-xs font-semibold mb-1">
                         <i class="fa-solid fa-lock text-slate-400 mr-1"></i>Senha de Autorização
                     </label>
                     <input type="password" id="add-senha" required placeholder="Digite a senha para salvar" class="w-full p-2 skeuo-input text-xs outline-none">
                 </div>
 
-                <div class="md:col-span-2 flex justify-end gap-3 pt-3 border-t border-slate-300/60">
-                    <button type="button" onclick="fecharModal()" class="px-4 py-2 skeuo-button-neutral text-slate-600 rounded-lg font-bold text-xs">Cancelar</button>
+                <div class="md:col-span-2 flex justify-end gap-3 pt-3 border-t border-slate-300/40">
+                    <button type="button" onclick="fecharModal()" class="px-4 py-2 skeuo-button-neutral rounded-lg font-bold text-xs">Cancelar</button>
                     <button type="submit" id="btn-salvar" class="px-4 py-2 skeuo-button text-white rounded-lg font-bold text-xs flex items-center gap-2">
                         <i class="fa-solid fa-floppy-disk"></i>
                         <span>Salvar Registro</span>
@@ -322,7 +371,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT DE LÓGICA -->
+    <!-- SCRIPT DE LÓGICA E DADOS -->
     <script>
         const URL_GOOGLE_SHEETS_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSaXyWBuLvG8G3VrwGcmMqk98vRk0V4L2Tv4rZnJispuDpLQIrjFmBC9UKLz0IrUDZxFhqqXZM-BB6s/pub?gid=0&single=true&output=csv";
         const URL_APPS_SCRIPT_WEBAPP = "https://script.google.com/macros/s/AKfycbxNRfqOPNrMq-iIotevwE3TTZbXCGBKma_r2BSh8LPXCrmpWkKTdIc1FjtOS9ay7e02Ow/exec";
@@ -331,7 +380,6 @@
         let dadosBrutos = [];
         let chart1 = null, chart2 = null, chart3 = null, chart4 = null;
 
-        /* NOVAS FUNÇÕES DA BARRA LATERAL */
         function irParaSecao(id) {
             if (id === 'topo') limparFiltros();
             document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
@@ -345,9 +393,9 @@
 
         function alternarModoEscuro() {
             document.body.classList.toggle('dark-mode');
+            aplicarFiltros(); // Re-renderiza gráficos ajustando as cores dos textos
         }
 
-        /* FUNÇÕES PADRÃO DO DASHBOARD */
         function padronizarTexto(texto) {
             if (!texto) return "";
             let t = texto.trim();
@@ -590,14 +638,14 @@
 
             if (total > 0 && maiorDef.valor > 0) {
                 const pctDef = ((maiorDef.valor / total) * 100).toFixed(0);
-                document.getElementById('card-defeito').innerHTML = `${maiorDef.chave.toUpperCase()} <span class="text-xs text-slate-400 font-normal ml-1">(${pctDef}%)</span>`;
+                document.getElementById('card-defeito').innerHTML = `${maiorDef.chave.toUpperCase()} <span class="text-xs opacity-75 font-normal ml-1">(${pctDef}%)</span>`;
             } else {
                 document.getElementById('card-defeito').innerText = "-";
             }
 
             if (total > 0 && maiorComp.valor > 0) {
                 const pctComp = ((maiorComp.valor / total) * 100).toFixed(0);
-                document.getElementById('card-componente').innerHTML = `${maiorComp.chave.toUpperCase()} <span class="text-xs text-slate-400 font-normal ml-1">(${pctComp}%)</span>`;
+                document.getElementById('card-componente').innerHTML = `${maiorComp.chave.toUpperCase()} <span class="text-xs opacity-75 font-normal ml-1">(${pctComp}%)</span>`;
             } else {
                 document.getElementById('card-componente').innerText = "-";
             }
@@ -611,7 +659,7 @@
             corpo.innerHTML = "";
 
             if (dados.length === 0) {
-                corpo.innerHTML = `<tr><td colspan="9" class="p-4 text-center text-slate-400">Nenhum registro encontrado.</td></tr>`;
+                corpo.innerHTML = `<tr><td colspan="9" class="p-4 text-center opacity-60">Nenhum registro encontrado.</td></tr>`;
                 return;
             }
 
@@ -619,17 +667,17 @@
                 const { _rowIndex, ...colunas } = item;
                 const vals = Object.values(colunas);
                 corpo.innerHTML += `
-                    <tr class="hover:bg-slate-200/40 transition-colors">
-                        <td class="p-3 font-medium text-slate-700">${padronizarTexto(vals[0]) || '-'}</td>
+                    <tr class="transition-colors">
+                        <td class="p-3 font-medium">${padronizarTexto(vals[0]) || '-'}</td>
                         <td class="p-3">${padronizarTexto(vals[1]) || '-'}</td>
-                        <td class="p-3 font-semibold text-slate-800">${padronizarModelo(vals[2]) || '-'}</td>
-                        <td class="p-3 text-rose-600 font-medium">${padronizarTexto(vals[3]) || '-'}</td>
+                        <td class="p-3 font-semibold text-blue-400">${padronizarModelo(vals[2]) || '-'}</td>
+                        <td class="p-3 text-rose-500 font-medium">${padronizarTexto(vals[3]) || '-'}</td>
                         <td class="p-3">${padronizarTexto(vals[4]) || '-'}</td>
-                        <td class="p-3 text-amber-600">${padronizarTexto(vals[5]) || '-'}</td>
+                        <td class="p-3 text-amber-500 font-medium">${padronizarTexto(vals[5]) || '-'}</td>
                         <td class="p-3">${padronizarTexto(vals[6]) || '-'}</td>
-                        <td class="p-3"><span class="px-2 py-1 bg-slate-300/50 rounded text-slate-700 text-xs font-semibold">${padronizarTexto(vals[7]) || '-'}</span></td>
+                        <td class="p-3"><span class="px-2 py-1 bg-slate-500/20 rounded text-xs font-semibold">${padronizarTexto(vals[7]) || '-'}</span></td>
                         <td class="p-3 text-center">
-                            <button onclick="excluirRegistro(${_rowIndex})" title="Excluir Registro" class="text-slate-400 hover:text-rose-600 p-1 transition-colors">
+                            <button onclick="excluirRegistro(${_rowIndex})" title="Excluir Registro" class="text-slate-400 hover:text-rose-500 p-1 transition-colors">
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
                         </td>
@@ -640,33 +688,49 @@
 
         function renderizarGraficos(modelos, clientes, defeitos, componentes) {
             const cores = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#64748b'];
+            const eModoEscuro = document.body.classList.contains('dark-mode');
+            const corTexto = eModoEscuro ? '#f8fafc' : '#475569';
+
+            const opcoesPadrao = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: { color: corTexto, boxWidth: 12 }
+                    }
+                },
+                scales: {
+                    x: { ticks: { color: corTexto }, grid: { display: false } },
+                    y: { ticks: { color: corTexto }, grid: { color: eModoEscuro ? '#334155' : '#e2e8f0' } }
+                }
+            };
 
             if (chart1) chart1.destroy();
             chart1 = new Chart(document.getElementById('chartModelos'), {
                 type: 'bar',
                 data: { labels: Object.keys(modelos), datasets: [{ label: 'Qtd', data: Object.values(modelos), backgroundColor: '#3b82f6', borderRadius: 6 }] },
-                options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+                options: { ...opcoesPadrao, indexAxis: 'y', plugins: { legend: { display: false } } }
             });
 
             if (chart2) chart2.destroy();
             chart2 = new Chart(document.getElementById('chartClientes'), {
                 type: 'pie',
                 data: { labels: Object.keys(clientes), datasets: [{ data: Object.values(clientes), backgroundColor: cores }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 12 } } } }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: corTexto, boxWidth: 12 } } } }
             });
 
             if (chart3) chart3.destroy();
             chart3 = new Chart(document.getElementById('chartDefeitos'), {
                 type: 'doughnut',
                 data: { labels: Object.keys(defeitos), datasets: [{ data: Object.values(defeitos), backgroundColor: cores }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 12 } } } }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: corTexto, boxWidth: 12 } } } }
             });
 
             if (chart4) chart4.destroy();
             chart4 = new Chart(document.getElementById('chartComponentes'), {
                 type: 'bar',
                 data: { labels: Object.keys(componentes), datasets: [{ label: 'Qtd', data: Object.values(componentes), backgroundColor: '#f59e0b', borderRadius: 6 }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+                options: { ...opcoesPadrao, plugins: { legend: { display: false } } }
             });
         }
 
