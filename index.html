@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel de Controle - Qualidade</title>
 
-    <!-- Favicon declarado -->
     <link rel="icon" type="image/png" href="favicon.png?v=2">
 
     <!-- Tailwind CSS -->
@@ -16,146 +15,192 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        body { background-color: #f8fafc; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        body { 
+            background-color: #e6ecf3; 
+            font-family: 'Inter', system-ui, -apple-system, sans-serif; 
+        }
+
+        /* Estilização Skeuomórfica (Efeito 3D Suave) */
+        .skeuo-card {
+            background: linear-gradient(145deg, #ffffff, #e6ecf0);
+            box-shadow: 6px 6px 14px #cbd5e1, -6px -6px 14px #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 16px;
+        }
+
+        .skeuo-input {
+            background: #eaf0f6;
+            box-shadow: inset 2px 2px 5px #c2cdd8, inset -2px -2px 5px #ffffff;
+            border: 1px solid #d1dbe5;
+            border-radius: 12px;
+        }
+
+        .skeuo-button {
+            background: linear-gradient(180deg, #1091a1, #085f6a);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+
+        .skeuo-button-secondary {
+            background: linear-gradient(180deg, #5b92e5, #366ac0);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+
+        .skeuo-button-neutral {
+            background: linear-gradient(180deg, #ffffff, #e2e8f0);
+            box-shadow: 2px 2px 5px #cbd5e1, -2px -2px 5px #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+        }
     </style>
 </head>
-<body class="p-4 md:p-6 text-slate-800">
+<body class="text-slate-800 flex min-h-screen">
 
-    <div class="max-w-7xl mx-auto space-y-6">
+    <!-- MENU LATERAL DA ESQUERDA -->
+    <aside class="w-16 bg-slate-200/60 border-r border-slate-300/60 flex flex-col items-center py-5 justify-between shadow-inner hidden md:flex">
+        <div class="space-y-6 text-slate-500 text-lg">
+            <div class="p-2 bg-slate-300/50 rounded-lg text-slate-700"><i class="fa-solid fa-shapes"></i></div>
+            <div class="p-2 hover:text-slate-800 cursor-pointer"><i class="fa-solid fa-chart-simple"></i></div>
+            <div class="p-2 hover:text-slate-800 cursor-pointer"><i class="fa-solid fa-arrow-rotate-left"></i></div>
+            <div class="p-2 hover:text-slate-800 cursor-pointer"><i class="fa-solid fa-sliders"></i></div>
+        </div>
+        <div class="space-y-4 text-slate-500 text-lg">
+            <div class="p-2 hover:text-slate-800 cursor-pointer"><i class="fa-solid fa-gear"></i></div>
+            <div class="p-2 hover:text-slate-800 cursor-pointer"><i class="fa-regular fa-face-smile"></i></div>
+        </div>
+    </aside>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="flex-1 p-4 md:p-6 space-y-6 max-w-[1600px] mx-auto w-full">
         
-        <!-- Cabeçalho com Logo -->
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center bg-white p-5 rounded-xl shadow-sm border border-slate-200/80 gap-4">
+        <!-- CABEÇALHO -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div class="flex items-center gap-4">
                 <img src="Logo.png" alt="Logo da Empresa" class="h-16 w-auto object-contain">
                 <div>
-                    <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Painel de Controle - Qualidade</h1>
-                    <p class="text-xs text-slate-500 mt-0.5">Acompanhamento e consulta de ocorrências</p>
+                    <h1 class="text-2xl font-black text-slate-900 tracking-tight">Painel de Controle - Qualidade</h1>
+                    <p class="text-xs text-slate-500 font-medium">Acompanhamento e consulta de ocorrências</p>
                 </div>
             </div>
 
-            <!-- CONTROLES DO TOPO -->
-            <div class="flex items-center gap-3">
-                <span id="ultima-atualizacao" class="text-xs text-slate-400 font-medium hidden sm:inline"></span>
+            <!-- CONTROLES DO TOPO COM ACABAMENTO SKEUOMÓRFICO -->
+            <div class="skeuo-card p-2 px-4 flex items-center gap-3">
+                <i class="fa-regular fa-calendar-days text-slate-500"></i>
+                <span id="ultima-atualizacao" class="text-xs text-slate-500 font-medium">Atualizado recentemente</span>
                 
-                <button onclick="abrirModal()" class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-all shadow-sm active:scale-95">
+                <button onclick="abrirModal()" class="skeuo-button text-white text-xs font-bold px-4 py-2 transition-all active:scale-95 flex items-center gap-2">
                     <i class="fa-solid fa-plus"></i>
                     <span>Novo Registro</span>
                 </button>
 
-                <button onclick="carregarDadosPlanilha()" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-all shadow-sm active:scale-95">
+                <button onclick="carregarDadosPlanilha()" class="skeuo-button-secondary text-white text-xs font-bold px-4 py-2 transition-all active:scale-95 flex items-center gap-2">
                     <i class="fa-solid fa-rotate" id="icon-sync"></i>
                     <span>Sincronizar</span>
                 </button>
             </div>
         </div>
 
-        <!-- BARRA DE PESQUISA E FILTROS -->
-        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200/80 space-y-3">
+        <!-- BARRA DE PESQUISA E FILTROS EMBUTIDOS -->
+        <div class="skeuo-card p-4 space-y-3">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
                 <div class="md:col-span-3 relative">
                     <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400"></i>
-                    <input type="text" id="input-busca" oninput="aplicarFiltros()" placeholder="Buscar por qualquer palavra-chave..." class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                    <input type="text" id="input-busca" oninput="aplicarFiltros()" placeholder="Buscar por palavra-chave..." class="w-full pl-9 pr-4 py-2.5 skeuo-input text-xs text-slate-700 focus:outline-none">
                 </div>
                 <div>
-                    <button onclick="limparFiltros()" class="w-full py-2 px-4 bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-medium rounded-lg transition-all flex items-center justify-center gap-2">
+                    <button onclick="limparFiltros()" class="w-full py-2.5 px-4 skeuo-button-neutral text-slate-600 text-xs font-bold transition-all flex items-center justify-center gap-2">
                         <i class="fa-solid fa-filter-circle-xmark"></i>
                         <span>Limpar Filtros</span>
                     </button>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 pt-1 border-t border-slate-100">
-                <div>
-                    <select id="select-cliente" onchange="aplicarFiltros()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="">Todos os Clientes</option>
-                    </select>
-                </div>
-                <div>
-                    <select id="select-equipamento" onchange="aplicarFiltros()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="">Todos os Equipamentos</option>
-                    </select>
-                </div>
-                <div>
-                    <select id="select-defeito" onchange="aplicarFiltros()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="">Todos os Defeitos</option>
-                    </select>
-                </div>
-                <div>
-                    <select id="select-componente" onchange="aplicarFiltros()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="">Todos os Componentes</option>
-                    </select>
-                </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 pt-1">
+                <select id="select-cliente" onchange="aplicarFiltros()" class="w-full py-2 px-3 skeuo-input text-xs text-slate-700 focus:outline-none">
+                    <option value="">Todos os Clientes</option>
+                </select>
+                <select id="select-equipamento" onchange="aplicarFiltros()" class="w-full py-2 px-3 skeuo-input text-xs text-slate-700 focus:outline-none">
+                    <option value="">Todos os Equipamentos</option>
+                </select>
+                <select id="select-defeito" onchange="aplicarFiltros()" class="w-full py-2 px-3 skeuo-input text-xs text-slate-700 focus:outline-none">
+                    <option value="">Todos os Defeitos</option>
+                </select>
+                <select id="select-componente" onchange="aplicarFiltros()" class="w-full py-2 px-3 skeuo-input text-xs text-slate-700 focus:outline-none">
+                    <option value="">Todos os Componentes</option>
+                </select>
             </div>
         </div>
 
-        <!-- Cards de Métricas -->
+        <!-- CARDS DE MÉTRICAS COM BORDA LATERAL COLORIDA -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100 border-l-4 border-l-blue-500">
+            <div class="skeuo-card p-5 border-l-8 border-l-blue-500">
                 <div class="flex justify-between items-center">
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Registrado</p>
-                    <i class="fa-solid fa-clipboard-list text-blue-500 text-lg"></i>
+                    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Registrado</p>
+                    <div class="p-2 bg-blue-100/70 text-blue-600 rounded-lg text-xs"><i class="fa-solid fa-clipboard-list"></i></div>
                 </div>
                 <p id="card-total" class="text-3xl font-black text-slate-800 mt-2">0</p>
             </div>
 
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100 border-l-4 border-l-rose-500">
+            <div class="skeuo-card p-5 border-l-8 border-l-rose-500">
                 <div class="flex justify-between items-center">
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Principal Defeito</p>
-                    <i class="fa-solid fa-triangle-exclamation text-rose-500 text-lg"></i>
+                    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Principal Defeito</p>
+                    <div class="p-2 bg-rose-100/70 text-rose-600 rounded-lg text-xs"><i class="fa-solid fa-triangle-exclamation"></i></div>
                 </div>
-                <p id="card-defeito" class="text-lg font-bold text-rose-600 mt-2 truncate uppercase">-</p>
+                <p id="card-defeito" class="text-lg font-black text-rose-700 mt-2 truncate uppercase">-</p>
             </div>
 
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100 border-l-4 border-l-amber-500">
+            <div class="skeuo-card p-5 border-l-8 border-l-amber-500">
                 <div class="flex justify-between items-center">
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Componente Mais Afetado</p>
-                    <i class="fa-solid fa-microchip text-amber-500 text-lg"></i>
+                    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Componente Mais Afetado</p>
+                    <div class="p-2 bg-amber-100/70 text-amber-600 rounded-lg text-xs"><i class="fa-solid fa-microchip"></i></div>
                 </div>
-                <p id="card-componente" class="text-lg font-bold text-amber-600 mt-2 truncate uppercase">-</p>
+                <p id="card-componente" class="text-lg font-black text-amber-700 mt-2 truncate uppercase">-</p>
             </div>
         </div>
 
-        <!-- Grid de Gráficos -->
+        <!-- PAINEL DE GRÁFICOS -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100">
-                <h2 class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2">
+            <div class="skeuo-card p-5">
+                <h2 class="text-xs font-extrabold text-slate-700 mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-cube text-blue-500"></i> Ocorrências por Modelo (Top 8)
                 </h2>
                 <div class="relative h-64"><canvas id="chartModelos"></canvas></div>
             </div>
 
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100">
-                <h2 class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2">
+            <div class="skeuo-card p-5">
+                <h2 class="text-xs font-extrabold text-slate-700 mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-users text-emerald-500"></i> Ocorrências por Cliente
                 </h2>
                 <div class="relative h-64"><canvas id="chartClientes"></canvas></div>
             </div>
 
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100">
-                <h2 class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2">
+            <div class="skeuo-card p-5">
+                <h2 class="text-xs font-extrabold text-slate-700 mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-circle-exclamation text-rose-500"></i> Tipos de Defeitos
                 </h2>
                 <div class="relative h-64"><canvas id="chartDefeitos"></canvas></div>
             </div>
 
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100">
-                <h2 class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2">
+            <div class="skeuo-card p-5">
+                <h2 class="text-xs font-extrabold text-slate-700 mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-gears text-amber-500"></i> Componentes Afetados
                 </h2>
                 <div class="relative h-64"><canvas id="chartComponentes"></canvas></div>
             </div>
         </div>
 
-        <!-- TABELA DE CONSULTA DE REGISTROS -->
-        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100">
-            <h2 class="text-sm font-bold text-slate-700 mb-4 flex items-center justify-between">
+        <!-- TABELA DE REGISTROS -->
+        <div class="skeuo-card p-5">
+            <h2 class="text-xs font-extrabold text-slate-700 mb-4 flex items-center justify-between">
                 <span><i class="fa-solid fa-table text-slate-500 mr-2"></i>Registros Encontrados</span>
-                <span id="contador-tabela" class="text-xs font-normal text-slate-400"></span>
+                <span id="contador-tabela" class="text-xs font-normal text-slate-500"></span>
             </h2>
             <div class="overflow-x-auto max-h-96">
                 <table class="w-full text-left text-xs text-slate-600 border-collapse">
-                    <thead class="bg-slate-50 sticky top-0 text-slate-500 font-semibold border-b border-slate-200">
+                    <thead class="bg-slate-200/50 sticky top-0 text-slate-700 font-bold">
                         <tr>
                             <th class="p-3">Data</th>
                             <th class="p-3">Cliente</th>
@@ -168,70 +213,69 @@
                             <th class="p-3 text-center">Ações</th>
                         </tr>
                     </thead>
-                    <tbody id="tabela-corpo" class="divide-y divide-slate-100"></tbody>
+                    <tbody id="tabela-corpo" class="divide-y divide-slate-200/60"></tbody>
                 </table>
             </div>
         </div>
 
-    </div>
+    </main>
 
-    <!-- MODAL DE NOVO REGISTRO -->
-    <div id="modal-registro" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-xl shadow-xl max-w-2xl w-full p-6 space-y-4">
-            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                <h3 class="text-lg font-bold text-slate-800"><i class="fa-solid fa-pen-to-square text-emerald-600 mr-2"></i>Nova Ocorrência</h3>
+    <!-- MODAL DE REGISTRO COM EFEITO ELEVADO -->
+    <div id="modal-registro" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="skeuo-card max-w-2xl w-full p-6 space-y-4 bg-slate-100">
+            <div class="flex justify-between items-center border-b border-slate-300/60 pb-3">
+                <h3 class="text-base font-bold text-slate-800"><i class="fa-solid fa-pen-to-square text-emerald-600 mr-2"></i>Nova Ocorrência</h3>
                 <button onclick="fecharModal()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
             <form id="form-ocorrencia" onsubmit="enviarNovoRegistro(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Data</label>
-                    <input type="date" id="add-data" required class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
+                    <input type="date" id="add-data" required class="w-full p-2 skeuo-input text-xs outline-none">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Cliente</label>
-                    <input type="text" id="add-cliente" required placeholder="Ex: Cliente X" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
+                    <input type="text" id="add-cliente" required placeholder="Ex: Cliente X" class="w-full p-2 skeuo-input text-xs outline-none">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Equipamento / Modelo</label>
-                    <input type="text" id="add-equipamento" required placeholder="Ex: PUMPER 500" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
+                    <input type="text" id="add-equipamento" required placeholder="Ex: PUMPER 500" class="w-full p-2 skeuo-input text-xs outline-none">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Defeito</label>
-                    <input type="text" id="add-defeito" required placeholder="Ex: Baixa Pressão" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
+                    <input type="text" id="add-defeito" required placeholder="Ex: Baixa Pressão" class="w-full p-2 skeuo-input text-xs outline-none">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Causa Raiz</label>
-                    <input type="text" id="add-causa" placeholder="Ex: Desgastada" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
+                    <input type="text" id="add-causa" placeholder="Ex: Desgastada" class="w-full p-2 skeuo-input text-xs outline-none">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Componente</label>
-                    <input type="text" id="add-componente" required placeholder="Ex: Rotor" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
+                    <input type="text" id="add-componente" required placeholder="Ex: Rotor" class="w-full p-2 skeuo-input text-xs outline-none">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Ação Tomada</label>
-                    <input type="text" id="add-acao" placeholder="Ex: Substituição efetuada" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
+                    <input type="text" id="add-acao" placeholder="Ex: Substituição efetuada" class="w-full p-2 skeuo-input text-xs outline-none">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Status</label>
-                    <select id="add-status" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
+                    <select id="add-status" class="w-full p-2 skeuo-input text-xs outline-none">
                         <option value="Concluído">Concluído</option>
                         <option value="Em Análise">Em Análise</option>
                         <option value="Pendente">Pendente</option>
                     </select>
                 </div>
 
-                <!-- CAMPO DE SENHA DE SEGURANÇA -->
                 <div class="md:col-span-2">
                     <label class="block text-xs font-semibold text-slate-600 mb-1">
                         <i class="fa-solid fa-lock text-slate-400 mr-1"></i>Senha de Autorização
                     </label>
-                    <input type="password" id="add-senha" required placeholder="Digite a senha para salvar" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
+                    <input type="password" id="add-senha" required placeholder="Digite a senha para salvar" class="w-full p-2 skeuo-input text-xs outline-none">
                 </div>
 
-                <div class="md:col-span-2 flex justify-end gap-3 pt-3 border-t border-slate-100">
-                    <button type="button" onclick="fecharModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg font-medium">Cancelar</button>
-                    <button type="submit" id="btn-salvar" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold flex items-center gap-2">
+                <div class="md:col-span-2 flex justify-end gap-3 pt-3 border-t border-slate-300/60">
+                    <button type="button" onclick="fecharModal()" class="px-4 py-2 skeuo-button-neutral text-slate-600 rounded-lg font-bold text-xs">Cancelar</button>
+                    <button type="submit" id="btn-salvar" class="px-4 py-2 skeuo-button text-white rounded-lg font-bold text-xs flex items-center gap-2">
                         <i class="fa-solid fa-floppy-disk"></i>
                         <span>Salvar Registro</span>
                     </button>
@@ -240,6 +284,7 @@
         </div>
     </div>
 
+    <!-- SCRIPT DE LÓGICA MANTIDO INTEGRALMENTE -->
     <script>
         const URL_GOOGLE_SHEETS_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSaXyWBuLvG8G3VrwGcmMqk98vRk0V4L2Tv4rZnJispuDpLQIrjFmBC9UKLz0IrUDZxFhqqXZM-BB6s/pub?gid=0&single=true&output=csv";
         const URL_APPS_SCRIPT_WEBAPP = "https://script.google.com/macros/s/AKfycbxNRfqOPNrMq-iIotevwE3TTZbXCGBKma_r2BSh8LPXCrmpWkKTdIc1FjtOS9ay7e02Ow/exec";
@@ -318,7 +363,6 @@
 
         async function excluirRegistro(rowIndex) {
             const senha = prompt("Digite a senha de autorização para excluir este registro:");
-            
             if (senha === null) return;
 
             if (senha !== SENHA_AUTORIZACAO) {
@@ -520,7 +564,7 @@
                 const { _rowIndex, ...colunas } = item;
                 const vals = Object.values(colunas);
                 corpo.innerHTML += `
-                    <tr class="hover:bg-slate-50 transition-colors">
+                    <tr class="hover:bg-slate-200/40 transition-colors">
                         <td class="p-3 font-medium text-slate-700">${padronizarTexto(vals[0]) || '-'}</td>
                         <td class="p-3">${padronizarTexto(vals[1]) || '-'}</td>
                         <td class="p-3 font-semibold text-slate-800">${padronizarModelo(vals[2]) || '-'}</td>
@@ -528,7 +572,7 @@
                         <td class="p-3">${padronizarTexto(vals[4]) || '-'}</td>
                         <td class="p-3 text-amber-600">${padronizarTexto(vals[5]) || '-'}</td>
                         <td class="p-3">${padronizarTexto(vals[6]) || '-'}</td>
-                        <td class="p-3"><span class="px-2 py-1 bg-slate-100 rounded text-slate-600 text-xs">${padronizarTexto(vals[7]) || '-'}</span></td>
+                        <td class="p-3"><span class="px-2 py-1 bg-slate-300/50 rounded text-slate-700 text-xs font-semibold">${padronizarTexto(vals[7]) || '-'}</span></td>
                         <td class="p-3 text-center">
                             <button onclick="excluirRegistro(${_rowIndex})" title="Excluir Registro" class="text-slate-400 hover:text-rose-600 p-1 transition-colors">
                                 <i class="fa-solid fa-trash-can"></i>
@@ -545,7 +589,7 @@
             if (chart1) chart1.destroy();
             chart1 = new Chart(document.getElementById('chartModelos'), {
                 type: 'bar',
-                data: { labels: Object.keys(modelos), datasets: [{ label: 'Qtd', data: Object.values(modelos), backgroundColor: '#3b82f6', borderRadius: 4 }] },
+                data: { labels: Object.keys(modelos), datasets: [{ label: 'Qtd', data: Object.values(modelos), backgroundColor: '#3b82f6', borderRadius: 6 }] },
                 options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
 
@@ -566,12 +610,11 @@
             if (chart4) chart4.destroy();
             chart4 = new Chart(document.getElementById('chartComponentes'), {
                 type: 'bar',
-                data: { labels: Object.keys(componentes), datasets: [{ label: 'Qtd', data: Object.values(componentes), backgroundColor: '#f59e0b', borderRadius: 4 }] },
+                data: { labels: Object.keys(componentes), datasets: [{ label: 'Qtd', data: Object.values(componentes), backgroundColor: '#f59e0b', borderRadius: 6 }] },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
         }
 
-        // Inicializar a busca dos dados ao carregar a página
         window.addEventListener('DOMContentLoaded', carregarDadosPlanilha);
     </script>
 </body>
