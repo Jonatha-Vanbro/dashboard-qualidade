@@ -59,7 +59,7 @@
                 </div>
             </div>
 
-            <!-- Linha 2: Filtros Especificos (Cliente, Equipamento, Defeito, Componente) -->
+            <!-- Linha 2: Filtros Específicos (Cliente, Equipamento, Defeito, Componente) -->
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 pt-1 border-t border-slate-100">
                 <div>
                     <select id="select-cliente" onchange="aplicarFiltros()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -89,7 +89,7 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
             <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100 border-l-4 border-l-blue-500">
                 <div class="flex justify-between items-center">
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Filtrado</p>
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Registrado</p>
                     <i class="fa-solid fa-clipboard-list text-blue-500 text-lg"></i>
                 </div>
                 <p id="card-total" class="text-3xl font-black text-slate-800 mt-2">0</p>
@@ -100,7 +100,7 @@
                     <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Principal Defeito</p>
                     <i class="fa-solid fa-triangle-exclamation text-rose-500 text-lg"></i>
                 </div>
-                <p id="card-defeito" class="text-lg font-bold text-rose-600 mt-2 truncate">-</p>
+                <p id="card-defeito" class="text-lg font-bold text-rose-600 mt-2 truncate uppercase">-</p>
             </div>
 
             <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100 border-l-4 border-l-amber-500">
@@ -108,7 +108,7 @@
                     <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Componente Mais Afetado</p>
                     <i class="fa-solid fa-microchip text-amber-500 text-lg"></i>
                 </div>
-                <p id="card-componente" class="text-lg font-bold text-amber-600 mt-2 truncate">-</p>
+                <p id="card-componente" class="text-lg font-bold text-amber-600 mt-2 truncate uppercase">-</p>
             </div>
         </div>
 
@@ -315,9 +315,10 @@
         }
 
         function processarDados(dados) {
-            document.getElementById('card-total').innerText = dados.length;
+            const total = dados.length;
+            document.getElementById('card-total').innerText = total;
 
-            const chaves = dados.length > 0 ? Object.keys(dados[0]) : [];
+            const chaves = total > 0 ? Object.keys(dados[0]) : [];
             const colModelo = chaves.find(k => k.toLowerCase().includes("modelo") || k.toLowerCase().includes("equipamento")) || chaves[0];
             const colCliente = chaves.find(k => k.toLowerCase().includes("cliente")) || chaves[1];
             const colDefeito = chaves.find(k => k.toLowerCase().includes("defeito") || k.toLowerCase().includes("falha")) || chaves[2];
@@ -328,8 +329,23 @@
             const contDefeito = contarOcorrencias(dados, colDefeito);
             const contComponente = contarOcorrencias(dados, colComponente);
 
-            document.getElementById('card-defeito').innerText = obterMaior(contDefeito).chave;
-            document.getElementById('card-componente').innerText = obterMaior(contComponente).chave;
+            // Cálculo dos maiores + percentuais
+            const maiorDef = obterMaior(contDefeito);
+            const maiorComp = obterMaior(contComponente);
+
+            if (total > 0 && maiorDef.valor > 0) {
+                const pctDef = ((maiorDef.valor / total) * 100).toFixed(0);
+                document.getElementById('card-defeito').innerText = `${maiorDef.chave.toUpperCase()} (${pctDef}%)`;
+            } else {
+                document.getElementById('card-defeito').innerText = "-";
+            }
+
+            if (total > 0 && maiorComp.valor > 0) {
+                const pctComp = ((maiorComp.valor / total) * 100).toFixed(0);
+                document.getElementById('card-componente').innerText = `${maiorComp.chave.toUpperCase()} (${pctComp}%)`;
+            } else {
+                document.getElementById('card-componente').innerText = "-";
+            }
 
             renderizarGraficos(ordenarEFiltrar(contModelo, 8), contCliente, contDefeito, ordenarEFiltrar(contComponente, 8));
         }
