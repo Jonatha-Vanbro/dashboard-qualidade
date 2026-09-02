@@ -238,11 +238,7 @@
 
     <script>
         const URL_GOOGLE_SHEETS_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSaXyWBuLvG8G3VrwGcmMqk98vRk0V4L2Tv4rZnJispuDpLQIrjFmBC9UKLz0IrUDZxFhqqXZM-BB6s/pub?gid=0&single=true&output=csv";
-        
-        // NOVO LINK DO APPS SCRIPT
         const URL_APPS_SCRIPT_WEBAPP = "https://script.google.com/macros/s/AKfycbxNRfqOPNrMq-iIotevwE3TTZbXCGBKma_r2BSh8LPXCrmpWkKTdIc1FjtOS9ay7e02Ow/exec";
-        
-        // SENHA DE SEGURANÇA
         const SENHA_AUTORIZACAO = "1234";
 
         let dadosBrutos = [];
@@ -319,7 +315,7 @@
         async function excluirRegistro(rowIndex) {
             const senha = prompt("Digite a senha de autorização para excluir este registro:");
             
-            if (senha === null) return; // Usuário cancelou
+            if (senha === null) return;
 
             if (senha !== SENHA_AUTORIZACAO) {
                 alert("Senha incorreta! Exclusão não autorizada.");
@@ -358,10 +354,9 @@
                     header: true,
                     skipEmptyLines: true,
                     complete: function(results) {
-                        // Mapeia adicionando o índice da linha original da planilha
                         dadosBrutos = results.data.map((row, index) => ({
                             ...row,
-                            _rowIndex: index + 2 // +2 compensa o cabeçalho e base 1
+                            _rowIndex: index + 2
                         }));
                         preencherOpcoesFiltros(dadosBrutos);
                         aplicarFiltros();
@@ -568,11 +563,12 @@
             chart4 = new Chart(document.getElementById('chartComponentes'), {
                 type: 'bar',
                 data: { labels: Object.keys(componentes), datasets: [{ label: 'Qtd', data: Object.values(componentes), backgroundColor: '#f59e0b', borderRadius: 4 }] },
-                options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
         }
 
-        window.onload = carregarDadosPlanilha;
+        // Inicializar a busca dos dados ao carregar a página
+        window.addEventListener('DOMContentLoaded', carregarDadosPlanilha);
     </script>
 </body>
 </html>
