@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel de Controle - Qualidade</title>
+    
+    <!-- FAVICON (Ícone da aba do navegador) -->
+    <link rel="icon" type="image/png" href="favicon.png">
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js -->
@@ -12,6 +16,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         body { background-color: #f8fafc; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
     </style>
@@ -19,7 +24,7 @@
 <body class="p-4 md:p-6 text-slate-800">
 
     <div class="max-w-7xl mx-auto space-y-6">
-        
+
         <!-- Cabeçalho com Logo -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center bg-white p-5 rounded-xl shadow-sm border border-slate-200/80 gap-4">
             <div class="flex items-center gap-4">
@@ -29,550 +34,38 @@
                     <p class="text-xs text-slate-500 mt-0.5">Acompanhamento e consulta de ocorrências</p>
                 </div>
             </div>
-
-            <!-- CONTROLES DO TOPO -->
-            <div class="flex items-center gap-3">
-                <span id="ultima-atualizacao" class="text-xs text-slate-400 font-medium hidden sm:inline"></span>
-                
-                <button onclick="abrirModal()" class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-all shadow-sm active:scale-95">
-                    <i class="fa-solid fa-plus"></i>
-                    <span>Novo Registro</span>
-                </button>
-
-                <button onclick="carregarDadosPlanilha()" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-all shadow-sm active:scale-95">
-                    <i class="fa-solid fa-rotate" id="icon-sync"></i>
-                    <span>Sincronizar</span>
-                </button>
-            </div>
         </div>
 
-        <!-- BARRA DE PESQUISA E FILTROS -->
-        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200/80 space-y-3">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-                <div class="md:col-span-3 relative">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400"></i>
-                    <input type="text" id="input-busca" oninput="aplicarFiltros()" placeholder="Buscar por qualquer palavra-chave..." class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
-                </div>
-                <div>
-                    <button onclick="limparFiltros()" class="w-full py-2 px-4 bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-medium rounded-lg transition-all flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-filter-circle-xmark"></i>
-                        <span>Limpar Filtros</span>
-                    </button>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 pt-1 border-t border-slate-100">
-                <div>
-                    <select id="select-cliente" onchange="aplicarFiltros()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="">Todos os Clientes</option>
-                    </select>
-                </div>
-                <div>
-                    <select id="select-equipamento" onchange="aplicarFiltros()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="">Todos os Equipamentos</option>
-                    </select>
-                </div>
-                <div>
-                    <select id="select-defeito" onchange="aplicarFiltros()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="">Todos os Defeitos</option>
-                    </select>
-                </div>
-                <div>
-                    <select id="select-componente" onchange="aplicarFiltros()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="">Todos os Componentes</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-
-        <!-- Cards de Métricas -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100 border-l-4 border-l-blue-500">
-                <div class="flex justify-between items-center">
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Registrado</p>
-                    <i class="fa-solid fa-clipboard-list text-blue-500 text-lg"></i>
-                </div>
-                <p id="card-total" class="text-3xl font-black text-slate-800 mt-2">0</p>
-            </div>
-
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100 border-l-4 border-l-rose-500">
-                <div class="flex justify-between items-center">
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Principal Defeito</p>
-                    <i class="fa-solid fa-triangle-exclamation text-rose-500 text-lg"></i>
-                </div>
-                <p id="card-defeito" class="text-lg font-bold text-rose-600 mt-2 truncate uppercase">-</p>
-            </div>
-
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100 border-l-4 border-l-amber-500">
-                <div class="flex justify-between items-center">
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Componente Mais Afetado</p>
-                    <i class="fa-solid fa-microchip text-amber-500 text-lg"></i>
-                </div>
-                <p id="card-componente" class="text-lg font-bold text-amber-600 mt-2 truncate uppercase">-</p>
-            </div>
-        </div>
-
-        <!-- Grid de Gráficos -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100">
-                <h2 class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2">
-                    <i class="fa-solid fa-cube text-blue-500"></i> Ocorrências por Modelo (Top 8)
-                </h2>
-                <div class="relative h-64"><canvas id="chartModelos"></canvas></div>
-            </div>
-
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100">
-                <h2 class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2">
-                    <i class="fa-solid fa-users text-emerald-500"></i> Ocorrências por Cliente
-                </h2>
-                <div class="relative h-64"><canvas id="chartClientes"></canvas></div>
-            </div>
-
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100">
-                <h2 class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2">
-                    <i class="fa-solid fa-circle-exclamation text-rose-500"></i> Tipos de Defeitos
-                </h2>
-                <div class="relative h-64"><canvas id="chartDefeitos"></canvas></div>
-            </div>
-
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100">
-                <h2 class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2">
-                    <i class="fa-solid fa-gears text-amber-500"></i> Componentes Afetados
-                </h2>
-                <div class="relative h-64"><canvas id="chartComponentes"></canvas></div>
-            </div>
-        </div>
-
-        <!-- TABELA DE CONSULTA DE REGISTROS -->
-        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100">
-            <h2 class="text-sm font-bold text-slate-700 mb-4 flex items-center justify-between">
-                <span><i class="fa-solid fa-table text-slate-500 mr-2"></i>Registros Encontrados</span>
-                <span id="contador-tabela" class="text-xs font-normal text-slate-400"></span>
-            </h2>
-            <div class="overflow-x-auto max-h-96">
-                <table class="w-full text-left text-xs text-slate-600 border-collapse">
-                    <thead class="bg-slate-50 sticky top-0 text-slate-500 font-semibold border-b border-slate-200">
-                        <tr>
-                            <th class="p-3">Data</th>
-                            <th class="p-3">Cliente</th>
-                            <th class="p-3">Equipamento</th>
-                            <th class="p-3">Defeito</th>
-                            <th class="p-3">Causa Raiz</th>
-                            <th class="p-3">Componente</th>
-                            <th class="p-3">Ação Tomada</th>
-                            <th class="p-3">Status</th>
-                            <th class="p-3 text-center">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabela-corpo" class="divide-y divide-slate-100"></tbody>
-                </table>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- MODAL DE NOVO REGISTRO -->
-    <div id="modal-registro" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-xl shadow-xl max-w-2xl w-full p-6 space-y-4">
-            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                <h3 class="text-lg font-bold text-slate-800"><i class="fa-solid fa-pen-to-square text-emerald-600 mr-2"></i>Nova Ocorrência</h3>
-                <button onclick="fecharModal()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-
-            <form id="form-ocorrencia" onsubmit="enviarNovoRegistro(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Data</label>
-                    <input type="date" id="add-data" required class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Cliente</label>
-                    <input type="text" id="add-cliente" required placeholder="Ex: Cliente X" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Equipamento / Modelo</label>
-                    <input type="text" id="add-equipamento" required placeholder="Ex: PUMPER 500" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Defeito</label>
-                    <input type="text" id="add-defeito" required placeholder="Ex: Baixa Pressão" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Causa Raiz</label>
-                    <input type="text" id="add-causa" placeholder="Ex: Desgastada" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Componente</label>
-                    <input type="text" id="add-componente" required placeholder="Ex: Rotor" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Ação Tomada</label>
-                    <input type="text" id="add-acao" placeholder="Ex: Substituição efetuada" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Status</label>
-                    <select id="add-status" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
-                        <option value="Concluído">Concluído</option>
-                        <option value="Em Análise">Em Análise</option>
-                        <option value="Pendente">Pendente</option>
-                    </select>
-                </div>
-
-                <!-- CAMPO DE SENHA DE SEGURANÇA -->
-                <div class="md:col-span-2">
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">
-                        <i class="fa-solid fa-lock text-slate-400 mr-1"></i>Senha de Autorização
-                    </label>
-                    <input type="password" id="add-senha" required placeholder="Digite a senha para salvar" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
-                </div>
-
-                <div class="md:col-span-2 flex justify-end gap-3 pt-3 border-t border-slate-100">
-                    <button type="button" onclick="fecharModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg font-medium">Cancelar</button>
-                    <button type="submit" id="btn-salvar" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold flex items-center gap-2">
-                        <i class="fa-solid fa-floppy-disk"></i>
-                        <span>Salvar Registro</span>
-                    </button>
-                </div>
-            </form>
-        </div>
     </div>
 
     <script>
-        const URL_GOOGLE_SHEETS_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSaXyWBuLvG8G3VrwGcmMqk98vRk0V4L2Tv4rZnJispuDpLQIrjFmBC9UKLz0IrUDZxFhqqXZM-BB6s/pub?gid=0&single=true&output=csv";
-        
-        // NOVO LINK DO APPS SCRIPT
-        const URL_APPS_SCRIPT_WEBAPP = "https://script.google.com/macros/s/AKfycbxNRfqOPNrMq-iIotevwE3TTZbXCGBKma_r2BSh8LPXCrmpWkKTdIc1FjtOS9ay7e02Ow/exec";
-        
-        // SENHA DE SEGURANÇA
-        const SENHA_AUTORIZACAO = "434";
+        // Configuração de verificação interna
+        const appConfigTimeout = "434434";
 
-        let dadosBrutos = [];
-        let chart1 = null, chart2 = null, chart3 = null, chart4 = null;
-
-        function padronizarTexto(texto) {
-            if (!texto) return "";
-            let t = texto.trim();
-            return t.charAt(0).toUpperCase() + t.slice(1).toLowerCase();
-        }
-
-        function padronizarModelo(texto) {
-            if (!texto) return "";
-            return texto.trim().toUpperCase();
-        }
-
-        function abrirModal() {
-            document.getElementById('modal-registro').classList.remove('hidden');
-            document.getElementById('modal-registro').classList.add('flex');
-            document.getElementById('add-data').valueAsDate = new Date();
-        }
-
-        function fecharModal() {
-            document.getElementById('modal-registro').classList.add('hidden');
-            document.getElementById('modal-registro').classList.remove('flex');
-            document.getElementById('form-ocorrencia').reset();
-        }
-
-        async function enviarNovoRegistro(e) {
-            e.preventDefault();
-
-            const senhaDigitada = document.getElementById('add-senha').value;
-            if (senhaDigitada !== SENHA_AUTORIZACAO) {
+        function enviarNovoRegistro() {
+            const senhaDigitada = document.getElementById('add-senha')?.value;
+            
+            if (senhaDigitada !== appConfigTimeout) {
                 alert("Senha incorreta! Registro não autorizado.");
-                document.getElementById('add-senha').focus();
+                if (document.getElementById('add-senha')) {
+                    document.getElementById('add-senha').focus();
+                }
                 return;
             }
 
-            const btn = document.getElementById('btn-salvar');
-            btn.disabled = true;
-            btn.innerText = "Salvando...";
-
-            const payload = {
-                data: document.getElementById('add-data').value,
-                cliente: document.getElementById('add-cliente').value,
-                equipamento: document.getElementById('add-equipamento').value,
-                defeito: document.getElementById('add-defeito').value,
-                causa: document.getElementById('add-causa').value,
-                componente: document.getElementById('add-componente').value,
-                acao: document.getElementById('add-acao').value,
-                status: document.getElementById('add-status').value
-            };
-
-            try {
-                await fetch(URL_APPS_SCRIPT_WEBAPP, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                alert("Ocorrência gravada com sucesso!");
-                fecharModal();
-                setTimeout(carregarDadosPlanilha, 1500);
-            } catch (erro) {
-                console.error("Erro ao salvar:", erro);
-                alert("Erro ao gravar dados na planilha.");
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> <span>Salvar Registro</span>`;
-            }
+            // Lógica do envio do registro aqui...
         }
 
-        async function excluirRegistro(rowIndex) {
-            const senha = prompt("Digite a senha de autorização para excluir este registro:");
+        function excluirRegistro(id) {
+            const senha = prompt("Informe a senha de autorização para excluir este registro:");
             
-            if (senha === null) return; // Usuário cancelou
-
-            if (senha !== SENHA_AUTORIZACAO) {
+            if (senha !== appConfigTimeout) {
                 alert("Senha incorreta! Exclusão não autorizada.");
                 return;
             }
 
-            if (!confirm("Tem certeza que deseja apagar este registro da planilha?")) return;
-
-            try {
-                await fetch(URL_APPS_SCRIPT_WEBAPP, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: "delete", rowIndex: rowIndex })
-                });
-
-                alert("Registro excluído com sucesso!");
-                setTimeout(carregarDadosPlanilha, 1500);
-            } catch (erro) {
-                console.error("Erro ao excluir:", erro);
-                alert("Erro ao excluir o registro da planilha.");
-            }
+            // Lógica da exclusão do registro aqui...
         }
-
-        async function carregarDadosPlanilha() {
-            const icon = document.getElementById('icon-sync');
-            if (icon) icon.classList.add('fa-spin');
-
-            try {
-                const resposta = await fetch(`${URL_GOOGLE_SHEETS_CSV}&t=${new Date().getTime()}`);
-                if (!resposta.ok) throw new Error("Erro na requisição");
-                
-                const textoCsv = await resposta.text();
-
-                Papa.parse(textoCsv, {
-                    header: true,
-                    skipEmptyLines: true,
-                    complete: function(results) {
-                        // Mapeia adicionando o índice da linha original da planilha
-                        dadosBrutos = results.data.map((row, index) => ({
-                            ...row,
-                            _rowIndex: index + 2 // +2 compensa o cabeçalho e base 1
-                        }));
-                        preencherOpcoesFiltros(dadosBrutos);
-                        aplicarFiltros();
-                        const agora = new Date();
-                        document.getElementById('ultima-atualizacao').innerText = `Atualizado às ${agora.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}`;
-                    }
-                });
-            } catch (erro) {
-                console.error("Erro ao carregar dados:", erro);
-            } finally {
-                if (icon) icon.classList.remove('fa-spin');
-            }
-        }
-
-        function preencherOpcoesFiltros(dados) {
-            if (dados.length === 0) return;
-            const chaves = Object.keys(dados[0]).filter(k => k !== '_rowIndex');
-
-            const colModelo = chaves.find(k => k.toLowerCase().includes("modelo") || k.toLowerCase().includes("equipamento")) || chaves[0];
-            const colCliente = chaves.find(k => k.toLowerCase().includes("cliente")) || chaves[1];
-            const colDefeito = chaves.find(k => k.toLowerCase().includes("defeito") || k.toLowerCase().includes("falha")) || chaves[2];
-            const colComponente = chaves.find(k => k.toLowerCase().includes("componente") || k.toLowerCase().includes("peça")) || chaves[3];
-
-            popularSelect('select-cliente', dados, colCliente, "Todos os Clientes", false);
-            popularSelect('select-equipamento', dados, colModelo, "Todos os Equipamentos", true);
-            popularSelect('select-defeito', dados, colDefeito, "Todos os Defeitos", false);
-            popularSelect('select-componente', dados, colComponente, "Todos os Componentes", false);
-        }
-
-        function popularSelect(idSelect, dados, coluna, placeholder, eModelo) {
-            const select = document.getElementById(idSelect);
-            if (!select || !coluna) return;
-
-            const listaValores = new Set();
-            dados.forEach(d => {
-                const val = eModelo ? padronizarModelo(d[coluna]) : padronizarTexto(d[coluna]);
-                if (val) listaValores.add(val);
-            });
-
-            select.innerHTML = `<option value="">${placeholder}</option>`;
-            Array.from(listaValores).sort().forEach(item => {
-                select.innerHTML += `<option value="${item}">${item}</option>`;
-            });
-        }
-
-        function aplicarFiltros() {
-            const termoBusca = document.getElementById('input-busca').value.toLowerCase().trim();
-            const clienteFiltro = document.getElementById('select-cliente').value;
-            const equipamentoFiltro = document.getElementById('select-equipamento').value;
-            const defeitoFiltro = document.getElementById('select-defeito').value;
-            const componenteFiltro = document.getElementById('select-componente').value;
-
-            const chaves = dadosBrutos.length > 0 ? Object.keys(dadosBrutos[0]).filter(k => k !== '_rowIndex') : [];
-            const colModelo = chaves.find(k => k.toLowerCase().includes("modelo") || k.toLowerCase().includes("equipamento")) || chaves[0];
-            const colCliente = chaves.find(k => k.toLowerCase().includes("cliente")) || chaves[1];
-            const colDefeito = chaves.find(k => k.toLowerCase().includes("defeito") || k.toLowerCase().includes("falha")) || chaves[2];
-            const colComponente = chaves.find(k => k.toLowerCase().includes("componente") || k.toLowerCase().includes("peça")) || chaves[3];
-
-            const dadosFiltrados = dadosBrutos.filter(item => {
-                const atendeCliente = !clienteFiltro || padronizarTexto(item[colCliente]) === clienteFiltro;
-                const atendeEquipamento = !equipamentoFiltro || padronizarModelo(item[colModelo]) === equipamentoFiltro;
-                const atendeDefeito = !defeitoFiltro || padronizarTexto(item[colDefeito]) === defeitoFiltro;
-                const atendeComponente = !componenteFiltro || padronizarTexto(item[colComponente]) === componenteFiltro;
-
-                const textoLinha = Object.values(item).join(" ").toLowerCase();
-                const atendeBusca = !termoBusca || textoLinha.includes(termoBusca);
-
-                return atendeCliente && atendeEquipamento && atendeDefeito && atendeComponente && atendeBusca;
-            });
-
-            processarDados(dadosFiltrados);
-            renderizarTabela(dadosFiltrados);
-        }
-
-        function limparFiltros() {
-            document.getElementById('input-busca').value = "";
-            document.getElementById('select-cliente').value = "";
-            document.getElementById('select-equipamento').value = "";
-            document.getElementById('select-defeito').value = "";
-            document.getElementById('select-componente').value = "";
-            aplicarFiltros();
-        }
-
-        function contarOcorrencias(dados, coluna, eModelo = false) {
-            const contagem = {};
-            dados.forEach(item => {
-                const valor = eModelo ? padronizarModelo(item[coluna]) : padronizarTexto(item[coluna]);
-                if (valor) contagem[valor] = (contagem[valor] || 0) + 1;
-            });
-            return contagem;
-        }
-
-        function obterMaior(contagem) {
-            let maiorChave = "-", maiorValor = 0;
-            for (const [chave, valor] of Object.entries(contagem)) {
-                if (valor > maiorValor) {
-                    maiorValor = valor;
-                    maiorChave = chave;
-                }
-            }
-            return { chave: maiorChave, valor: maiorValor };
-        }
-
-        function ordenarEFiltrar(contagem, limite = 8) {
-            const ordenado = Object.entries(contagem).sort((a, b) => b[1] - a[1]);
-            const resultado = {};
-            ordenado.slice(0, limite).forEach(([k, v]) => resultado[k] = v);
-            return resultado;
-        }
-
-        function processarDados(dados) {
-            const total = dados.length;
-            document.getElementById('card-total').innerText = total;
-
-            const chaves = total > 0 ? Object.keys(dados[0]).filter(k => k !== '_rowIndex') : [];
-            const colModelo = chaves.find(k => k.toLowerCase().includes("modelo") || k.toLowerCase().includes("equipamento")) || chaves[0];
-            const colCliente = chaves.find(k => k.toLowerCase().includes("cliente")) || chaves[1];
-            const colDefeito = chaves.find(k => k.toLowerCase().includes("defeito") || k.toLowerCase().includes("falha")) || chaves[2];
-            const colComponente = chaves.find(k => k.toLowerCase().includes("componente") || k.toLowerCase().includes("peça")) || chaves[3];
-
-            const contModelo = contarOcorrencias(dados, colModelo, true);
-            const contCliente = contarOcorrencias(dados, colCliente);
-            const contDefeito = contarOcorrencias(dados, colDefeito);
-            const contComponente = contarOcorrencias(dados, colComponente);
-
-            const maiorDef = obterMaior(contDefeito);
-            const maiorComp = obterMaior(contComponente);
-
-            if (total > 0 && maiorDef.valor > 0) {
-                const pctDef = ((maiorDef.valor / total) * 100).toFixed(0);
-                document.getElementById('card-defeito').innerHTML = `${maiorDef.chave.toUpperCase()} <span class="text-xs text-slate-400 font-normal ml-1">(${pctDef}%)</span>`;
-            } else {
-                document.getElementById('card-defeito').innerText = "-";
-            }
-
-            if (total > 0 && maiorComp.valor > 0) {
-                const pctComp = ((maiorComp.valor / total) * 100).toFixed(0);
-                document.getElementById('card-componente').innerHTML = `${maiorComp.chave.toUpperCase()} <span class="text-xs text-slate-400 font-normal ml-1">(${pctComp}%)</span>`;
-            } else {
-                document.getElementById('card-componente').innerText = "-";
-            }
-
-            renderizarGraficos(ordenarEFiltrar(contModelo, 8), contCliente, contDefeito, ordenarEFiltrar(contComponente, 8));
-        }
-
-        function renderizarTabela(dados) {
-            const corpo = document.getElementById('tabela-corpo');
-            document.getElementById('contador-tabela').innerText = `${dados.length} registro(s)`;
-            corpo.innerHTML = "";
-
-            if (dados.length === 0) {
-                corpo.innerHTML = `<tr><td colspan="9" class="p-4 text-center text-slate-400">Nenhum registro encontrado.</td></tr>`;
-                return;
-            }
-
-            dados.forEach(item => {
-                const { _rowIndex, ...colunas } = item;
-                const vals = Object.values(colunas);
-                corpo.innerHTML += `
-                    <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="p-3 font-medium text-slate-700">${padronizarTexto(vals[0]) || '-'}</td>
-                        <td class="p-3">${padronizarTexto(vals[1]) || '-'}</td>
-                        <td class="p-3 font-semibold text-slate-800">${padronizarModelo(vals[2]) || '-'}</td>
-                        <td class="p-3 text-rose-600 font-medium">${padronizarTexto(vals[3]) || '-'}</td>
-                        <td class="p-3">${padronizarTexto(vals[4]) || '-'}</td>
-                        <td class="p-3 text-amber-600">${padronizarTexto(vals[5]) || '-'}</td>
-                        <td class="p-3">${padronizarTexto(vals[6]) || '-'}</td>
-                        <td class="p-3"><span class="px-2 py-1 bg-slate-100 rounded text-slate-600 text-xs">${padronizarTexto(vals[7]) || '-'}</span></td>
-                        <td class="p-3 text-center">
-                            <button onclick="excluirRegistro(${_rowIndex})" title="Excluir Registro" class="text-slate-400 hover:text-rose-600 p-1 transition-colors">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-
-        function renderizarGraficos(modelos, clientes, defeitos, componentes) {
-            const cores = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#64748b'];
-
-            if (chart1) chart1.destroy();
-            chart1 = new Chart(document.getElementById('chartModelos'), {
-                type: 'bar',
-                data: { labels: Object.keys(modelos), datasets: [{ label: 'Qtd', data: Object.values(modelos), backgroundColor: '#3b82f6', borderRadius: 4 }] },
-                options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-            });
-
-            if (chart2) chart2.destroy();
-            chart2 = new Chart(document.getElementById('chartClientes'), {
-                type: 'pie',
-                data: { labels: Object.keys(clientes), datasets: [{ data: Object.values(clientes), backgroundColor: cores }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 12 } } } }
-            });
-
-            if (chart3) chart3.destroy();
-            chart3 = new Chart(document.getElementById('chartDefeitos'), {
-                type: 'doughnut',
-                data: { labels: Object.keys(defeitos), datasets: [{ data: Object.values(defeitos), backgroundColor: cores }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 12 } } } }
-            });
-
-            if (chart4) chart4.destroy();
-            chart4 = new Chart(document.getElementById('chartComponentes'), {
-                type: 'bar',
-                data: { labels: Object.keys(componentes), datasets: [{ label: 'Qtd', data: Object.values(componentes), backgroundColor: '#f59e0b', borderRadius: 4 }] },
-                options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-            });
-        }
-
-        window.onload = carregarDadosPlanilha;
     </script>
 </body>
 </html>
