@@ -329,20 +329,20 @@
             const contDefeito = contarOcorrencias(dados, colDefeito);
             const contComponente = contarOcorrencias(dados, colComponente);
 
-            // Cálculo dos maiores + percentuais
+            // Cálculo dos maiores + percentuais em fonte menor e cor cinza claro
             const maiorDef = obterMaior(contDefeito);
             const maiorComp = obterMaior(contComponente);
 
             if (total > 0 && maiorDef.valor > 0) {
                 const pctDef = ((maiorDef.valor / total) * 100).toFixed(0);
-                document.getElementById('card-defeito').innerText = `${maiorDef.chave.toUpperCase()} (${pctDef}%)`;
+                document.getElementById('card-defeito').innerHTML = `${maiorDef.chave.toUpperCase()} <span class="text-xs text-slate-400 font-normal ml-1">(${pctDef}%)</span>`;
             } else {
                 document.getElementById('card-defeito').innerText = "-";
             }
 
             if (total > 0 && maiorComp.valor > 0) {
                 const pctComp = ((maiorComp.valor / total) * 100).toFixed(0);
-                document.getElementById('card-componente').innerText = `${maiorComp.chave.toUpperCase()} (${pctComp}%)`;
+                document.getElementById('card-componente').innerHTML = `${maiorComp.chave.toUpperCase()} <span class="text-xs text-slate-400 font-normal ml-1">(${pctComp}%)</span>`;
             } else {
                 document.getElementById('card-componente').innerText = "-";
             }
