@@ -67,7 +67,7 @@
             color: #ffffff;
         }
 
-        /* BOTÕES PRINCIPAIS (COM TEXTO BRANCO GARANTIDO) */
+        /* BOTÕES PRINCIPAIS */
         .skeuo-button {
             background: linear-gradient(180deg, #1091a1, #085f6a);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.3);
@@ -164,7 +164,6 @@
             color: #334155;
         }
 
-        /* PRESERVA A COR BRANCA DOS TEXTOS E ÍCONES DOS BOTÕES NO MODO CLARO */
         body.light-mode .skeuo-button span,
         body.light-mode .skeuo-button i,
         body.light-mode .skeuo-button-secondary span,
@@ -220,7 +219,6 @@
             <button onclick="carregarDadosPlanilha()" title="Sincronizar Planilha" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
                 <i class="fa-solid fa-gear"></i>
             </button>
-            <!-- BOTÃO ALTERNADOR DE MODO -->
             <button onclick="alternarModoClaro()" id="btn-tema" title="Alternar para Modo Claro" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
                 <i class="fa-solid fa-sun" id="icon-tema"></i>
             </button>
@@ -448,7 +446,6 @@
             setTimeout(() => input.focus(), 300);
         }
 
-        /* ALTERNAR PARA MODO CLARO OU ESCURO */
         function alternarModoClaro() {
             document.body.classList.toggle('light-mode');
             const icon = document.getElementById('icon-tema');
@@ -465,15 +462,15 @@
             aplicarFiltros();
         }
 
+        /* CONVERTE TODO O TEXTO PARA MAIÚSCULAS */
         function padronizarTexto(texto) {
             if (!texto) return "";
-            let t = texto.trim();
-            return t.charAt(0).toUpperCase() + t.slice(1).toLowerCase();
+            return texto.toString().trim().toUpperCase();
         }
 
         function padronizarModelo(texto) {
             if (!texto) return "";
-            return texto.trim().toUpperCase();
+            return texto.toString().trim().toUpperCase();
         }
 
         function abrirModal() {
@@ -611,7 +608,7 @@
 
             const listaValores = new Set();
             dados.forEach(d => {
-                const val = eModelo ? padronizarModelo(d[coluna]) : padronizarTexto(d[coluna]);
+                const val = padronizarTexto(d[coluna]);
                 if (val) listaValores.add(val);
             });
 
@@ -636,7 +633,7 @@
 
             const dadosFiltrados = dadosBrutos.filter(item => {
                 const atendeCliente = !clienteFiltro || padronizarTexto(item[colCliente]) === clienteFiltro;
-                const atendeEquipamento = !equipamentoFiltro || padronizarModelo(item[colModelo]) === equipamentoFiltro;
+                const atendeEquipamento = !equipamentoFiltro || padronizarTexto(item[colModelo]) === equipamentoFiltro;
                 const atendeDefeito = !defeitoFiltro || padronizarTexto(item[colDefeito]) === defeitoFiltro;
                 const atendeComponente = !componenteFiltro || padronizarTexto(item[colComponente]) === componenteFiltro;
 
@@ -659,10 +656,10 @@
             aplicarFiltros();
         }
 
-        function contarOcorrencias(dados, coluna, eModelo = false) {
+        function contarOcorrencias(dados, coluna) {
             const contagem = {};
             dados.forEach(item => {
-                const valor = eModelo ? padronizarModelo(item[coluna]) : padronizarTexto(item[coluna]);
+                const valor = padronizarTexto(item[coluna]);
                 if (valor) contagem[valor] = (contagem[valor] || 0) + 1;
             });
             return contagem;
@@ -696,7 +693,7 @@
             const colDefeito = chaves.find(k => k.toLowerCase().includes("defeito") || k.toLowerCase().includes("falha")) || chaves[2];
             const colComponente = chaves.find(k => k.toLowerCase().includes("componente") || k.toLowerCase().includes("peça")) || chaves[3];
 
-            const contModelo = contarOcorrencias(dados, colModelo, true);
+            const contModelo = contarOcorrencias(dados, colModelo);
             const contCliente = contarOcorrencias(dados, colCliente);
             const contDefeito = contarOcorrencias(dados, colDefeito);
             const contComponente = contarOcorrencias(dados, colComponente);
@@ -721,13 +718,14 @@
             renderizarGraficos(ordenarEFiltrar(contModelo, 8), contCliente, contDefeito, ordenarEFiltrar(contComponente, 8));
         }
 
+        /* RENDERIZA A TABELA COM TODAS AS COLUNAS EM MAIÚSCULAS */
         function renderizarTabela(dados) {
             const corpo = document.getElementById('tabela-corpo');
             document.getElementById('contador-tabela').innerText = `${dados.length} registro(s)`;
             corpo.innerHTML = "";
 
             if (dados.length === 0) {
-                corpo.innerHTML = `<tr><td colspan="8" class="p-4 text-center opacity-60">Nenhum registro encontrado.</td></tr>`;
+                corpo.innerHTML = `<tr><td colspan="8" class="p-4 text-center opacity-60">NENHUM REGISTRO ENCONTRADO.</td></tr>`;
                 return;
             }
 
@@ -738,7 +736,7 @@
                     <tr class="transition-colors">
                         <td class="p-3 font-medium">${padronizarTexto(vals[0]) || '-'}</td>
                         <td class="p-3">${padronizarTexto(vals[1]) || '-'}</td>
-                        <td class="p-3 font-semibold text-blue-400">${padronizarModelo(vals[2]) || '-'}</td>
+                        <td class="p-3 font-semibold text-blue-400">${padronizarTexto(vals[2]) || '-'}</td>
                         <td class="p-3 text-rose-500 font-medium">${padronizarTexto(vals[3]) || '-'}</td>
                         <td class="p-3">${padronizarTexto(vals[4]) || '-'}</td>
                         <td class="p-3 text-amber-500 font-medium">${padronizarTexto(vals[5]) || '-'}</td>
