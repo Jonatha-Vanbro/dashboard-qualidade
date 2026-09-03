@@ -67,16 +67,27 @@
             color: #ffffff;
         }
 
+        /* BOTÕES PRINCIPAIS (COM TEXTO BRANCO GARANTIDO) */
         .skeuo-button {
             background: linear-gradient(180deg, #1091a1, #085f6a);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.3);
             border-radius: 10px;
+            color: #ffffff !important;
+        }
+
+        .skeuo-button * {
+            color: #ffffff !important;
         }
 
         .skeuo-button-secondary {
             background: linear-gradient(180deg, #5b92e5, #366ac0);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.3);
             border-radius: 10px;
+            color: #ffffff !important;
+        }
+
+        .skeuo-button-secondary * {
+            color: #ffffff !important;
         }
 
         .skeuo-button-neutral {
@@ -103,7 +114,7 @@
             color: #e2e8f0;
         }
 
-        /* --- MODO CLARO (OPCIONAL VIA BOTÃO) --- */
+        /* --- MODO CLARO --- */
         body.light-mode {
             background-color: #e6ecf3;
             color: #1e293b;
@@ -151,6 +162,14 @@
         body.light-mode .skeuo-input option {
             background: #ffffff;
             color: #334155;
+        }
+
+        /* PRESERVA A COR BRANCA DOS TEXTOS E ÍCONES DOS BOTÕES NO MODO CLARO */
+        body.light-mode .skeuo-button span,
+        body.light-mode .skeuo-button i,
+        body.light-mode .skeuo-button-secondary span,
+        body.light-mode .skeuo-button-secondary i {
+            color: #ffffff !important;
         }
 
         body.light-mode .skeuo-button-neutral {
@@ -225,12 +244,12 @@
                 <i class="fa-regular fa-calendar-days text-slate-400"></i>
                 <span id="ultima-atualizacao" class="text-xs font-medium">Atualizado recentemente</span>
                 
-                <button onclick="abrirModal()" class="skeuo-button text-white text-xs font-bold px-4 py-2 transition-all active:scale-95 flex items-center gap-2">
+                <button onclick="abrirModal()" class="skeuo-button text-xs font-bold px-4 py-2 transition-all active:scale-95 flex items-center gap-2">
                     <i class="fa-solid fa-plus"></i>
                     <span>Novo Registro</span>
                 </button>
 
-                <button onclick="carregarDadosPlanilha()" class="skeuo-button-secondary text-white text-xs font-bold px-4 py-2 transition-all active:scale-95 flex items-center gap-2">
+                <button onclick="carregarDadosPlanilha()" class="skeuo-button-secondary text-xs font-bold px-4 py-2 transition-all active:scale-95 flex items-center gap-2">
                     <i class="fa-solid fa-rotate" id="icon-sync"></i>
                     <span>Sincronizar</span>
                 </button>
@@ -452,7 +471,7 @@
                 btn.title = "Alternar para Modo Claro";
             }
 
-            aplicarFiltros(); // Atualiza a cor dos textos nos gráficos
+            aplicarFiltros();
         }
 
         function padronizarTexto(texto) {
