@@ -362,7 +362,6 @@
                             <th class="p-3">Causa Raiz</th>
                             <th class="p-3">Componente</th>
                             <th class="p-3">Ação Tomada</th>
-                            <th class="p-3">Status</th>
                             <th class="p-3 text-center">Ações</th>
                         </tr>
                     </thead>
@@ -406,17 +405,9 @@
                     <label class="block text-xs font-semibold mb-1">Componente</label>
                     <input type="text" id="add-componente" required placeholder="Ex: Rotor" class="w-full p-2 skeuo-input text-xs outline-none">
                 </div>
-                <div>
+                <div class="md:col-span-2">
                     <label class="block text-xs font-semibold mb-1">Ação Tomada</label>
                     <input type="text" id="add-acao" placeholder="Ex: Substituição efetuada" class="w-full p-2 skeuo-input text-xs outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold mb-1">Status</label>
-                    <select id="add-status" class="w-full p-2 skeuo-input text-xs outline-none">
-                        <option value="Concluído">Concluído</option>
-                        <option value="Em Análise">Em Análise</option>
-                        <option value="Pendente">Pendente</option>
-                    </select>
                 </div>
 
                 <div class="md:col-span-2">
@@ -518,8 +509,7 @@
                 defeito: document.getElementById('add-defeito').value,
                 causa: document.getElementById('add-causa').value,
                 componente: document.getElementById('add-componente').value,
-                acao: document.getElementById('add-acao').value,
-                status: document.getElementById('add-status').value
+                acao: document.getElementById('add-acao').value
             };
 
             try {
@@ -737,7 +727,7 @@
             corpo.innerHTML = "";
 
             if (dados.length === 0) {
-                corpo.innerHTML = `<tr><td colspan="9" class="p-4 text-center opacity-60">Nenhum registro encontrado.</td></tr>`;
+                corpo.innerHTML = `<tr><td colspan="8" class="p-4 text-center opacity-60">Nenhum registro encontrado.</td></tr>`;
                 return;
             }
 
@@ -753,7 +743,6 @@
                         <td class="p-3">${padronizarTexto(vals[4]) || '-'}</td>
                         <td class="p-3 text-amber-500 font-medium">${padronizarTexto(vals[5]) || '-'}</td>
                         <td class="p-3">${padronizarTexto(vals[6]) || '-'}</td>
-                        <td class="p-3"><span class="px-2 py-1 bg-slate-500/20 rounded text-xs font-semibold">${padronizarTexto(vals[7]) || '-'}</span></td>
                         <td class="p-3 text-center">
                             <button onclick="excluirRegistro(${_rowIndex})" title="Excluir Registro" class="text-slate-400 hover:text-rose-500 p-1 transition-colors">
                                 <i class="fa-solid fa-trash-can"></i>
