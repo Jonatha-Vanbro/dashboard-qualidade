@@ -17,7 +17,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- ESTILOS PADRÃO (MODO ESCURO - ALTO CONTRASTE) --- */
         body { 
             background-color: #0f172a; 
             color: #f8fafc;
@@ -30,22 +29,11 @@
             border-color: #334155;
         }
 
-        aside button {
-            color: #cbd5e1;
-        }
+        aside button { color: #cbd5e1; }
+        aside button:hover { color: #ffffff; background-color: #334155; }
 
-        aside button:hover {
-            color: #ffffff;
-            background-color: #334155;
-        }
-
-        h1, h2, h3 {
-            color: #ffffff !important;
-        }
-
-        p, span, label {
-            color: #cbd5e1;
-        }
+        h1, h2, h3 { color: #ffffff !important; }
+        p, span, label { color: #cbd5e1; }
 
         .skeuo-card {
             background: #1e293b;
@@ -62,20 +50,12 @@
             border-radius: 12px;
         }
 
-        .skeuo-input option {
-            background: #0f172a;
-            color: #ffffff;
-        }
+        .skeuo-input option { background: #0f172a; color: #ffffff; }
 
-        /* BOTÕES PRINCIPAIS (COM TEXTO BRANCO GARANTIDO) */
         .skeuo-button {
             background: linear-gradient(180deg, #1091a1, #085f6a);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.3);
             border-radius: 10px;
-            color: #ffffff !important;
-        }
-
-        .skeuo-button * {
             color: #ffffff !important;
         }
 
@@ -86,10 +66,6 @@
             color: #ffffff !important;
         }
 
-        .skeuo-button-secondary * {
-            color: #ffffff !important;
-        }
-
         .skeuo-button-neutral {
             background: #334155;
             color: #ffffff;
@@ -97,106 +73,34 @@
             border-radius: 10px;
         }
 
-        table thead {
-            background-color: #334155 !important;
-            color: #f8fafc !important;
-        }
+        table thead { background-color: #334155 !important; color: #f8fafc !important; }
+        table tbody tr { border-color: #334155; }
+        table tbody tr:hover { background-color: rgba(51, 65, 85, 0.5); }
+        table td { color: #e2e8f0; }
 
-        table tbody tr {
-            border-color: #334155;
-        }
-
-        table tbody tr:hover {
-            background-color: rgba(51, 65, 85, 0.5);
-        }
-
-        table td {
-            color: #e2e8f0;
-        }
-
-        /* --- MODO CLARO --- */
-        body.light-mode {
-            background-color: #e6ecf3;
-            color: #1e293b;
-        }
-
-        body.light-mode aside {
-            background-color: rgba(226, 232, 240, 0.6);
-            border-color: rgba(203, 213, 225, 0.6);
-        }
-
-        body.light-mode aside button {
-            color: #64748b;
-        }
-
-        body.light-mode aside button:hover {
-            color: #0f172a;
-            background-color: #cbd5e1;
-        }
-
-        body.light-mode h1, 
-        body.light-mode h2, 
-        body.light-mode h3 {
-            color: #0f172a !important;
-        }
-
-        body.light-mode p, 
-        body.light-mode span, 
-        body.light-mode label {
-            color: #64748b;
-        }
-
+        /* MODO CLARO */
+        body.light-mode { background-color: #e6ecf3; color: #1e293b; }
+        body.light-mode aside { background-color: rgba(226, 232, 240, 0.6); border-color: rgba(203, 213, 225, 0.6); }
+        body.light-mode aside button { color: #64748b; }
+        body.light-mode aside button:hover { color: #0f172a; background-color: #cbd5e1; }
+        body.light-mode h1, body.light-mode h2, body.light-mode h3 { color: #0f172a !important; }
+        body.light-mode p, body.light-mode span, body.light-mode label { color: #64748b; }
         body.light-mode .skeuo-card {
             background: linear-gradient(145deg, #ffffff, #e6ecf0);
             box-shadow: 6px 6px 14px #cbd5e1, -6px -6px 14px #ffffff;
             border: 1px solid rgba(255, 255, 255, 0.8);
         }
-
         body.light-mode .skeuo-input {
-            background: #eaf0f6;
-            color: #334155;
+            background: #eaf0f6; color: #334155;
             box-shadow: inset 2px 2px 5px #c2cdd8, inset -2px -2px 5px #ffffff;
             border: 1px solid #d1dbe5;
         }
+        body.light-mode .skeuo-input option { background: #ffffff; color: #334155; }
+        body.light-mode table thead { background-color: rgba(226, 232, 240, 0.8) !important; color: #334155 !important; }
+        body.light-mode table tbody tr { border-color: rgba(226, 232, 240, 0.6); }
+        body.light-mode table tbody tr:hover { background-color: rgba(226, 232, 240, 0.4); }
+        body.light-mode table td { color: #475569; }
 
-        body.light-mode .skeuo-input option {
-            background: #ffffff;
-            color: #334155;
-        }
-
-        /* PRESERVA A COR BRANCA DOS TEXTOS E ÍCONES DOS BOTÕES NO MODO CLARO */
-        body.light-mode .skeuo-button span,
-        body.light-mode .skeuo-button i,
-        body.light-mode .skeuo-button-secondary span,
-        body.light-mode .skeuo-button-secondary i {
-            color: #ffffff !important;
-        }
-
-        body.light-mode .skeuo-button-neutral {
-            background: linear-gradient(180deg, #ffffff, #e2e8f0);
-            color: #475569;
-            box-shadow: 2px 2px 5px #cbd5e1, -2px -2px 5px #ffffff;
-            border: 1px solid #cbd5e1;
-        }
-
-        body.light-mode table thead {
-            background-color: rgba(226, 232, 240, 0.8) !important;
-            color: #334155 !important;
-        }
-
-        body.light-mode table tbody tr {
-            border-color: rgba(226, 232, 240, 0.6);
-        }
-
-        body.light-mode table tbody tr:hover {
-            background-color: rgba(226, 232, 240, 0.4);
-        }
-
-        body.light-mode table td {
-            color: #475569;
-        }
-
-        /* BADGES E SELECT DE STATUS */
         .status-select {
             appearance: none;
             -webkit-appearance: none;
@@ -206,66 +110,41 @@
             font-size: 0.75rem;
             font-weight: 700;
             border: 1px solid transparent;
-            background-repeat: no-repeat;
-            background-position: right 6px center;
-            background-size: 10px;
             transition: all 0.2s ease;
         }
 
-        .status-concluido {
-            background-color: rgba(16, 185, 129, 0.15);
-            color: #10b981;
-            border-color: rgba(16, 185, 129, 0.3);
-        }
+        .status-concluido { background-color: rgba(16, 185, 129, 0.15); color: #10b981; border-color: rgba(16, 185, 129, 0.3); }
+        .status-analise { background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; border-color: rgba(245, 158, 11, 0.3); }
+        .status-pendente { background-color: rgba(239, 68, 68, 0.15); color: #ef4444; border-color: rgba(239, 68, 68, 0.3); }
 
-        .status-analise {
-            background-color: rgba(245, 158, 11, 0.15);
-            color: #f59e0b;
-            border-color: rgba(245, 158, 11, 0.3);
-        }
-
-        .status-pendente {
-            background-color: rgba(239, 68, 68, 0.15);
-            color: #ef4444;
-            border-color: rgba(239, 68, 68, 0.3);
-        }
-
-        .status-select option {
-            background-color: #1e293b;
-            color: #ffffff;
-        }
-
-        body.light-mode .status-select option {
-            background-color: #ffffff;
-            color: #1e293b;
-        }
+        .status-select option { background-color: #1e293b; color: #ffffff; }
+        body.light-mode .status-select option { background-color: #ffffff; color: #1e293b; }
     </style>
 </head>
 <body class="flex min-h-screen">
 
-    <!-- MENU LATERAL DA ESQUERDA -->
+    <!-- MENU LATERAL -->
     <aside class="w-16 border-r flex flex-col items-center py-5 justify-between shadow-inner hidden md:flex sticky top-0 h-screen transition-colors">
         <div class="space-y-6 text-lg">
-            <button onclick="irParaSecao('topo')" title="Visão Geral (Início)" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
+            <button onclick="irParaSecao('topo')" title="Visão Geral" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
                 <i class="fa-solid fa-shapes"></i>
             </button>
-            <button onclick="irParaSecao('secao-graficos')" title="Ir para Gráficos" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
+            <button onclick="irParaSecao('secao-graficos')" title="Gráficos" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
                 <i class="fa-solid fa-chart-simple"></i>
             </button>
-            <button onclick="irParaSecao('secao-tabela')" title="Ir para Tabela de Ocorrências" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
+            <button onclick="irParaSecao('secao-tabela')" title="Tabela" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
                 <i class="fa-solid fa-arrow-rotate-left"></i>
             </button>
-            <button onclick="focarBusca()" title="Focar Campo de Busca" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
+            <button onclick="focarBusca()" title="Buscar" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
                 <i class="fa-solid fa-sliders"></i>
             </button>
         </div>
 
         <div class="space-y-4 text-lg">
-            <button onclick="carregarDadosPlanilha()" title="Sincronizar Planilha" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
+            <button onclick="carregarDadosPlanilha()" title="Sincronizar" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
                 <i class="fa-solid fa-gear"></i>
             </button>
-            <!-- BOTÃO ALTERNADOR DE MODO -->
-            <button onclick="alternarModoClaro()" id="btn-tema" title="Alternar para Modo Claro" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
+            <button onclick="alternarModoClaro()" id="btn-tema" title="Alternar Modo" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
                 <i class="fa-solid fa-sun" id="icon-tema"></i>
             </button>
         </div>
@@ -277,7 +156,7 @@
         <!-- CABEÇALHO -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div class="flex items-center gap-4">
-                <img src="Logo.png" alt="Logo da Empresa" class="h-16 w-auto object-contain">
+                <img src="Logo.png" alt="Logo" class="h-16 w-auto object-contain">
                 <div>
                     <h1 class="text-2xl font-black tracking-tight">Painel de Controle - Qualidade</h1>
                     <p class="text-xs font-medium">Acompanhamento e consulta de ocorrências</p>
@@ -501,7 +380,6 @@
             setTimeout(() => input.focus(), 300);
         }
 
-        /* ALTERNAR PARA MODO CLARO OU ESCURO */
         function alternarModoClaro() {
             document.body.classList.toggle('light-mode');
             const icon = document.getElementById('icon-tema');
@@ -555,7 +433,8 @@
             btn.disabled = true;
             btn.innerText = "Salvando...";
 
-            const payload = {
+            const bodyParams = new URLSearchParams({
+                action: "add",
                 data: document.getElementById('add-data').value,
                 cliente: document.getElementById('add-cliente').value,
                 equipamento: document.getElementById('add-equipamento').value,
@@ -564,19 +443,19 @@
                 componente: document.getElementById('add-componente').value,
                 acao: document.getElementById('add-acao').value,
                 status: document.getElementById('add-status').value
-            };
+            });
 
             try {
                 await fetch(URL_APPS_SCRIPT_WEBAPP, {
                     method: 'POST',
                     mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: bodyParams
                 });
 
                 alert("Ocorrência gravada com sucesso!");
                 fecharModal();
-                setTimeout(carregarDadosPlanilha, 1500);
+                setTimeout(carregarDadosPlanilha, 2000);
             } catch (erro) {
                 console.error("Erro ao salvar:", erro);
                 alert("Erro ao gravar dados na planilha.");
@@ -606,19 +485,21 @@
             try {
                 selectElement.disabled = true;
 
+                const bodyParams = new URLSearchParams({
+                    action: "updateStatus",
+                    rowIndex: rowIndex,
+                    status: novoStatus
+                });
+
                 await fetch(URL_APPS_SCRIPT_WEBAPP, {
                     method: 'POST',
                     mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        action: "updateStatus", 
-                        rowIndex: rowIndex, 
-                        status: novoStatus 
-                    })
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: bodyParams
                 });
 
                 alert("Status atualizado com sucesso!");
-                setTimeout(carregarDadosPlanilha, 1500);
+                setTimeout(carregarDadosPlanilha, 2000);
             } catch (erro) {
                 console.error("Erro ao atualizar status:", erro);
                 alert("Erro ao atualizar o status na planilha.");
@@ -639,15 +520,20 @@
             if (!confirm("Tem certeza que deseja apagar este registro da planilha?")) return;
 
             try {
+                const bodyParams = new URLSearchParams({
+                    action: "delete",
+                    rowIndex: rowIndex
+                });
+
                 await fetch(URL_APPS_SCRIPT_WEBAPP, {
                     method: 'POST',
                     mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: "delete", rowIndex: rowIndex })
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: bodyParams
                 });
 
                 alert("Registro excluído com sucesso!");
-                setTimeout(carregarDadosPlanilha, 1500);
+                setTimeout(carregarDadosPlanilha, 2000);
             } catch (erro) {
                 console.error("Erro ao excluir:", erro);
                 alert("Erro ao excluir o registro da planilha.");
@@ -668,10 +554,14 @@
                     header: true,
                     skipEmptyLines: true,
                     complete: function(results) {
-                        dadosBrutos = results.data.map((row, index) => ({
-                            ...row,
-                            _rowIndex: index + 2
-                        }));
+                        // Filtra linhas onde os principais campos estão vazios
+                        dadosBrutos = results.data
+                            .map((row, index) => ({ ...row, _rowIndex: index + 2 }))
+                            .filter(row => {
+                                const vals = Object.values(row);
+                                return vals.some(v => v && v.toString().trim() !== '' && v !== row._rowIndex);
+                            });
+
                         preencherOpcoesFiltros(dadosBrutos);
                         aplicarFiltros();
                         const agora = new Date();
@@ -878,9 +768,7 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: {
-                        labels: { color: corTexto, boxWidth: 12 }
-                    }
+                    legend: { labels: { color: corTexto, boxWidth: 12 } }
                 },
                 scales: {
                     x: { ticks: { color: corTexto }, grid: { display: false } },
