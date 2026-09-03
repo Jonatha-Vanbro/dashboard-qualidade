@@ -195,6 +195,50 @@
         body.light-mode table td {
             color: #475569;
         }
+
+        /* BADGES E SELECT DE STATUS */
+        .status-select {
+            appearance: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+            padding: 4px 20px 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border: 1px solid transparent;
+            background-repeat: no-repeat;
+            background-position: right 6px center;
+            background-size: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .status-concluido {
+            background-color: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .status-analise {
+            background-color: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+
+        .status-pendente {
+            background-color: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .status-select option {
+            background-color: #1e293b;
+            color: #ffffff;
+        }
+
+        body.light-mode .status-select option {
+            background-color: #ffffff;
+            color: #1e293b;
+        }
     </style>
 </head>
 <body class="flex min-h-screen">
@@ -542,6 +586,47 @@
             }
         }
 
+        async function atualizarStatus(rowIndex, novoStatus, selectElement) {
+            const statusAnterior = selectElement.getAttribute('data-status-atual');
+            
+            if (novoStatus === statusAnterior) return;
+
+            const senha = prompt("Digite a senha de autorização para alterar o status:");
+            if (senha === null) {
+                selectElement.value = statusAnterior;
+                return;
+            }
+
+            if (senha !== SENHA_AUTORIZACAO) {
+                alert("Senha incorreta! Alteração não autorizada.");
+                selectElement.value = statusAnterior;
+                return;
+            }
+
+            try {
+                selectElement.disabled = true;
+
+                await fetch(URL_APPS_SCRIPT_WEBAPP, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        action: "updateStatus", 
+                        rowIndex: rowIndex, 
+                        status: novoStatus 
+                    })
+                });
+
+                alert("Status atualizado com sucesso!");
+                setTimeout(carregarDadosPlanilha, 1500);
+            } catch (erro) {
+                console.error("Erro ao atualizar status:", erro);
+                alert("Erro ao atualizar o status na planilha.");
+                selectElement.value = statusAnterior;
+                selectElement.disabled = false;
+            }
+        }
+
         async function excluirRegistro(rowIndex) {
             const senha = prompt("Digite a senha de autorização para excluir este registro:");
             if (senha === null) return;
@@ -731,6 +816,13 @@
             renderizarGraficos(ordenarEFiltrar(contModelo, 8), contCliente, contDefeito, ordenarEFiltrar(contComponente, 8));
         }
 
+        function obterClasseStatus(status) {
+            const s = (status || '').toLowerCase();
+            if (s.includes('conclu')) return 'status-concluido';
+            if (s.includes('anál') || s.includes('anal')) return 'status-analise';
+            return 'status-pendente';
+        }
+
         function renderizarTabela(dados) {
             const corpo = document.getElementById('tabela-corpo');
             document.getElementById('contador-tabela').innerText = `${dados.length} registro(s)`;
@@ -744,6 +836,9 @@
             dados.forEach(item => {
                 const { _rowIndex, ...colunas } = item;
                 const vals = Object.values(colunas);
+                const statusTexto = padronizarTexto(vals[7]) || 'Pendente';
+                const classeStatus = obterClasseStatus(statusTexto);
+
                 corpo.innerHTML += `
                     <tr class="transition-colors">
                         <td class="p-3 font-medium">${padronizarTexto(vals[0]) || '-'}</td>
@@ -753,7 +848,17 @@
                         <td class="p-3">${padronizarTexto(vals[4]) || '-'}</td>
                         <td class="p-3 text-amber-500 font-medium">${padronizarTexto(vals[5]) || '-'}</td>
                         <td class="p-3">${padronizarTexto(vals[6]) || '-'}</td>
-                        <td class="p-3"><span class="px-2 py-1 bg-slate-500/20 rounded text-xs font-semibold">${padronizarTexto(vals[7]) || '-'}</span></td>
+                        <td class="p-3">
+                            <select 
+                                data-status-atual="${statusTexto}"
+                                onchange="atualizarStatus(${_rowIndex}, this.value, this)"
+                                class="status-select ${classeStatus}"
+                                title="Clique para alterar a situação">
+                                <option value="Concluído" ${statusTexto === 'Concluído' ? 'selected' : ''}>Concluído</option>
+                                <option value="Em Análise" ${statusTexto === 'Em Análise' ? 'selected' : ''}>Em Análise</option>
+                                <option value="Pendente" ${statusTexto === 'Pendente' ? 'selected' : ''}>Pendente</option>
+                            </select>
+                        </td>
                         <td class="p-3 text-center">
                             <button onclick="excluirRegistro(${_rowIndex})" title="Excluir Registro" class="text-slate-400 hover:text-rose-500 p-1 transition-colors">
                                 <i class="fa-solid fa-trash-can"></i>
