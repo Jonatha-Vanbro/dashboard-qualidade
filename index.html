@@ -17,99 +17,54 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
+        /* --- ESTILOS PADRÃO (MODO ESCURO - ALTO CONTRASTE) --- */
         body { 
-            background-color: #e6ecf3; 
-            color: #1e293b;
+            background-color: #0f172a; 
+            color: #f8fafc;
             font-family: 'Inter', system-ui, -apple-system, sans-serif; 
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* --- ESTILOS DO MODO ESCURO COM ALTO CONTRASTE --- */
-        body.dark-mode {
-            background-color: #0f172a;
-            color: #f8fafc;
-        }
-
-        body.dark-mode aside {
+        aside {
             background-color: #1e293b;
             border-color: #334155;
         }
 
-        body.dark-mode aside button {
+        aside button {
             color: #cbd5e1;
         }
 
-        body.dark-mode aside button:hover {
+        aside button:hover {
             color: #ffffff;
             background-color: #334155;
         }
 
-        body.dark-mode h1, 
-        body.dark-mode h2, 
-        body.dark-mode h3 {
+        h1, h2, h3 {
             color: #ffffff !important;
         }
 
-        body.dark-mode p, 
-        body.dark-mode span, 
-        body.dark-mode label {
+        p, span, label {
             color: #cbd5e1;
         }
 
-        body.dark-mode .skeuo-card {
+        .skeuo-card {
             background: #1e293b;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
             border: 1px solid #334155;
-        }
-
-        body.dark-mode .skeuo-input {
-            background: #0f172a;
-            color: #ffffff;
-            border: 1px solid #475569;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
-        }
-
-        body.dark-mode .skeuo-input option {
-            background: #0f172a;
-            color: #ffffff;
-        }
-
-        body.dark-mode .skeuo-button-neutral {
-            background: #334155;
-            color: #ffffff;
-            border-color: #475569;
-        }
-
-        body.dark-mode table thead {
-            background-color: #334155 !important;
-            color: #f8fafc !important;
-        }
-
-        body.dark-mode table tbody tr {
-            border-color: #334155;
-        }
-
-        body.dark-mode table tbody tr:hover {
-            background-color: #334155/50;
-        }
-
-        body.dark-mode table td {
-            color: #e2e8f0;
-        }
-
-        /* ESTILOS SKEUOMÓRFICOS (MODO CLARO PADRÃO) */
-        .skeuo-card {
-            background: linear-gradient(145deg, #ffffff, #e6ecf0);
-            box-shadow: 6px 6px 14px #cbd5e1, -6px -6px 14px #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.8);
             border-radius: 16px;
         }
 
         .skeuo-input {
-            background: #eaf0f6;
-            box-shadow: inset 2px 2px 5px #c2cdd8, inset -2px -2px 5px #ffffff;
-            border: 1px solid #d1dbe5;
+            background: #0f172a;
+            color: #ffffff;
+            border: 1px solid #475569;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
             border-radius: 12px;
+        }
+
+        .skeuo-input option {
+            background: #0f172a;
+            color: #ffffff;
         }
 
         .skeuo-button {
@@ -125,38 +80,130 @@
         }
 
         .skeuo-button-neutral {
+            background: #334155;
+            color: #ffffff;
+            border: 1px solid #475569;
+            border-radius: 10px;
+        }
+
+        table thead {
+            background-color: #334155 !important;
+            color: #f8fafc !important;
+        }
+
+        table tbody tr {
+            border-color: #334155;
+        }
+
+        table tbody tr:hover {
+            background-color: rgba(51, 65, 85, 0.5);
+        }
+
+        table td {
+            color: #e2e8f0;
+        }
+
+        /* --- MODO CLARO (OPCIONAL VIA BOTÃO) --- */
+        body.light-mode {
+            background-color: #e6ecf3;
+            color: #1e293b;
+        }
+
+        body.light-mode aside {
+            background-color: rgba(226, 232, 240, 0.6);
+            border-color: rgba(203, 213, 225, 0.6);
+        }
+
+        body.light-mode aside button {
+            color: #64748b;
+        }
+
+        body.light-mode aside button:hover {
+            color: #0f172a;
+            background-color: #cbd5e1;
+        }
+
+        body.light-mode h1, 
+        body.light-mode h2, 
+        body.light-mode h3 {
+            color: #0f172a !important;
+        }
+
+        body.light-mode p, 
+        body.light-mode span, 
+        body.light-mode label {
+            color: #64748b;
+        }
+
+        body.light-mode .skeuo-card {
+            background: linear-gradient(145deg, #ffffff, #e6ecf0);
+            box-shadow: 6px 6px 14px #cbd5e1, -6px -6px 14px #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        body.light-mode .skeuo-input {
+            background: #eaf0f6;
+            color: #334155;
+            box-shadow: inset 2px 2px 5px #c2cdd8, inset -2px -2px 5px #ffffff;
+            border: 1px solid #d1dbe5;
+        }
+
+        body.light-mode .skeuo-input option {
+            background: #ffffff;
+            color: #334155;
+        }
+
+        body.light-mode .skeuo-button-neutral {
             background: linear-gradient(180deg, #ffffff, #e2e8f0);
+            color: #475569;
             box-shadow: 2px 2px 5px #cbd5e1, -2px -2px 5px #ffffff;
             border: 1px solid #cbd5e1;
-            border-radius: 10px;
+        }
+
+        body.light-mode table thead {
+            background-color: rgba(226, 232, 240, 0.8) !important;
+            color: #334155 !important;
+        }
+
+        body.light-mode table tbody tr {
+            border-color: rgba(226, 232, 240, 0.6);
+        }
+
+        body.light-mode table tbody tr:hover {
+            background-color: rgba(226, 232, 240, 0.4);
+        }
+
+        body.light-mode table td {
+            color: #475569;
         }
     </style>
 </head>
 <body class="flex min-h-screen">
 
     <!-- MENU LATERAL DA ESQUERDA -->
-    <aside class="w-16 bg-slate-200/60 border-r border-slate-300/60 flex flex-col items-center py-5 justify-between shadow-inner hidden md:flex sticky top-0 h-screen transition-colors">
-        <div class="space-y-6 text-slate-500 text-lg">
-            <button onclick="irParaSecao('topo')" title="Visão Geral (Início)" class="p-2 hover:bg-slate-300 rounded-lg transition-all active:scale-95 flex items-center justify-center">
+    <aside class="w-16 border-r flex flex-col items-center py-5 justify-between shadow-inner hidden md:flex sticky top-0 h-screen transition-colors">
+        <div class="space-y-6 text-lg">
+            <button onclick="irParaSecao('topo')" title="Visão Geral (Início)" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
                 <i class="fa-solid fa-shapes"></i>
             </button>
-            <button onclick="irParaSecao('secao-graficos')" title="Ir para Gráficos" class="p-2 hover:bg-slate-300 rounded-lg transition-all active:scale-95 flex items-center justify-center">
+            <button onclick="irParaSecao('secao-graficos')" title="Ir para Gráficos" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
                 <i class="fa-solid fa-chart-simple"></i>
             </button>
-            <button onclick="irParaSecao('secao-tabela')" title="Ir para Tabela de Ocorrências" class="p-2 hover:bg-slate-300 rounded-lg transition-all active:scale-95 flex items-center justify-center">
+            <button onclick="irParaSecao('secao-tabela')" title="Ir para Tabela de Ocorrências" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
                 <i class="fa-solid fa-arrow-rotate-left"></i>
             </button>
-            <button onclick="focarBusca()" title="Focar Campo de Busca" class="p-2 hover:bg-slate-300 rounded-lg transition-all active:scale-95 flex items-center justify-center">
+            <button onclick="focarBusca()" title="Focar Campo de Busca" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
                 <i class="fa-solid fa-sliders"></i>
             </button>
         </div>
 
-        <div class="space-y-4 text-slate-500 text-lg">
-            <button onclick="carregarDadosPlanilha()" title="Sincronizar Planilha" class="p-2 hover:bg-slate-300 rounded-lg transition-all active:scale-95 flex items-center justify-center">
+        <div class="space-y-4 text-lg">
+            <button onclick="carregarDadosPlanilha()" title="Sincronizar Planilha" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
                 <i class="fa-solid fa-gear"></i>
             </button>
-            <button onclick="alternarModoEscuro()" title="Alternar Modo Escuro" class="p-2 hover:bg-slate-300 rounded-lg transition-all active:scale-95 flex items-center justify-center">
-                <i class="fa-solid fa-moon"></i>
+            <!-- BOTÃO ALTERNADOR DE MODO -->
+            <button onclick="alternarModoClaro()" id="btn-tema" title="Alternar para Modo Claro" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
+                <i class="fa-solid fa-sun" id="icon-tema"></i>
             </button>
         </div>
     </aside>
@@ -169,14 +216,14 @@
             <div class="flex items-center gap-4">
                 <img src="Logo.png" alt="Logo da Empresa" class="h-16 w-auto object-contain">
                 <div>
-                    <h1 class="text-2xl font-black text-slate-900 tracking-tight">Painel de Controle - Qualidade</h1>
-                    <p class="text-xs text-slate-500 font-medium">Acompanhamento e consulta de ocorrências</p>
+                    <h1 class="text-2xl font-black tracking-tight">Painel de Controle - Qualidade</h1>
+                    <p class="text-xs font-medium">Acompanhamento e consulta de ocorrências</p>
                 </div>
             </div>
 
             <div class="skeuo-card p-2 px-4 flex items-center gap-3">
                 <i class="fa-regular fa-calendar-days text-slate-400"></i>
-                <span id="ultima-atualizacao" class="text-xs text-slate-500 font-medium">Atualizado recentemente</span>
+                <span id="ultima-atualizacao" class="text-xs font-medium">Atualizado recentemente</span>
                 
                 <button onclick="abrirModal()" class="skeuo-button text-white text-xs font-bold px-4 py-2 transition-all active:scale-95 flex items-center gap-2">
                     <i class="fa-solid fa-plus"></i>
@@ -287,7 +334,7 @@
             </h2>
             <div class="overflow-x-auto max-h-96">
                 <table class="w-full text-left text-xs border-collapse">
-                    <thead class="bg-slate-200/80 sticky top-0 font-bold text-slate-700">
+                    <thead class="sticky top-0 font-bold">
                         <tr>
                             <th class="p-3">Data</th>
                             <th class="p-3">Cliente</th>
@@ -300,7 +347,7 @@
                             <th class="p-3 text-center">Ações</th>
                         </tr>
                     </thead>
-                    <tbody id="tabela-corpo" class="divide-y divide-slate-200/40"></tbody>
+                    <tbody id="tabela-corpo" class="divide-y"></tbody>
                 </table>
             </div>
         </div>
@@ -308,9 +355,9 @@
     </main>
 
     <!-- MODAL DE REGISTRO -->
-    <div id="modal-registro" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div id="modal-registro" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
         <div class="skeuo-card max-w-2xl w-full p-6 space-y-4">
-            <div class="flex justify-between items-center border-b border-slate-300/40 pb-3">
+            <div class="flex justify-between items-center border-b border-slate-500/30 pb-3">
                 <h3 class="text-base font-bold"><i class="fa-solid fa-pen-to-square text-emerald-500 mr-2"></i>Nova Ocorrência</h3>
                 <button onclick="fecharModal()" class="text-slate-400 hover:text-slate-200 text-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
@@ -360,7 +407,7 @@
                     <input type="password" id="add-senha" required placeholder="Digite a senha para salvar" class="w-full p-2 skeuo-input text-xs outline-none">
                 </div>
 
-                <div class="md:col-span-2 flex justify-end gap-3 pt-3 border-t border-slate-300/40">
+                <div class="md:col-span-2 flex justify-end gap-3 pt-3 border-t border-slate-500/30">
                     <button type="button" onclick="fecharModal()" class="px-4 py-2 skeuo-button-neutral rounded-lg font-bold text-xs">Cancelar</button>
                     <button type="submit" id="btn-salvar" class="px-4 py-2 skeuo-button text-white rounded-lg font-bold text-xs flex items-center gap-2">
                         <i class="fa-solid fa-floppy-disk"></i>
@@ -391,9 +438,21 @@
             setTimeout(() => input.focus(), 300);
         }
 
-        function alternarModoEscuro() {
-            document.body.classList.toggle('dark-mode');
-            aplicarFiltros(); // Re-renderiza gráficos ajustando as cores dos textos
+        /* ALTERNAR PARA MODO CLARO OU ESCURO */
+        function alternarModoClaro() {
+            document.body.classList.toggle('light-mode');
+            const icon = document.getElementById('icon-tema');
+            const btn = document.getElementById('btn-tema');
+
+            if (document.body.classList.contains('light-mode')) {
+                icon.className = "fa-solid fa-moon";
+                btn.title = "Alternar para Modo Escuro";
+            } else {
+                icon.className = "fa-solid fa-sun";
+                btn.title = "Alternar para Modo Claro";
+            }
+
+            aplicarFiltros(); // Atualiza a cor dos textos nos gráficos
         }
 
         function padronizarTexto(texto) {
@@ -688,8 +747,8 @@
 
         function renderizarGraficos(modelos, clientes, defeitos, componentes) {
             const cores = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#64748b'];
-            const eModoEscuro = document.body.classList.contains('dark-mode');
-            const corTexto = eModoEscuro ? '#f8fafc' : '#475569';
+            const eModoClaro = document.body.classList.contains('light-mode');
+            const corTexto = eModoClaro ? '#475569' : '#f8fafc';
 
             const opcoesPadrao = {
                 responsive: true,
@@ -701,7 +760,7 @@
                 },
                 scales: {
                     x: { ticks: { color: corTexto }, grid: { display: false } },
-                    y: { ticks: { color: corTexto }, grid: { color: eModoEscuro ? '#334155' : '#e2e8f0' } }
+                    y: { ticks: { color: corTexto }, grid: { color: eModoClaro ? '#e2e8f0' : '#334155' } }
                 }
             };
 
