@@ -11,10 +11,13 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- PapaParse -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
+        /* --- ESTILOS PADRÃO (MODO ESCURO - ALTO CONTRASTE) --- */
         body { 
             background-color: #0f172a; 
             color: #f8fafc;
@@ -27,11 +30,22 @@
             border-color: #334155;
         }
 
-        aside button { color: #cbd5e1; }
-        aside button:hover { color: #ffffff; background-color: #334155; }
+        aside button {
+            color: #cbd5e1;
+        }
 
-        h1, h2, h3 { color: #ffffff !important; }
-        p, span, label { color: #cbd5e1; }
+        aside button:hover {
+            color: #ffffff;
+            background-color: #334155;
+        }
+
+        h1, h2, h3 {
+            color: #ffffff !important;
+        }
+
+        p, span, label {
+            color: #cbd5e1;
+        }
 
         .skeuo-card {
             background: #1e293b;
@@ -48,12 +62,20 @@
             border-radius: 12px;
         }
 
-        .skeuo-input option { background: #0f172a; color: #ffffff; }
+        .skeuo-input option {
+            background: #0f172a;
+            color: #ffffff;
+        }
 
+        /* BOTÕES PRINCIPAIS (COM TEXTO BRANCO GARANTIDO) */
         .skeuo-button {
             background: linear-gradient(180deg, #1091a1, #085f6a);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.3);
             border-radius: 10px;
+            color: #ffffff !important;
+        }
+
+        .skeuo-button * {
             color: #ffffff !important;
         }
 
@@ -64,6 +86,10 @@
             color: #ffffff !important;
         }
 
+        .skeuo-button-secondary * {
+            color: #ffffff !important;
+        }
+
         .skeuo-button-neutral {
             background: #334155;
             color: #ffffff;
@@ -71,78 +97,131 @@
             border-radius: 10px;
         }
 
-        table thead { background-color: #334155 !important; color: #f8fafc !important; }
-        table tbody tr { border-color: #334155; }
-        table tbody tr:hover { background-color: rgba(51, 65, 85, 0.5); }
-        table td { color: #e2e8f0; }
+        table thead {
+            background-color: #334155 !important;
+            color: #f8fafc !important;
+        }
 
-        /* MODO CLARO */
-        body.light-mode { background-color: #e6ecf3; color: #1e293b; }
-        body.light-mode aside { background-color: rgba(226, 232, 240, 0.6); border-color: rgba(203, 213, 225, 0.6); }
-        body.light-mode aside button { color: #64748b; }
-        body.light-mode aside button:hover { color: #0f172a; background-color: #cbd5e1; }
-        body.light-mode h1, body.light-mode h2, body.light-mode h3 { color: #0f172a !important; }
-        body.light-mode p, body.light-mode span, body.light-mode label { color: #64748b; }
+        table tbody tr {
+            border-color: #334155;
+        }
+
+        table tbody tr:hover {
+            background-color: rgba(51, 65, 85, 0.5);
+        }
+
+        table td {
+            color: #e2e8f0;
+        }
+
+        /* --- MODO CLARO --- */
+        body.light-mode {
+            background-color: #e6ecf3;
+            color: #1e293b;
+        }
+
+        body.light-mode aside {
+            background-color: rgba(226, 232, 240, 0.6);
+            border-color: rgba(203, 213, 225, 0.6);
+        }
+
+        body.light-mode aside button {
+            color: #64748b;
+        }
+
+        body.light-mode aside button:hover {
+            color: #0f172a;
+            background-color: #cbd5e1;
+        }
+
+        body.light-mode h1, 
+        body.light-mode h2, 
+        body.light-mode h3 {
+            color: #0f172a !important;
+        }
+
+        body.light-mode p, 
+        body.light-mode span, 
+        body.light-mode label {
+            color: #64748b;
+        }
+
         body.light-mode .skeuo-card {
             background: linear-gradient(145deg, #ffffff, #e6ecf0);
             box-shadow: 6px 6px 14px #cbd5e1, -6px -6px 14px #ffffff;
             border: 1px solid rgba(255, 255, 255, 0.8);
         }
+
         body.light-mode .skeuo-input {
-            background: #eaf0f6; color: #334155;
+            background: #eaf0f6;
+            color: #334155;
             box-shadow: inset 2px 2px 5px #c2cdd8, inset -2px -2px 5px #ffffff;
             border: 1px solid #d1dbe5;
         }
-        body.light-mode .skeuo-input option { background: #ffffff; color: #334155; }
-        body.light-mode table thead { background-color: rgba(226, 232, 240, 0.8) !important; color: #334155 !important; }
-        body.light-mode table tbody tr { border-color: rgba(226, 232, 240, 0.6); }
-        body.light-mode table tbody tr:hover { background-color: rgba(226, 232, 240, 0.4); }
-        body.light-mode table td { color: #475569; }
 
-        .status-select {
-            appearance: none;
-            -webkit-appearance: none;
-            cursor: pointer;
-            padding: 4px 20px 4px 10px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            border: 1px solid transparent;
-            transition: all 0.2s ease;
+        body.light-mode .skeuo-input option {
+            background: #ffffff;
+            color: #334155;
         }
 
-        .status-concluido { background-color: rgba(16, 185, 129, 0.15); color: #10b981; border-color: rgba(16, 185, 129, 0.3); }
-        .status-analise { background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; border-color: rgba(245, 158, 11, 0.3); }
-        .status-pendente { background-color: rgba(239, 68, 68, 0.15); color: #ef4444; border-color: rgba(239, 68, 68, 0.3); }
+        /* PRESERVA A COR BRANCA DOS TEXTOS E ÍCONES DOS BOTÕES NO MODO CLARO */
+        body.light-mode .skeuo-button span,
+        body.light-mode .skeuo-button i,
+        body.light-mode .skeuo-button-secondary span,
+        body.light-mode .skeuo-button-secondary i {
+            color: #ffffff !important;
+        }
 
-        .status-select option { background-color: #1e293b; color: #ffffff; }
-        body.light-mode .status-select option { background-color: #ffffff; color: #1e293b; }
+        body.light-mode .skeuo-button-neutral {
+            background: linear-gradient(180deg, #ffffff, #e2e8f0);
+            color: #475569;
+            box-shadow: 2px 2px 5px #cbd5e1, -2px -2px 5px #ffffff;
+            border: 1px solid #cbd5e1;
+        }
+
+        body.light-mode table thead {
+            background-color: rgba(226, 232, 240, 0.8) !important;
+            color: #334155 !important;
+        }
+
+        body.light-mode table tbody tr {
+            border-color: rgba(226, 232, 240, 0.6);
+        }
+
+        body.light-mode table tbody tr:hover {
+            background-color: rgba(226, 232, 240, 0.4);
+        }
+
+        body.light-mode table td {
+            color: #475569;
+        }
     </style>
 </head>
 <body class="flex min-h-screen">
 
-    <!-- MENU LATERAL -->
+    <!-- MENU LATERAL DA ESQUERDA -->
     <aside class="w-16 border-r flex flex-col items-center py-5 justify-between shadow-inner hidden md:flex sticky top-0 h-screen transition-colors">
         <div class="space-y-6 text-lg">
-            <button onclick="irParaSecao('topo')" title="Visão Geral" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
+            <button onclick="irParaSecao('topo')" title="Visão Geral (Início)" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
                 <i class="fa-solid fa-shapes"></i>
             </button>
-            <button onclick="irParaSecao('secao-graficos')" title="Gráficos" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
+            <button onclick="irParaSecao('secao-graficos')" title="Ir para Gráficos" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
                 <i class="fa-solid fa-chart-simple"></i>
             </button>
-            <button onclick="irParaSecao('secao-tabela')" title="Tabela" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
+            <button onclick="irParaSecao('secao-tabela')" title="Ir para Tabela de Ocorrências" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
                 <i class="fa-solid fa-arrow-rotate-left"></i>
             </button>
-            <button onclick="focarBusca()" title="Buscar" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
+            <button onclick="focarBusca()" title="Focar Campo de Busca" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
                 <i class="fa-solid fa-sliders"></i>
             </button>
         </div>
 
         <div class="space-y-4 text-lg">
-            <button onclick="carregarDadosPlanilha()" title="Sincronizar" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
+            <button onclick="carregarDadosPlanilha()" title="Sincronizar Planilha" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
                 <i class="fa-solid fa-gear"></i>
             </button>
-            <button onclick="alternarModoClaro()" id="btn-tema" title="Alternar Modo" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
+            <!-- BOTÃO ALTERNADOR DE MODO -->
+            <button onclick="alternarModoClaro()" id="btn-tema" title="Alternar para Modo Claro" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
                 <i class="fa-solid fa-sun" id="icon-tema"></i>
             </button>
         </div>
@@ -154,7 +233,7 @@
         <!-- CABEÇALHO -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div class="flex items-center gap-4">
-                <img src="Logo.png" alt="Logo" class="h-16 w-auto object-contain">
+                <img src="Logo.png" alt="Logo da Empresa" class="h-16 w-auto object-contain">
                 <div>
                     <h1 class="text-2xl font-black tracking-tight">Painel de Controle - Qualidade</h1>
                     <p class="text-xs font-medium">Acompanhamento e consulta de ocorrências</p>
@@ -360,7 +439,8 @@
 
     <!-- SCRIPT DE LÓGICA E DADOS -->
     <script>
-        const URL_APPS_SCRIPT_WEBAPP = "https://script.google.com/macros/s/AKfycbzk1c-BR_t56GAknpEG7VwNcTWO79b-WvS9hI9gYLD3Oj0pdnh5CpdR5CVBQlL7On85Ng/exec";
+        const URL_GOOGLE_SHEETS_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSaXyWBuLvG8G3VrwGcmMqk98vRk0V4L2Tv4rZnJispuDpLQIrjFmBC9UKLz0IrUDZxFhqqXZM-BB6s/pub?gid=0&single=true&output=csv";
+        const URL_APPS_SCRIPT_WEBAPP = "https://script.google.com/macros/s/AKfycbxNRfqOPNrMq-iIotevwE3TTZbXCGBKma_r2BSh8LPXCrmpWkKTdIc1FjtOS9ay7e02Ow/exec";
         const SENHA_AUTORIZACAO = "1234";
 
         let dadosBrutos = [];
@@ -377,6 +457,7 @@
             setTimeout(() => input.focus(), 300);
         }
 
+        /* ALTERNAR PARA MODO CLARO OU ESCURO */
         function alternarModoClaro() {
             document.body.classList.toggle('light-mode');
             const icon = document.getElementById('icon-tema');
@@ -395,13 +476,13 @@
 
         function padronizarTexto(texto) {
             if (!texto) return "";
-            let t = String(texto).trim();
+            let t = texto.trim();
             return t.charAt(0).toUpperCase() + t.slice(1).toLowerCase();
         }
 
         function padronizarModelo(texto) {
             if (!texto) return "";
-            return String(texto).trim().toUpperCase();
+            return texto.trim().toUpperCase();
         }
 
         function abrirModal() {
@@ -430,8 +511,7 @@
             btn.disabled = true;
             btn.innerText = "Salvando...";
 
-            const bodyParams = new URLSearchParams({
-                action: "add",
+            const payload = {
                 data: document.getElementById('add-data').value,
                 cliente: document.getElementById('add-cliente').value,
                 equipamento: document.getElementById('add-equipamento').value,
@@ -440,76 +520,25 @@
                 componente: document.getElementById('add-componente').value,
                 acao: document.getElementById('add-acao').value,
                 status: document.getElementById('add-status').value
-            });
+            };
 
             try {
                 await fetch(URL_APPS_SCRIPT_WEBAPP, {
                     method: 'POST',
                     mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: bodyParams
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
                 });
 
                 alert("Ocorrência gravada com sucesso!");
                 fecharModal();
-                setTimeout(carregarDadosPlanilha, 1000);
+                setTimeout(carregarDadosPlanilha, 1500);
             } catch (erro) {
                 console.error("Erro ao salvar:", erro);
                 alert("Erro ao gravar dados na planilha.");
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> <span>Salvar Registro</span>`;
-            }
-        }
-
-        async function atualizarStatus(rowIndex, novoStatus, selectElement) {
-            const statusAnterior = selectElement.getAttribute('data-status-atual');
-            
-            if (novoStatus === statusAnterior) return;
-
-            const senha = prompt("Digite a senha de autorização para alterar o status:");
-            if (senha === null) {
-                selectElement.value = statusAnterior;
-                return;
-            }
-
-            if (senha !== SENHA_AUTORIZACAO) {
-                alert("Senha incorreta! Alteração não autorizada.");
-                selectElement.value = statusAnterior;
-                return;
-            }
-
-            try {
-                selectElement.disabled = true;
-
-                const bodyParams = new URLSearchParams({
-                    action: "updateStatus",
-                    rowIndex: rowIndex,
-                    status: novoStatus
-                });
-
-                await fetch(URL_APPS_SCRIPT_WEBAPP, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: bodyParams
-                });
-
-                selectElement.setAttribute('data-status-atual', novoStatus);
-                selectElement.className = `status-select ${obterClasseStatus(novoStatus)}`;
-
-                const itemLocal = dadosBrutos.find(d => d._rowIndex === rowIndex);
-                if (itemLocal) {
-                    itemLocal.status = novoStatus;
-                }
-
-                alert("Status atualizado com sucesso!");
-            } catch (erro) {
-                console.error("Erro ao atualizar status:", erro);
-                alert("Erro ao atualizar o status na planilha.");
-                selectElement.value = statusAnterior;
-            } finally {
-                selectElement.disabled = false;
             }
         }
 
@@ -525,20 +554,15 @@
             if (!confirm("Tem certeza que deseja apagar este registro da planilha?")) return;
 
             try {
-                const bodyParams = new URLSearchParams({
-                    action: "delete",
-                    rowIndex: rowIndex
-                });
-
                 await fetch(URL_APPS_SCRIPT_WEBAPP, {
                     method: 'POST',
                     mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: bodyParams
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: "delete", rowIndex: rowIndex })
                 });
 
                 alert("Registro excluído com sucesso!");
-                setTimeout(carregarDadosPlanilha, 1000);
+                setTimeout(carregarDadosPlanilha, 1500);
             } catch (erro) {
                 console.error("Erro ao excluir:", erro);
                 alert("Erro ao excluir o registro da planilha.");
@@ -550,49 +574,25 @@
             if (icon) icon.classList.add('fa-spin');
 
             try {
-                // Leitura direta via JSON sem cache
-                const resposta = await fetch(`${URL_APPS_SCRIPT_WEBAPP}?t=${new Date().getTime()}`);
+                const resposta = await fetch(`${URL_GOOGLE_SHEETS_CSV}&t=${new Date().getTime()}`);
                 if (!resposta.ok) throw new Error("Erro na requisição");
                 
-                const matriz = await resposta.json();
+                const textoCsv = await resposta.text();
 
-                if (!matriz || matriz.length < 2) {
-                    dadosBrutos = [];
-                    renderizarTabela([]);
-                    return;
-                }
-
-                // Linha 2 da planilha contém os cabeçalhos (Índice 1 da matriz)
-                const cabecalhos = matriz[1].map(c => String(c).trim().toLowerCase());
-                
-                const idxData = cabecalhos.findIndex(c => c.includes("data"));
-                const idxCliente = cabecalhos.findIndex(c => c.includes("cliente"));
-                const idxEquipamento = cabecalhos.findIndex(c => c.includes("equipamento") || c.includes("modelo"));
-                const idxDefeito = cabecalhos.findIndex(c => c.includes("defeito") || c.includes("tipo"));
-                const idxCausa = cabecalhos.findIndex(c => c.includes("causa"));
-                const idxComponente = cabecalhos.findIndex(c => c.includes("componente"));
-                const idxAcao = cabecalhos.findIndex(c => c.includes("ação") || c.includes("acao"));
-                const idxStatus = cabecalhos.findIndex(c => c.includes("status"));
-
-                dadosBrutos = matriz.slice(2).map((linha, index) => {
-                    return {
-                        _rowIndex: index + 3, // Linha real na planilha
-                        data: linha[idxData !== -1 ? idxData : 0] || "",
-                        cliente: linha[idxCliente !== -1 ? idxCliente : 1] || "",
-                        equipamento: linha[idxEquipamento !== -1 ? idxEquipamento : 2] || "",
-                        defeito: linha[idxDefeito !== -1 ? idxDefeito : 3] || "",
-                        causa: linha[idxCausa !== -1 ? idxCausa : 4] || "",
-                        componente: linha[idxComponente !== -1 ? idxComponente : 5] || "",
-                        acao: linha[idxAcao !== -1 ? idxAcao : 6] || "",
-                        status: linha[idxStatus !== -1 ? idxStatus : 7] || "Pendente"
-                    };
-                }).filter(item => item.cliente || item.equipamento || item.defeito);
-
-                preencherOpcoesFiltros(dadosBrutos);
-                aplicarFiltros();
-
-                const agora = new Date();
-                document.getElementById('ultima-atualizacao').innerText = `Atualizado às ${agora.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}`;
+                Papa.parse(textoCsv, {
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        dadosBrutos = results.data.map((row, index) => ({
+                            ...row,
+                            _rowIndex: index + 2
+                        }));
+                        preencherOpcoesFiltros(dadosBrutos);
+                        aplicarFiltros();
+                        const agora = new Date();
+                        document.getElementById('ultima-atualizacao').innerText = `Atualizado às ${agora.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}`;
+                    }
+                });
             } catch (erro) {
                 console.error("Erro ao carregar dados:", erro);
             } finally {
@@ -601,19 +601,27 @@
         }
 
         function preencherOpcoesFiltros(dados) {
-            popularSelect('select-cliente', dados, 'cliente', "Todos os Clientes", false);
-            popularSelect('select-equipamento', dados, 'equipamento', "Todos os Equipamentos", true);
-            popularSelect('select-defeito', dados, 'defeito', "Todos os Defeitos", false);
-            popularSelect('select-componente', dados, 'componente', "Todos os Componentes", false);
+            if (dados.length === 0) return;
+            const chaves = Object.keys(dados[0]).filter(k => k !== '_rowIndex');
+
+            const colModelo = chaves.find(k => k.toLowerCase().includes("modelo") || k.toLowerCase().includes("equipamento")) || chaves[0];
+            const colCliente = chaves.find(k => k.toLowerCase().includes("cliente")) || chaves[1];
+            const colDefeito = chaves.find(k => k.toLowerCase().includes("defeito") || k.toLowerCase().includes("falha")) || chaves[2];
+            const colComponente = chaves.find(k => k.toLowerCase().includes("componente") || k.toLowerCase().includes("peça")) || chaves[3];
+
+            popularSelect('select-cliente', dados, colCliente, "Todos os Clientes", false);
+            popularSelect('select-equipamento', dados, colModelo, "Todos os Equipamentos", true);
+            popularSelect('select-defeito', dados, colDefeito, "Todos os Defeitos", false);
+            popularSelect('select-componente', dados, colComponente, "Todos os Componentes", false);
         }
 
-        function popularSelect(idSelect, dados, propriedade, placeholder, eModelo) {
+        function popularSelect(idSelect, dados, coluna, placeholder, eModelo) {
             const select = document.getElementById(idSelect);
-            if (!select) return;
+            if (!select || !coluna) return;
 
             const listaValores = new Set();
             dados.forEach(d => {
-                const val = eModelo ? padronizarModelo(d[propriedade]) : padronizarTexto(d[propriedade]);
+                const val = eModelo ? padronizarModelo(d[coluna]) : padronizarTexto(d[coluna]);
                 if (val) listaValores.add(val);
             });
 
@@ -630,11 +638,17 @@
             const defeitoFiltro = document.getElementById('select-defeito').value;
             const componenteFiltro = document.getElementById('select-componente').value;
 
+            const chaves = dadosBrutos.length > 0 ? Object.keys(dadosBrutos[0]).filter(k => k !== '_rowIndex') : [];
+            const colModelo = chaves.find(k => k.toLowerCase().includes("modelo") || k.toLowerCase().includes("equipamento")) || chaves[0];
+            const colCliente = chaves.find(k => k.toLowerCase().includes("cliente")) || chaves[1];
+            const colDefeito = chaves.find(k => k.toLowerCase().includes("defeito") || k.toLowerCase().includes("falha")) || chaves[2];
+            const colComponente = chaves.find(k => k.toLowerCase().includes("componente") || k.toLowerCase().includes("peça")) || chaves[3];
+
             const dadosFiltrados = dadosBrutos.filter(item => {
-                const atendeCliente = !clienteFiltro || padronizarTexto(item.cliente) === clienteFiltro;
-                const atendeEquipamento = !equipamentoFiltro || padronizarModelo(item.equipamento) === equipamentoFiltro;
-                const atendeDefeito = !defeitoFiltro || padronizarTexto(item.defeito) === defeitoFiltro;
-                const atendeComponente = !componenteFiltro || padronizarTexto(item.componente) === componenteFiltro;
+                const atendeCliente = !clienteFiltro || padronizarTexto(item[colCliente]) === clienteFiltro;
+                const atendeEquipamento = !equipamentoFiltro || padronizarModelo(item[colModelo]) === equipamentoFiltro;
+                const atendeDefeito = !defeitoFiltro || padronizarTexto(item[colDefeito]) === defeitoFiltro;
+                const atendeComponente = !componenteFiltro || padronizarTexto(item[colComponente]) === componenteFiltro;
 
                 const textoLinha = Object.values(item).join(" ").toLowerCase();
                 const atendeBusca = !termoBusca || textoLinha.includes(termoBusca);
@@ -655,10 +669,10 @@
             aplicarFiltros();
         }
 
-        function contarOcorrencias(dados, propriedade, eModelo = false) {
+        function contarOcorrencias(dados, coluna, eModelo = false) {
             const contagem = {};
             dados.forEach(item => {
-                const valor = eModelo ? padronizarModelo(item[propriedade]) : padronizarTexto(item[propriedade]);
+                const valor = eModelo ? padronizarModelo(item[coluna]) : padronizarTexto(item[coluna]);
                 if (valor) contagem[valor] = (contagem[valor] || 0) + 1;
             });
             return contagem;
@@ -686,10 +700,16 @@
             const total = dados.length;
             document.getElementById('card-total').innerText = total;
 
-            const contModelo = contarOcorrencias(dados, 'equipamento', true);
-            const contCliente = contarOcorrencias(dados, 'cliente');
-            const contDefeito = contarOcorrencias(dados, 'defeito');
-            const contComponente = contarOcorrencias(dados, 'componente');
+            const chaves = total > 0 ? Object.keys(dados[0]).filter(k => k !== '_rowIndex') : [];
+            const colModelo = chaves.find(k => k.toLowerCase().includes("modelo") || k.toLowerCase().includes("equipamento")) || chaves[0];
+            const colCliente = chaves.find(k => k.toLowerCase().includes("cliente")) || chaves[1];
+            const colDefeito = chaves.find(k => k.toLowerCase().includes("defeito") || k.toLowerCase().includes("falha")) || chaves[2];
+            const colComponente = chaves.find(k => k.toLowerCase().includes("componente") || k.toLowerCase().includes("peça")) || chaves[3];
+
+            const contModelo = contarOcorrencias(dados, colModelo, true);
+            const contCliente = contarOcorrencias(dados, colCliente);
+            const contDefeito = contarOcorrencias(dados, colDefeito);
+            const contComponente = contarOcorrencias(dados, colComponente);
 
             const maiorDef = obterMaior(contDefeito);
             const maiorComp = obterMaior(contComponente);
@@ -711,13 +731,6 @@
             renderizarGraficos(ordenarEFiltrar(contModelo, 8), contCliente, contDefeito, ordenarEFiltrar(contComponente, 8));
         }
 
-        function obterClasseStatus(status) {
-            const s = (status || '').toLowerCase();
-            if (s.includes('conclu')) return 'status-concluido';
-            if (s.includes('anál') || s.includes('anal')) return 'status-analise';
-            return 'status-pendente';
-        }
-
         function renderizarTabela(dados) {
             const corpo = document.getElementById('tabela-corpo');
             document.getElementById('contador-tabela').innerText = `${dados.length} registro(s)`;
@@ -729,31 +742,20 @@
             }
 
             dados.forEach(item => {
-                const statusTexto = padronizarTexto(item.status) || 'Pendente';
-                const classeStatus = obterClasseStatus(statusTexto);
-
+                const { _rowIndex, ...colunas } = item;
+                const vals = Object.values(colunas);
                 corpo.innerHTML += `
                     <tr class="transition-colors">
-                        <td class="p-3 font-medium">${padronizarTexto(item.data) || '-'}</td>
-                        <td class="p-3">${padronizarTexto(item.cliente) || '-'}</td>
-                        <td class="p-3 font-semibold text-blue-400">${padronizarModelo(item.equipamento) || '-'}</td>
-                        <td class="p-3 text-rose-500 font-medium">${padronizarTexto(item.defeito) || '-'}</td>
-                        <td class="p-3">${padronizarTexto(item.causa) || '-'}</td>
-                        <td class="p-3 text-amber-500 font-medium">${padronizarTexto(item.componente) || '-'}</td>
-                        <td class="p-3">${padronizarTexto(item.acao) || '-'}</td>
-                        <td class="p-3">
-                            <select 
-                                data-status-atual="${statusTexto}"
-                                onchange="atualizarStatus(${item._rowIndex}, this.value, this)"
-                                class="status-select ${classeStatus}"
-                                title="Clique para alterar a situação">
-                                <option value="Concluído" ${statusTexto === 'Concluído' ? 'selected' : ''}>Concluído</option>
-                                <option value="Em Análise" ${statusTexto === 'Em Análise' ? 'selected' : ''}>Em Análise</option>
-                                <option value="Pendente" ${statusTexto === 'Pendente' ? 'selected' : ''}>Pendente</option>
-                            </select>
-                        </td>
+                        <td class="p-3 font-medium">${padronizarTexto(vals[0]) || '-'}</td>
+                        <td class="p-3">${padronizarTexto(vals[1]) || '-'}</td>
+                        <td class="p-3 font-semibold text-blue-400">${padronizarModelo(vals[2]) || '-'}</td>
+                        <td class="p-3 text-rose-500 font-medium">${padronizarTexto(vals[3]) || '-'}</td>
+                        <td class="p-3">${padronizarTexto(vals[4]) || '-'}</td>
+                        <td class="p-3 text-amber-500 font-medium">${padronizarTexto(vals[5]) || '-'}</td>
+                        <td class="p-3">${padronizarTexto(vals[6]) || '-'}</td>
+                        <td class="p-3"><span class="px-2 py-1 bg-slate-500/20 rounded text-xs font-semibold">${padronizarTexto(vals[7]) || '-'}</span></td>
                         <td class="p-3 text-center">
-                            <button onclick="excluirRegistro(${item._rowIndex})" title="Excluir Registro" class="text-slate-400 hover:text-rose-500 p-1 transition-colors">
+                            <button onclick="excluirRegistro(${_rowIndex})" title="Excluir Registro" class="text-slate-400 hover:text-rose-500 p-1 transition-colors">
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
                         </td>
@@ -771,7 +773,9 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { labels: { color: corTexto, boxWidth: 12 } }
+                    legend: {
+                        labels: { color: corTexto, boxWidth: 12 }
+                    }
                 },
                 scales: {
                     x: { ticks: { color: corTexto }, grid: { display: false } },
