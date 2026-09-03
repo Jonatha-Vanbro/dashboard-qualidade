@@ -11,8 +11,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- PapaParse -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -362,8 +360,7 @@
 
     <!-- SCRIPT DE LÓGICA E DADOS -->
     <script>
-        const URL_GOOGLE_SHEETS_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSaXyWBuLvG8G3VrwGcmMqk98vRk0V4L2Tv4rZnJispuDpLQIrjFmBC9UKLz0IrUDZxFhqqXZM-BB6s/pub?gid=0&single=true&output=csv";
-        const URL_APPS_SCRIPT_WEBAPP = "https://script.google.com/macros/s/AKfycbwjU2H_WV8R9hwpuRQ5H03ocnHAMRCFqqRyDz7yMq9xc1qoWgGb6dVXZ6e96B2redx_TA/exec";
+        const URL_APPS_SCRIPT_WEBAPP = "https://script.google.com/macros/s/AKfycbzk1c-BR_t56GAknpEG7VwNcTWO79b-WvS9hI9gYLD3Oj0pdnh5CpdR5CVBQlL7On85Ng/exec";
         const SENHA_AUTORIZACAO = "1234";
 
         let dadosBrutos = [];
@@ -398,13 +395,13 @@
 
         function padronizarTexto(texto) {
             if (!texto) return "";
-            let t = texto.trim();
+            let t = String(texto).trim();
             return t.charAt(0).toUpperCase() + t.slice(1).toLowerCase();
         }
 
         function padronizarModelo(texto) {
             if (!texto) return "";
-            return texto.trim().toUpperCase();
+            return String(texto).trim().toUpperCase();
         }
 
         function abrirModal() {
@@ -455,7 +452,7 @@
 
                 alert("Ocorrência gravada com sucesso!");
                 fecharModal();
-                setTimeout(carregarDadosPlanilha, 2000);
+                setTimeout(carregarDadosPlanilha, 1000);
             } catch (erro) {
                 console.error("Erro ao salvar:", erro);
                 alert("Erro ao gravar dados na planilha.");
@@ -503,8 +500,7 @@
 
                 const itemLocal = dadosBrutos.find(d => d._rowIndex === rowIndex);
                 if (itemLocal) {
-                    const chaves = Object.keys(itemLocal);
-                    itemLocal[chaves[7]] = novoStatus;
+                    itemLocal.status = novoStatus;
                 }
 
                 alert("Status atualizado com sucesso!");
@@ -542,7 +538,7 @@
                 });
 
                 alert("Registro excluído com sucesso!");
-                setTimeout(carregarDadosPlanilha, 2000);
+                setTimeout(carregarDadosPlanilha, 1000);
             } catch (erro) {
                 console.error("Erro ao excluir:", erro);
                 alert("Erro ao excluir o registro da planilha.");
@@ -554,28 +550,49 @@
             if (icon) icon.classList.add('fa-spin');
 
             try {
-                const resposta = await fetch(`${URL_GOOGLE_SHEETS_CSV}&t=${new Date().getTime()}`);
+                // Leitura direta via JSON sem cache
+                const resposta = await fetch(`${URL_APPS_SCRIPT_WEBAPP}?t=${new Date().getTime()}`);
                 if (!resposta.ok) throw new Error("Erro na requisição");
                 
-                const textoCsv = await resposta.text();
+                const matriz = await resposta.json();
 
-                Papa.parse(textoCsv, {
-                    header: true,
-                    skipEmptyLines: true,
-                    complete: function(results) {
-                        dadosBrutos = results.data
-                            .map((row, index) => ({ ...row, _rowIndex: index + 2 }))
-                            .filter(row => {
-                                const vals = Object.values(row);
-                                return vals.some(v => v && v.toString().trim() !== '' && v !== row._rowIndex);
-                            });
+                if (!matriz || matriz.length < 2) {
+                    dadosBrutos = [];
+                    renderizarTabela([]);
+                    return;
+                }
 
-                        preencherOpcoesFiltros(dadosBrutos);
-                        aplicarFiltros();
-                        const agora = new Date();
-                        document.getElementById('ultima-atualizacao').innerText = `Atualizado às ${agora.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}`;
-                    }
-                });
+                // Linha 2 da planilha contém os cabeçalhos (Índice 1 da matriz)
+                const cabecalhos = matriz[1].map(c => String(c).trim().toLowerCase());
+                
+                const idxData = cabecalhos.findIndex(c => c.includes("data"));
+                const idxCliente = cabecalhos.findIndex(c => c.includes("cliente"));
+                const idxEquipamento = cabecalhos.findIndex(c => c.includes("equipamento") || c.includes("modelo"));
+                const idxDefeito = cabecalhos.findIndex(c => c.includes("defeito") || c.includes("tipo"));
+                const idxCausa = cabecalhos.findIndex(c => c.includes("causa"));
+                const idxComponente = cabecalhos.findIndex(c => c.includes("componente"));
+                const idxAcao = cabecalhos.findIndex(c => c.includes("ação") || c.includes("acao"));
+                const idxStatus = cabecalhos.findIndex(c => c.includes("status"));
+
+                dadosBrutos = matriz.slice(2).map((linha, index) => {
+                    return {
+                        _rowIndex: index + 3, // Linha real na planilha
+                        data: linha[idxData !== -1 ? idxData : 0] || "",
+                        cliente: linha[idxCliente !== -1 ? idxCliente : 1] || "",
+                        equipamento: linha[idxEquipamento !== -1 ? idxEquipamento : 2] || "",
+                        defeito: linha[idxDefeito !== -1 ? idxDefeito : 3] || "",
+                        causa: linha[idxCausa !== -1 ? idxCausa : 4] || "",
+                        componente: linha[idxComponente !== -1 ? idxComponente : 5] || "",
+                        acao: linha[idxAcao !== -1 ? idxAcao : 6] || "",
+                        status: linha[idxStatus !== -1 ? idxStatus : 7] || "Pendente"
+                    };
+                }).filter(item => item.cliente || item.equipamento || item.defeito);
+
+                preencherOpcoesFiltros(dadosBrutos);
+                aplicarFiltros();
+
+                const agora = new Date();
+                document.getElementById('ultima-atualizacao').innerText = `Atualizado às ${agora.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}`;
             } catch (erro) {
                 console.error("Erro ao carregar dados:", erro);
             } finally {
@@ -584,27 +601,19 @@
         }
 
         function preencherOpcoesFiltros(dados) {
-            if (dados.length === 0) return;
-            const chaves = Object.keys(dados[0]).filter(k => k !== '_rowIndex');
-
-            const colModelo = chaves.find(k => k.toLowerCase().includes("modelo") || k.toLowerCase().includes("equipamento")) || chaves[0];
-            const colCliente = chaves.find(k => k.toLowerCase().includes("cliente")) || chaves[1];
-            const colDefeito = chaves.find(k => k.toLowerCase().includes("defeito") || k.toLowerCase().includes("falha")) || chaves[2];
-            const colComponente = chaves.find(k => k.toLowerCase().includes("componente") || k.toLowerCase().includes("peça")) || chaves[3];
-
-            popularSelect('select-cliente', dados, colCliente, "Todos os Clientes", false);
-            popularSelect('select-equipamento', dados, colModelo, "Todos os Equipamentos", true);
-            popularSelect('select-defeito', dados, colDefeito, "Todos os Defeitos", false);
-            popularSelect('select-componente', dados, colComponente, "Todos os Componentes", false);
+            popularSelect('select-cliente', dados, 'cliente', "Todos os Clientes", false);
+            popularSelect('select-equipamento', dados, 'equipamento', "Todos os Equipamentos", true);
+            popularSelect('select-defeito', dados, 'defeito', "Todos os Defeitos", false);
+            popularSelect('select-componente', dados, 'componente', "Todos os Componentes", false);
         }
 
-        function popularSelect(idSelect, dados, coluna, placeholder, eModelo) {
+        function popularSelect(idSelect, dados, propriedade, placeholder, eModelo) {
             const select = document.getElementById(idSelect);
-            if (!select || !coluna) return;
+            if (!select) return;
 
             const listaValores = new Set();
             dados.forEach(d => {
-                const val = eModelo ? padronizarModelo(d[coluna]) : padronizarTexto(d[coluna]);
+                const val = eModelo ? padronizarModelo(d[propriedade]) : padronizarTexto(d[propriedade]);
                 if (val) listaValores.add(val);
             });
 
@@ -621,17 +630,11 @@
             const defeitoFiltro = document.getElementById('select-defeito').value;
             const componenteFiltro = document.getElementById('select-componente').value;
 
-            const chaves = dadosBrutos.length > 0 ? Object.keys(dadosBrutos[0]).filter(k => k !== '_rowIndex') : [];
-            const colModelo = chaves.find(k => k.toLowerCase().includes("modelo") || k.toLowerCase().includes("equipamento")) || chaves[0];
-            const colCliente = chaves.find(k => k.toLowerCase().includes("cliente")) || chaves[1];
-            const colDefeito = chaves.find(k => k.toLowerCase().includes("defeito") || k.toLowerCase().includes("falha")) || chaves[2];
-            const colComponente = chaves.find(k => k.toLowerCase().includes("componente") || k.toLowerCase().includes("peça")) || chaves[3];
-
             const dadosFiltrados = dadosBrutos.filter(item => {
-                const atendeCliente = !clienteFiltro || padronizarTexto(item[colCliente]) === clienteFiltro;
-                const atendeEquipamento = !equipamentoFiltro || padronizarModelo(item[colModelo]) === equipamentoFiltro;
-                const atendeDefeito = !defeitoFiltro || padronizarTexto(item[colDefeito]) === defeitoFiltro;
-                const atendeComponente = !componenteFiltro || padronizarTexto(item[colComponente]) === componenteFiltro;
+                const atendeCliente = !clienteFiltro || padronizarTexto(item.cliente) === clienteFiltro;
+                const atendeEquipamento = !equipamentoFiltro || padronizarModelo(item.equipamento) === equipamentoFiltro;
+                const atendeDefeito = !defeitoFiltro || padronizarTexto(item.defeito) === defeitoFiltro;
+                const atendeComponente = !componenteFiltro || padronizarTexto(item.componente) === componenteFiltro;
 
                 const textoLinha = Object.values(item).join(" ").toLowerCase();
                 const atendeBusca = !termoBusca || textoLinha.includes(termoBusca);
@@ -652,10 +655,10 @@
             aplicarFiltros();
         }
 
-        function contarOcorrencias(dados, coluna, eModelo = false) {
+        function contarOcorrencias(dados, propriedade, eModelo = false) {
             const contagem = {};
             dados.forEach(item => {
-                const valor = eModelo ? padronizarModelo(item[coluna]) : padronizarTexto(item[coluna]);
+                const valor = eModelo ? padronizarModelo(item[propriedade]) : padronizarTexto(item[propriedade]);
                 if (valor) contagem[valor] = (contagem[valor] || 0) + 1;
             });
             return contagem;
@@ -683,16 +686,10 @@
             const total = dados.length;
             document.getElementById('card-total').innerText = total;
 
-            const chaves = total > 0 ? Object.keys(dados[0]).filter(k => k !== '_rowIndex') : [];
-            const colModelo = chaves.find(k => k.toLowerCase().includes("modelo") || k.toLowerCase().includes("equipamento")) || chaves[0];
-            const colCliente = chaves.find(k => k.toLowerCase().includes("cliente")) || chaves[1];
-            const colDefeito = chaves.find(k => k.toLowerCase().includes("defeito") || k.toLowerCase().includes("falha")) || chaves[2];
-            const colComponente = chaves.find(k => k.toLowerCase().includes("componente") || k.toLowerCase().includes("peça")) || chaves[3];
-
-            const contModelo = contarOcorrencias(dados, colModelo, true);
-            const contCliente = contarOcorrencias(dados, colCliente);
-            const contDefeito = contarOcorrencias(dados, colDefeito);
-            const contComponente = contarOcorrencias(dados, colComponente);
+            const contModelo = contarOcorrencias(dados, 'equipamento', true);
+            const contCliente = contarOcorrencias(dados, 'cliente');
+            const contDefeito = contarOcorrencias(dados, 'defeito');
+            const contComponente = contarOcorrencias(dados, 'componente');
 
             const maiorDef = obterMaior(contDefeito);
             const maiorComp = obterMaior(contComponente);
@@ -732,24 +729,22 @@
             }
 
             dados.forEach(item => {
-                const { _rowIndex, ...colunas } = item;
-                const vals = Object.values(colunas);
-                const statusTexto = padronizarTexto(vals[7]) || 'Pendente';
+                const statusTexto = padronizarTexto(item.status) || 'Pendente';
                 const classeStatus = obterClasseStatus(statusTexto);
 
                 corpo.innerHTML += `
                     <tr class="transition-colors">
-                        <td class="p-3 font-medium">${padronizarTexto(vals[0]) || '-'}</td>
-                        <td class="p-3">${padronizarTexto(vals[1]) || '-'}</td>
-                        <td class="p-3 font-semibold text-blue-400">${padronizarModelo(vals[2]) || '-'}</td>
-                        <td class="p-3 text-rose-500 font-medium">${padronizarTexto(vals[3]) || '-'}</td>
-                        <td class="p-3">${padronizarTexto(vals[4]) || '-'}</td>
-                        <td class="p-3 text-amber-500 font-medium">${padronizarTexto(vals[5]) || '-'}</td>
-                        <td class="p-3">${padronizarTexto(vals[6]) || '-'}</td>
+                        <td class="p-3 font-medium">${padronizarTexto(item.data) || '-'}</td>
+                        <td class="p-3">${padronizarTexto(item.cliente) || '-'}</td>
+                        <td class="p-3 font-semibold text-blue-400">${padronizarModelo(item.equipamento) || '-'}</td>
+                        <td class="p-3 text-rose-500 font-medium">${padronizarTexto(item.defeito) || '-'}</td>
+                        <td class="p-3">${padronizarTexto(item.causa) || '-'}</td>
+                        <td class="p-3 text-amber-500 font-medium">${padronizarTexto(item.componente) || '-'}</td>
+                        <td class="p-3">${padronizarTexto(item.acao) || '-'}</td>
                         <td class="p-3">
                             <select 
                                 data-status-atual="${statusTexto}"
-                                onchange="atualizarStatus(${_rowIndex}, this.value, this)"
+                                onchange="atualizarStatus(${item._rowIndex}, this.value, this)"
                                 class="status-select ${classeStatus}"
                                 title="Clique para alterar a situação">
                                 <option value="Concluído" ${statusTexto === 'Concluído' ? 'selected' : ''}>Concluído</option>
@@ -758,7 +753,7 @@
                             </select>
                         </td>
                         <td class="p-3 text-center">
-                            <button onclick="excluirRegistro(${_rowIndex})" title="Excluir Registro" class="text-slate-400 hover:text-rose-500 p-1 transition-colors">
+                            <button onclick="excluirRegistro(${item._rowIndex})" title="Excluir Registro" class="text-slate-400 hover:text-rose-500 p-1 transition-colors">
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
                         </td>
