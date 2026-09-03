@@ -363,7 +363,7 @@
     <!-- SCRIPT DE LÓGICA E DADOS -->
     <script>
         const URL_GOOGLE_SHEETS_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSaXyWBuLvG8G3VrwGcmMqk98vRk0V4L2Tv4rZnJispuDpLQIrjFmBC9UKLz0IrUDZxFhqqXZM-BB6s/pub?gid=0&single=true&output=csv";
-        const URL_APPS_SCRIPT_WEBAPP = "https://script.google.com/macros/s/AKfycbxNRfqOPNrMq-iIotevwE3TTZbXCGBKma_r2BSh8LPXCrmpWkKTdIc1FjtOS9ay7e02Ow/exec";
+        const URL_APPS_SCRIPT_WEBAPP = "https://script.google.com/macros/s/AKfycbwjU2H_WV8R9hwpuRQ5H03ocnHAMRCFqqRyDz7yMq9xc1qoWgGb6dVXZ6e96B2redx_TA/exec";
         const SENHA_AUTORIZACAO = "1234";
 
         let dadosBrutos = [];
@@ -498,12 +498,21 @@
                     body: bodyParams
                 });
 
+                selectElement.setAttribute('data-status-atual', novoStatus);
+                selectElement.className = `status-select ${obterClasseStatus(novoStatus)}`;
+
+                const itemLocal = dadosBrutos.find(d => d._rowIndex === rowIndex);
+                if (itemLocal) {
+                    const chaves = Object.keys(itemLocal);
+                    itemLocal[chaves[7]] = novoStatus;
+                }
+
                 alert("Status atualizado com sucesso!");
-                setTimeout(carregarDadosPlanilha, 2000);
             } catch (erro) {
                 console.error("Erro ao atualizar status:", erro);
                 alert("Erro ao atualizar o status na planilha.");
                 selectElement.value = statusAnterior;
+            } finally {
                 selectElement.disabled = false;
             }
         }
@@ -554,7 +563,6 @@
                     header: true,
                     skipEmptyLines: true,
                     complete: function(results) {
-                        // Filtra linhas onde os principais campos estão vazios
                         dadosBrutos = results.data
                             .map((row, index) => ({ ...row, _rowIndex: index + 2 }))
                             .filter(row => {
