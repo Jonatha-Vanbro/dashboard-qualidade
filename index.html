@@ -1,805 +1,748 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel de Controle - Qualidade</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel de Controle - Qualidade</title>
+<link rel="icon" type="image/png" href="favicon.png">
 
-    <link rel="icon" type="image/png" href="favicon.png?v=2">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- PapaParse -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- PapaParse -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-    <!-- FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        /* --- ESTILOS PADRÃO (MODO ESCURO - ALTO CONTRASTE) --- */
-        body { 
-            background-color: #0f172a; 
-            color: #f8fafc;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif; 
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
+<style>
+  :root{
+    --navy:#1B3B63;
+    --navy-dark:#122C4C;
+    --page-bg:#EEF2F7;
+    --card-bg:#FFFFFF;
+    --border:#E3E8EF;
+    --ink:#1F2A3A;
+    --muted:#6B7686;
+    --orange:#F2994A;
+    --orange-dark:#DD8235;
 
-        aside {
-            background-color: #1e293b;
-            border-color: #334155;
-        }
+    --pill-green-bg:#E5F6EA; --pill-green-txt:#1F8A4C;
+    --pill-red-bg:#FCE9E7;   --pill-red-txt:#C0392B;
+    --pill-amber-bg:#FDF0DC; --pill-amber-txt:#B7791F;
+    --pill-mint-bg:#E3F5F1;  --pill-mint-txt:#1E8074;
+    --pill-gray-bg:#EEF0F3;  --pill-gray-txt:#6B7280;
+    --pill-purple-bg:#EFEAFB; --pill-purple-txt:#6B4FBB;
+    --pill-blue-bg:#E7EEFA;  --pill-blue-txt:#2E5FA3;
+  }
+  *{box-sizing:border-box;}
+  body{
+    background:var(--page-bg);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+  }
 
-        aside button {
-            color: #cbd5e1;
-        }
+  .page{
+    max-width:min(1800px, 96vw);
+    margin:0 auto;
+    padding:1.5rem 1.25rem 3rem 1.25rem;
+  }
 
-        aside button:hover {
-            color: #ffffff;
-            background-color: #334155;
-        }
+  header.topbar{
+    background:linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
+    border-radius:14px;
+    padding:1.4rem 1.6rem;
+    display:flex;
+    align-items:center;
+    gap:1rem;
+    flex-wrap:wrap;
+    box-shadow:0 4px 14px rgba(18,44,76,0.25);
+    margin-bottom:1.25rem;
+  }
+  .icon-badge{
+    width:52px;
+    height:52px;
+    border-radius:12px;
+    background:#fff;
+    padding:6px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+  }
+  .icon-badge img{ width:100%; height:100%; object-fit:contain; }
+  header.topbar h1{ color:#fff; font-size:1.4rem; font-weight:800; margin:0; letter-spacing:.2px; }
+  header.topbar .subtitle{ color:rgba(255,255,255,0.75); font-size:.85rem; margin-top:.1rem; }
 
-        h1, h2, h3 {
-            color: #ffffff !important;
-        }
+  .area-acoes{
+    margin-left:auto;
+    display:flex;
+    align-items:center;
+    gap:.6rem;
+    flex-wrap:wrap;
+  }
+  .sync-info{
+    color:rgba(255,255,255,0.8);
+    font-size:.78rem;
+    display:flex;
+    align-items:center;
+    gap:.4rem;
+    white-space:nowrap;
+  }
 
-        p, span, label {
-            color: #cbd5e1;
-        }
+  .btn-navy{
+    background:var(--navy); border-color:var(--navy); color:#fff;
+    font-weight:600; border-radius:9px; padding:.55rem 1rem; font-size:.85rem;
+  }
+  .btn-navy:hover{ background:var(--navy-dark); border-color:var(--navy-dark); color:#fff; }
+  .btn-outline-navy{
+    background:#fff; border:1px solid var(--border); color:var(--navy);
+    font-weight:600; border-radius:9px; font-size:.85rem;
+  }
+  .btn-outline-navy:hover{ background:#F4F7FB; color:var(--navy); }
+  .btn-light-topo{
+    background:rgba(255,255,255,0.12);
+    border:1px solid rgba(255,255,255,0.3);
+    color:#fff; font-weight:600; border-radius:9px; font-size:.85rem;
+  }
+  .btn-light-topo:hover{ background:rgba(255,255,255,0.22); color:#fff; }
 
-        .skeuo-card {
-            background: #1e293b;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-            border: 1px solid #334155;
-            border-radius: 16px;
-        }
+  .card{
+    background:var(--card-bg);
+    border:1px solid var(--border);
+    border-radius:12px;
+    box-shadow:0 1px 3px rgba(15,35,60,0.06);
+    padding:1.25rem;
+    margin-bottom:1.1rem;
+  }
+  .card-title{
+    display:flex; align-items:center; gap:.5rem;
+    font-weight:700; font-size:1rem; color:var(--ink); margin-bottom:.15rem;
+  }
+  .card-subtitle{ color:var(--muted); font-size:.8rem; margin-bottom:1rem; }
+  .card-title svg{ width:18px; height:18px; color:var(--navy); }
 
-        .skeuo-input {
-            background: #0f172a;
-            color: #ffffff;
-            border: 1px solid #475569;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
-            border-radius: 12px;
-        }
+  label.field-label{ font-size:.8rem; font-weight:600; color:var(--ink); margin-bottom:.3rem; display:block; }
+  .form-select, .form-control{ border-radius:8px; border-color:var(--border); font-size:.85rem; }
+  .form-select:focus, .form-control:focus{ border-color:var(--navy); box-shadow:0 0 0 .2rem rgba(27,59,99,0.12); }
 
-        .skeuo-input option {
-            background: #0f172a;
-            color: #ffffff;
-        }
+  .filter-row{ display:flex; flex-wrap:wrap; gap:.6rem; align-items:center; }
+  .filter-row .form-select{ max-width:220px; }
+  .filter-row .busca-wrap{ position:relative; flex:1; min-width:220px; }
+  .filter-row .busca-wrap svg{
+    position:absolute; left:10px; top:50%; transform:translateY(-50%);
+    width:15px; height:15px; color:var(--muted);
+  }
+  .filter-row .busca-wrap input{ padding-left:32px; }
 
-        /* BOTÕES PRINCIPAIS */
-        .skeuo-button {
-            background: linear-gradient(180deg, #1091a1, #085f6a);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.3);
-            border-radius: 10px;
-            color: #ffffff !important;
-        }
+  /* Cards de métricas (mesmo padrão "resumo" do ATA Engenharia) */
+  .resumo-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+    gap:.75rem;
+  }
+  .resumo-tile{
+    border-radius:10px;
+    padding:.85rem 1rem;
+    display:flex; flex-direction:column; gap:.15rem;
+  }
+  .resumo-tile svg{ width:16px; height:16px; opacity:.8; }
+  .resumo-tile .valor{ font-size:1.35rem; font-weight:800; line-height:1.2; margin-top:.3rem; word-break:break-word; }
+  .resumo-tile .rotulo{ font-size:.68rem; text-transform:uppercase; letter-spacing:.03em; opacity:.8; }
+  .resumo-tile.t-gray{ background:var(--pill-gray-bg); color:var(--pill-gray-txt); }
+  .resumo-tile.t-red{ background:var(--pill-red-bg); color:var(--pill-red-txt); }
+  .resumo-tile.t-amber{ background:var(--pill-amber-bg); color:var(--pill-amber-txt); }
 
-        .skeuo-button * {
-            color: #ffffff !important;
-        }
+  /* Grid de gráficos */
+  .graficos-grid{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:1.1rem;
+  }
+  @media (max-width: 900px){ .graficos-grid{ grid-template-columns:1fr; } }
+  .grafico-card .grafico-area{ position:relative; height:260px; }
 
-        .skeuo-button-secondary {
-            background: linear-gradient(180deg, #5b92e5, #366ac0);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.3);
-            border-radius: 10px;
-            color: #ffffff !important;
-        }
+  table.registros-table{
+    width:100%;
+    border-collapse:separate;
+    border-spacing:0;
+  }
+  table.registros-table thead th{
+    background:var(--navy); color:#fff;
+    font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.03em;
+    padding:.65rem .75rem; text-align:left; white-space:nowrap;
+  }
+  table.registros-table thead th:first-child{ border-top-left-radius:8px; }
+  table.registros-table thead th:last-child{ border-top-right-radius:8px; }
+  table.registros-table tbody td{
+    padding:.65rem .75rem; border-bottom:1px solid var(--border); font-size:.83rem; vertical-align:top;
+  }
+  table.registros-table tbody tr:hover{ background:#FAFBFD; }
 
-        .skeuo-button-secondary * {
-            color: #ffffff !important;
-        }
+  .pill{
+    display:inline-block; font-size:.72rem; font-weight:700;
+    padding:.2rem .55rem; border-radius:20px; white-space:nowrap;
+  }
+  .pill-green{ background:var(--pill-green-bg); color:var(--pill-green-txt); }
+  .pill-red{ background:var(--pill-red-bg); color:var(--pill-red-txt); }
+  .pill-amber{ background:var(--pill-amber-bg); color:var(--pill-amber-txt); }
+  .pill-mint{ background:var(--pill-mint-bg); color:var(--pill-mint-txt); }
+  .pill-gray{ background:var(--pill-gray-bg); color:var(--pill-gray-txt); }
+  .pill-blue{ background:var(--pill-blue-bg); color:var(--pill-blue-txt); }
 
-        .skeuo-button-neutral {
-            background: #334155;
-            color: #ffffff;
-            border: 1px solid #475569;
-            border-radius: 10px;
-        }
+  .cell-muted{ color:var(--muted); font-size:.8rem; }
 
-        table thead {
-            background-color: #334155 !important;
-            color: #f8fafc !important;
-        }
+  .icon-btn{
+    border:none; background:transparent; color:var(--muted);
+    width:28px; height:28px; border-radius:6px;
+    display:inline-flex; align-items:center; justify-content:center; cursor:pointer;
+  }
+  .icon-btn:hover{ background:var(--pill-red-bg); color:var(--pill-red-txt); }
 
-        table tbody tr {
-            border-color: #334155;
-        }
+  .empty-state{ text-align:center; padding:2.5rem 1rem; color:var(--muted); font-size:.88rem; }
 
-        table tbody tr:hover {
-            background-color: rgba(51, 65, 85, 0.5);
-        }
+  .table-header-row{
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:.5rem; margin-bottom:1rem;
+  }
+  .contador-tabela{ font-size:.78rem; color:var(--muted); font-weight:600; }
 
-        table td {
-            color: #e2e8f0;
-        }
-
-        /* --- MODO CLARO --- */
-        body.light-mode {
-            background-color: #e6ecf3;
-            color: #1e293b;
-        }
-
-        body.light-mode aside {
-            background-color: rgba(226, 232, 240, 0.6);
-            border-color: rgba(203, 213, 225, 0.6);
-        }
-
-        body.light-mode aside button {
-            color: #64748b;
-        }
-
-        body.light-mode aside button:hover {
-            color: #0f172a;
-            background-color: #cbd5e1;
-        }
-
-        body.light-mode h1, 
-        body.light-mode h2, 
-        body.light-mode h3 {
-            color: #0f172a !important;
-        }
-
-        body.light-mode p, 
-        body.light-mode span, 
-        body.light-mode label {
-            color: #64748b;
-        }
-
-        body.light-mode .skeuo-card {
-            background: linear-gradient(145deg, #ffffff, #e6ecf0);
-            box-shadow: 6px 6px 14px #cbd5e1, -6px -6px 14px #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.8);
-        }
-
-        body.light-mode .skeuo-input {
-            background: #eaf0f6;
-            color: #334155;
-            box-shadow: inset 2px 2px 5px #c2cdd8, inset -2px -2px 5px #ffffff;
-            border: 1px solid #d1dbe5;
-        }
-
-        body.light-mode .skeuo-input option {
-            background: #ffffff;
-            color: #334155;
-        }
-
-        body.light-mode .skeuo-button span,
-        body.light-mode .skeuo-button i,
-        body.light-mode .skeuo-button-secondary span,
-        body.light-mode .skeuo-button-secondary i {
-            color: #ffffff !important;
-        }
-
-        body.light-mode .skeuo-button-neutral {
-            background: linear-gradient(180deg, #ffffff, #e2e8f0);
-            color: #475569;
-            box-shadow: 2px 2px 5px #cbd5e1, -2px -2px 5px #ffffff;
-            border: 1px solid #cbd5e1;
-        }
-
-        body.light-mode table thead {
-            background-color: rgba(226, 232, 240, 0.8) !important;
-            color: #334155 !important;
-        }
-
-        body.light-mode table tbody tr {
-            border-color: rgba(226, 232, 240, 0.6);
-        }
-
-        body.light-mode table tbody tr:hover {
-            background-color: rgba(226, 232, 240, 0.4);
-        }
-
-        body.light-mode table td {
-            color: #475569;
-        }
-    </style>
+  .modal-content{ border-radius:12px; }
+  .modal-header{ background:var(--navy); color:#fff; border-radius:12px 12px 0 0; }
+</style>
 </head>
-<body class="flex min-h-screen">
+<body>
 
-    <!-- MENU LATERAL DA ESQUERDA -->
-    <aside class="w-16 border-r flex flex-col items-center py-5 justify-between shadow-inner hidden md:flex sticky top-0 h-screen transition-colors">
-        <div class="space-y-6 text-lg">
-            <button onclick="irParaSecao('topo')" title="Visão Geral (Início)" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
-                <i class="fa-solid fa-shapes"></i>
-            </button>
-            <button onclick="irParaSecao('secao-graficos')" title="Ir para Gráficos" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
-                <i class="fa-solid fa-chart-simple"></i>
-            </button>
-            <button onclick="irParaSecao('secao-tabela')" title="Ir para Tabela de Ocorrências" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
-                <i class="fa-solid fa-arrow-rotate-left"></i>
-            </button>
-            <button onclick="focarBusca()" title="Focar Campo de Busca" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
-                <i class="fa-solid fa-sliders"></i>
-            </button>
-        </div>
+<div class="page">
 
-        <div class="space-y-4 text-lg">
-            <button onclick="carregarDadosPlanilha()" title="Sincronizar Planilha" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
-                <i class="fa-solid fa-gear"></i>
-            </button>
-            <button onclick="alternarModoClaro()" id="btn-tema" title="Alternar para Modo Claro" class="p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center">
-                <i class="fa-solid fa-sun" id="icon-tema"></i>
-            </button>
-        </div>
-    </aside>
-
-    <!-- CONTEÚDO PRINCIPAL -->
-    <main id="topo" class="flex-1 p-4 md:p-6 space-y-6 max-w-[1600px] mx-auto w-full">
-        
-        <!-- CABEÇALHO -->
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div class="flex items-center gap-4">
-                <img src="Logo.png" alt="Logo da Empresa" class="h-16 w-auto object-contain">
-                <div>
-                    <h1 class="text-2xl font-black tracking-tight">Painel de Controle - Qualidade</h1>
-                    <p class="text-xs font-medium">Acompanhamento e consulta de ocorrências</p>
-                </div>
-            </div>
-
-            <div class="skeuo-card p-2 px-4 flex items-center gap-3">
-                <i class="fa-regular fa-calendar-days text-slate-400"></i>
-                <span id="ultima-atualizacao" class="text-xs font-medium">Atualizado recentemente</span>
-                
-                <button onclick="abrirModal()" class="skeuo-button text-xs font-bold px-4 py-2 transition-all active:scale-95 flex items-center gap-2">
-                    <i class="fa-solid fa-plus"></i>
-                    <span>Novo Registro</span>
-                </button>
-
-                <button onclick="carregarDadosPlanilha()" class="skeuo-button-secondary text-xs font-bold px-4 py-2 transition-all active:scale-95 flex items-center gap-2">
-                    <i class="fa-solid fa-rotate" id="icon-sync"></i>
-                    <span>Sincronizar</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- BARRA DE PESQUISA E FILTROS -->
-        <div class="skeuo-card p-4 space-y-3">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-                <div class="md:col-span-3 relative">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-slate-400"></i>
-                    <input type="text" id="input-busca" oninput="aplicarFiltros()" placeholder="Buscar por palavra-chave..." class="w-full pl-9 pr-4 py-2.5 skeuo-input text-xs focus:outline-none">
-                </div>
-                <div>
-                    <button onclick="limparFiltros()" class="w-full py-2.5 px-4 skeuo-button-neutral text-xs font-bold transition-all flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-filter-circle-xmark"></i>
-                        <span>Limpar Filtros</span>
-                    </button>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 pt-1">
-                <select id="select-cliente" onchange="aplicarFiltros()" class="w-full py-2 px-3 skeuo-input text-xs focus:outline-none">
-                    <option value="">Todos os Clientes</option>
-                </select>
-                <select id="select-equipamento" onchange="aplicarFiltros()" class="w-full py-2 px-3 skeuo-input text-xs focus:outline-none">
-                    <option value="">Todos os Equipamentos</option>
-                </select>
-                <select id="select-defeito" onchange="aplicarFiltros()" class="w-full py-2 px-3 skeuo-input text-xs focus:outline-none">
-                    <option value="">Todos os Defeitos</option>
-                </select>
-                <select id="select-componente" onchange="aplicarFiltros()" class="w-full py-2 px-3 skeuo-input text-xs focus:outline-none">
-                    <option value="">Todos os Componentes</option>
-                </select>
-            </div>
-        </div>
-
-        <!-- CARDS DE MÉTRICAS -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <div class="skeuo-card p-5 border-l-8 border-l-blue-500">
-                <div class="flex justify-between items-center">
-                    <p class="text-xs font-bold uppercase tracking-wider">Total Registrado</p>
-                    <div class="p-2 bg-blue-500/10 text-blue-500 rounded-lg text-xs"><i class="fa-solid fa-clipboard-list"></i></div>
-                </div>
-                <p id="card-total" class="text-3xl font-black mt-2">0</p>
-            </div>
-
-            <div class="skeuo-card p-5 border-l-8 border-l-rose-500">
-                <div class="flex justify-between items-center">
-                    <p class="text-xs font-bold uppercase tracking-wider">Principal Defeito</p>
-                    <div class="p-2 bg-rose-500/10 text-rose-500 rounded-lg text-xs"><i class="fa-solid fa-triangle-exclamation"></i></div>
-                </div>
-                <p id="card-defeito" class="text-lg font-black text-rose-500 mt-2 truncate uppercase">-</p>
-            </div>
-
-            <div class="skeuo-card p-5 border-l-8 border-l-amber-500">
-                <div class="flex justify-between items-center">
-                    <p class="text-xs font-bold uppercase tracking-wider">Componente Mais Afetado</p>
-                    <div class="p-2 bg-amber-500/10 text-amber-500 rounded-lg text-xs"><i class="fa-solid fa-microchip"></i></div>
-                </div>
-                <p id="card-componente" class="text-lg font-black text-amber-500 mt-2 truncate uppercase">-</p>
-            </div>
-        </div>
-
-        <!-- PAINEL DE GRÁFICOS -->
-        <div id="secao-graficos" class="grid grid-cols-1 md:grid-cols-2 gap-6 scroll-mt-6">
-            <div class="skeuo-card p-5">
-                <h2 class="text-xs font-extrabold mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-cube text-blue-500"></i> Ocorrências por Modelo (Top 8)
-                </h2>
-                <div class="relative h-64"><canvas id="chartModelos"></canvas></div>
-            </div>
-
-            <div class="skeuo-card p-5">
-                <h2 class="text-xs font-extrabold mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-users text-emerald-500"></i> Ocorrências por Cliente
-                </h2>
-                <div class="relative h-64"><canvas id="chartClientes"></canvas></div>
-            </div>
-
-            <div class="skeuo-card p-5">
-                <h2 class="text-xs font-extrabold mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-circle-exclamation text-rose-500"></i> Tipos de Defeitos
-                </h2>
-                <div class="relative h-64"><canvas id="chartDefeitos"></canvas></div>
-            </div>
-
-            <div class="skeuo-card p-5">
-                <h2 class="text-xs font-extrabold mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-gears text-amber-500"></i> Componentes Afetados
-                </h2>
-                <div class="relative h-64"><canvas id="chartComponentes"></canvas></div>
-            </div>
-        </div>
-
-        <!-- TABELA DE REGISTROS -->
-        <div id="secao-tabela" class="skeuo-card p-5 scroll-mt-6">
-            <h2 class="text-xs font-extrabold mb-4 flex items-center justify-between">
-                <span><i class="fa-solid fa-table text-slate-400 mr-2"></i>Registros Encontrados</span>
-                <span id="contador-tabela" class="text-xs font-normal"></span>
-            </h2>
-            <div class="overflow-x-auto max-h-96">
-                <table class="w-full text-left text-xs border-collapse">
-                    <thead class="sticky top-0 font-bold">
-                        <tr>
-                            <th class="p-3">Data</th>
-                            <th class="p-3">Cliente</th>
-                            <th class="p-3">Equipamento</th>
-                            <th class="p-3">Defeito</th>
-                            <th class="p-3">Causa Raiz</th>
-                            <th class="p-3">Componente</th>
-                            <th class="p-3">Ação Tomada</th>
-                            <th class="p-3 text-center">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabela-corpo" class="divide-y"></tbody>
-                </table>
-            </div>
-        </div>
-
-    </main>
-
-    <!-- MODAL DE REGISTRO -->
-    <div id="modal-registro" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-        <div class="skeuo-card max-w-2xl w-full p-6 space-y-4">
-            <div class="flex justify-between items-center border-b border-slate-500/30 pb-3">
-                <h3 class="text-base font-bold"><i class="fa-solid fa-pen-to-square text-emerald-500 mr-2"></i>Nova Ocorrência</h3>
-                <button onclick="fecharModal()" class="text-slate-400 hover:text-slate-200 text-lg"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-
-            <form id="form-ocorrencia" onsubmit="enviarNovoRegistro(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                <div>
-                    <label class="block text-xs font-semibold mb-1">Data</label>
-                    <input type="date" id="add-data" required class="w-full p-2 skeuo-input text-xs outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold mb-1">Cliente</label>
-                    <input type="text" id="add-cliente" required placeholder="Ex: Cliente X" class="w-full p-2 skeuo-input text-xs outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold mb-1">Equipamento / Modelo</label>
-                    <input type="text" id="add-equipamento" required placeholder="Ex: PUMPER 500" class="w-full p-2 skeuo-input text-xs outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold mb-1">Defeito</label>
-                    <input type="text" id="add-defeito" required placeholder="Ex: Baixa Pressão" class="w-full p-2 skeuo-input text-xs outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold mb-1">Causa Raiz</label>
-                    <input type="text" id="add-causa" placeholder="Ex: Desgastada" class="w-full p-2 skeuo-input text-xs outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold mb-1">Componente</label>
-                    <input type="text" id="add-componente" required placeholder="Ex: Rotor" class="w-full p-2 skeuo-input text-xs outline-none">
-                </div>
-                <div class="md:col-span-2">
-                    <label class="block text-xs font-semibold mb-1">Ação Tomada</label>
-                    <input type="text" id="add-acao" placeholder="Ex: Substituição efetuada" class="w-full p-2 skeuo-input text-xs outline-none">
-                </div>
-
-                <div class="md:col-span-2">
-                    <label class="block text-xs font-semibold mb-1">
-                        <i class="fa-solid fa-lock text-slate-400 mr-1"></i>Senha de Autorização
-                    </label>
-                    <input type="password" id="add-senha" required placeholder="Digite a senha para salvar" class="w-full p-2 skeuo-input text-xs outline-none">
-                </div>
-
-                <div class="md:col-span-2 flex justify-end gap-3 pt-3 border-t border-slate-500/30">
-                    <button type="button" onclick="fecharModal()" class="px-4 py-2 skeuo-button-neutral rounded-lg font-bold text-xs">Cancelar</button>
-                    <button type="submit" id="btn-salvar" class="px-4 py-2 skeuo-button text-white rounded-lg font-bold text-xs flex items-center gap-2">
-                        <i class="fa-solid fa-floppy-disk"></i>
-                        <span>Salvar Registro</span>
-                    </button>
-                </div>
-            </form>
-        </div>
+  <header class="topbar">
+    <div class="icon-badge">
+      <img src="Logo.png" alt="Logo da Empresa">
     </div>
+    <div>
+      <h1>Painel de Controle - Qualidade</h1>
+      <div class="subtitle">Acompanhamento e consulta de ocorrências</div>
+    </div>
+    <div class="area-acoes">
+      <span class="sync-info">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>
+        <span id="ultima-atualizacao">Atualizado recentemente</span>
+      </span>
+      <button class="btn btn-light-topo btn-sm" id="btnNovoRegistro">+ Novo Registro</button>
+      <button class="btn btn-light-topo btn-sm" id="btnSincronizar">↻ Sincronizar</button>
+    </div>
+  </header>
 
-    <!-- SCRIPT DE LÓGICA E DADOS -->
-    <script>
-        const URL_GOOGLE_SHEETS_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSaXyWBuLvG8G3VrwGcmMqk98vRk0V4L2Tv4rZnJispuDpLQIrjFmBC9UKLz0IrUDZxFhqqXZM-BB6s/pub?gid=0&single=true&output=csv";
-        const URL_APPS_SCRIPT_WEBAPP = "https://script.google.com/macros/s/AKfycbxNRfqOPNrMq-iIotevwE3TTZbXCGBKma_r2BSh8LPXCrmpWkKTdIc1FjtOS9ay7e02Ow/exec";
-        const SENHA_AUTORIZACAO = "434";
+  <!-- FILTROS -->
+  <div class="card">
+    <div class="card-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16l-6 8v6l-4 2v-8L4 4z"></path></svg>
+      Filtros
+    </div>
+    <div class="card-subtitle">Busque e refine os registros de ocorrências</div>
+    <div class="filter-row">
+      <div class="busca-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>
+        <input type="text" id="input-busca" class="form-control" placeholder="Buscar por palavra-chave...">
+      </div>
+      <select id="select-cliente" class="form-select"><option value="">Todos os Clientes</option></select>
+      <select id="select-equipamento" class="form-select"><option value="">Todos os Equipamentos</option></select>
+      <select id="select-defeito" class="form-select"><option value="">Todos os Defeitos</option></select>
+      <select id="select-componente" class="form-select"><option value="">Todos os Componentes</option></select>
+      <button class="btn btn-outline-navy btn-sm" id="btnLimparFiltros">Limpar filtros</button>
+    </div>
+  </div>
 
-        let dadosBrutos = [];
-        let chart1 = null, chart2 = null, chart3 = null, chart4 = null;
+  <!-- MÉTRICAS -->
+  <div class="card">
+    <div class="card-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M3 10h18"></path></svg>
+      Resumo
+    </div>
+    <div class="card-subtitle">Panorama geral das ocorrências filtradas</div>
+    <div class="resumo-grid">
+      <div class="resumo-tile t-gray">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+        <div class="valor" id="card-total">0</div>
+        <div class="rotulo">Total Registrado</div>
+      </div>
+      <div class="resumo-tile t-red">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"></path><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"></path><path d="M12 17h.01"></path></svg>
+        <div class="valor" id="card-defeito">-</div>
+        <div class="rotulo">Principal Defeito</div>
+      </div>
+      <div class="resumo-tile t-amber">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        <div class="valor" id="card-componente">-</div>
+        <div class="rotulo">Componente Mais Afetado</div>
+      </div>
+    </div>
+  </div>
 
-        function irParaSecao(id) {
-            if (id === 'topo') limparFiltros();
-            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
-        }
+  <!-- GRÁFICOS -->
+  <div class="graficos-grid">
+    <div class="card grafico-card">
+      <div class="card-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        Ocorrências por Modelo (Top 8)
+      </div>
+      <div class="grafico-area"><canvas id="chartModelos"></canvas></div>
+    </div>
+    <div class="card grafico-card">
+      <div class="card-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        Ocorrências por Cliente
+      </div>
+      <div class="grafico-area"><canvas id="chartClientes"></canvas></div>
+    </div>
+    <div class="card grafico-card">
+      <div class="card-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"></path><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"></path><path d="M12 17h.01"></path></svg>
+        Tipos de Defeitos
+      </div>
+      <div class="grafico-area"><canvas id="chartDefeitos"></canvas></div>
+    </div>
+    <div class="card grafico-card">
+      <div class="card-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        Componentes Afetados
+      </div>
+      <div class="grafico-area"><canvas id="chartComponentes"></canvas></div>
+    </div>
+  </div>
 
-        function focarBusca() {
-            const input = document.getElementById('input-busca');
-            input.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            setTimeout(() => input.focus(), 300);
-        }
+  <!-- TABELA -->
+  <div class="card">
+    <div class="table-header-row">
+      <div class="card-title" style="margin-bottom:0;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M3 10h18"></path></svg>
+        Registros Encontrados
+      </div>
+      <span class="contador-tabela" id="contador-tabela"></span>
+    </div>
+    <div style="overflow-x:auto; max-height:520px; overflow-y:auto;">
+      <table class="registros-table">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Cliente</th>
+            <th>Equipamento</th>
+            <th>Defeito</th>
+            <th>Causa Raiz</th>
+            <th>Componente</th>
+            <th>Ação Tomada</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="tabela-corpo"></tbody>
+      </table>
+    </div>
+  </div>
 
-        function alternarModoClaro() {
-            document.body.classList.toggle('light-mode');
-            const icon = document.getElementById('icon-tema');
-            const btn = document.getElementById('btn-tema');
+</div>
 
-            if (document.body.classList.contains('light-mode')) {
-                icon.className = "fa-solid fa-moon";
-                btn.title = "Alternar para Modo Escuro";
-            } else {
-                icon.className = "fa-solid fa-sun";
-                btn.title = "Alternar para Modo Claro";
-            }
+<!-- MODAL NOVO REGISTRO -->
+<div class="modal fade" id="modalRegistro" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Nova Ocorrência</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <form id="form-ocorrencia">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6 mb-2">
+              <label class="field-label">Data</label>
+              <input type="date" id="add-data" class="form-control" required>
+            </div>
+            <div class="col-md-6 mb-2">
+              <label class="field-label">Cliente</label>
+              <input type="text" id="add-cliente" class="form-control" required placeholder="Ex: Cliente X">
+            </div>
+            <div class="col-md-6 mb-2">
+              <label class="field-label">Equipamento / Modelo</label>
+              <input type="text" id="add-equipamento" class="form-control" required placeholder="Ex: PUMPER 500">
+            </div>
+            <div class="col-md-6 mb-2">
+              <label class="field-label">Defeito</label>
+              <input type="text" id="add-defeito" class="form-control" required placeholder="Ex: Baixa Pressão">
+            </div>
+            <div class="col-md-6 mb-2">
+              <label class="field-label">Causa Raiz</label>
+              <input type="text" id="add-causa" class="form-control" placeholder="Ex: Desgastada">
+            </div>
+            <div class="col-md-6 mb-2">
+              <label class="field-label">Componente</label>
+              <input type="text" id="add-componente" class="form-control" required placeholder="Ex: Rotor">
+            </div>
+            <div class="col-12 mb-2">
+              <label class="field-label">Ação Tomada</label>
+              <input type="text" id="add-acao" class="form-control" placeholder="Ex: Substituição efetuada">
+            </div>
+            <div class="col-12 mb-2">
+              <label class="field-label">Senha de Autorização</label>
+              <input type="password" id="add-senha" class="form-control" required placeholder="Digite a senha para salvar">
+            </div>
+          </div>
+          <div class="text-danger" style="font-size:.78rem;" id="erroFormulario"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" id="btn-salvar" class="btn btn-navy btn-sm">Salvar Registro</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
-            aplicarFiltros();
-        }
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+/* ============================================================================
+   PAINEL DE CONTROLE - QUALIDADE — FRONTEND (visual alinhado ao ATA Engenharia)
+   ============================================================================ */
+const URL_GOOGLE_SHEETS_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSaXyWBuLvG8G3VrwGcmMqk98vRk0V4L2Tv4rZnJispuDpLQIrjFmBC9UKLz0IrUDZxFhqqXZM-BB6s/pub?gid=0&single=true&output=csv";
+const URL_APPS_SCRIPT_WEBAPP = "https://script.google.com/macros/s/AKfycbxNRfqOPNrMq-iIotevwE3TTZbXCGBKma_r2BSh8LPXCrmpWkKTdIc1FjtOS9ay7e02Ow/exec";
+const SENHA_AUTORIZACAO = "434";
 
-        /* CONVERTE TODO O TEXTO PARA MAIÚSCULAS */
-        function padronizarTexto(texto) {
-            if (!texto) return "";
-            return texto.toString().trim().toUpperCase();
-        }
+let dadosBrutos = [];
+let chart1 = null, chart2 = null, chart3 = null, chart4 = null;
 
-        function padronizarModelo(texto) {
-            if (!texto) return "";
-            return texto.toString().trim().toUpperCase();
-        }
+const modalRegistro = new bootstrap.Modal(document.getElementById('modalRegistro'));
 
-        function abrirModal() {
-            document.getElementById('modal-registro').classList.remove('hidden');
-            document.getElementById('modal-registro').classList.add('flex');
-            document.getElementById('add-data').valueAsDate = new Date();
-        }
+function padronizarTexto(texto) {
+  if (!texto) return "";
+  return texto.toString().trim().toUpperCase();
+}
 
-        function fecharModal() {
-            document.getElementById('modal-registro').classList.add('hidden');
-            document.getElementById('modal-registro').classList.remove('flex');
-            document.getElementById('form-ocorrencia').reset();
-        }
+document.getElementById('btnNovoRegistro').addEventListener('click', () => {
+  document.getElementById('add-data').valueAsDate = new Date();
+  document.getElementById('erroFormulario').textContent = '';
+  modalRegistro.show();
+});
 
-        async function enviarNovoRegistro(e) {
-            e.preventDefault();
+document.getElementById('btnSincronizar').addEventListener('click', carregarDadosPlanilha);
+document.getElementById('btnLimparFiltros').addEventListener('click', limparFiltros);
 
-            const senhaDigitada = document.getElementById('add-senha').value;
-            if (senhaDigitada !== SENHA_AUTORIZACAO) {
-                alert("Senha incorreta! Registro não autorizado.");
-                document.getElementById('add-senha').focus();
-                return;
-            }
+['input-busca'].forEach(id => document.getElementById(id).addEventListener('input', aplicarFiltros));
+['select-cliente','select-equipamento','select-defeito','select-componente'].forEach(id =>
+  document.getElementById(id).addEventListener('change', aplicarFiltros)
+);
 
-            const btn = document.getElementById('btn-salvar');
-            btn.disabled = true;
-            btn.innerText = "Salvando...";
+document.getElementById('form-ocorrencia').addEventListener('submit', enviarNovoRegistro);
 
-            const payload = {
-                data: document.getElementById('add-data').value,
-                cliente: document.getElementById('add-cliente').value,
-                equipamento: document.getElementById('add-equipamento').value,
-                defeito: document.getElementById('add-defeito').value,
-                causa: document.getElementById('add-causa').value,
-                componente: document.getElementById('add-componente').value,
-                acao: document.getElementById('add-acao').value
-            };
+async function enviarNovoRegistro(e) {
+  e.preventDefault();
+  const erroEl = document.getElementById('erroFormulario');
+  erroEl.textContent = '';
 
-            try {
-                await fetch(URL_APPS_SCRIPT_WEBAPP, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
+  const senhaDigitada = document.getElementById('add-senha').value;
+  if (senhaDigitada !== SENHA_AUTORIZACAO) {
+    erroEl.textContent = "Senha incorreta! Registro não autorizado.";
+    return;
+  }
 
-                alert("Ocorrência gravada com sucesso!");
-                fecharModal();
-                setTimeout(carregarDadosPlanilha, 1500);
-            } catch (erro) {
-                console.error("Erro ao salvar:", erro);
-                alert("Erro ao gravar dados na planilha.");
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> <span>Salvar Registro</span>`;
-            }
-        }
+  const btn = document.getElementById('btn-salvar');
+  btn.disabled = true;
+  btn.innerText = "Salvando...";
 
-        async function excluirRegistro(rowIndex) {
-            const senha = prompt("Digite a senha de autorização para excluir este registro:");
-            if (senha === null) return;
+  const payload = {
+    data: document.getElementById('add-data').value,
+    cliente: document.getElementById('add-cliente').value,
+    equipamento: document.getElementById('add-equipamento').value,
+    defeito: document.getElementById('add-defeito').value,
+    causa: document.getElementById('add-causa').value,
+    componente: document.getElementById('add-componente').value,
+    acao: document.getElementById('add-acao').value
+  };
 
-            if (senha !== SENHA_AUTORIZACAO) {
-                alert("Senha incorreta! Exclusão não autorizada.");
-                return;
-            }
+  try {
+    await fetch(URL_APPS_SCRIPT_WEBAPP, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
 
-            if (!confirm("Tem certeza que deseja apagar este registro da planilha?")) return;
+    modalRegistro.hide();
+    document.getElementById('form-ocorrencia').reset();
+    setTimeout(carregarDadosPlanilha, 1500);
+  } catch (erro) {
+    console.error("Erro ao salvar:", erro);
+    erroEl.textContent = "Erro ao gravar dados na planilha.";
+  } finally {
+    btn.disabled = false;
+    btn.innerText = "Salvar Registro";
+  }
+}
 
-            try {
-                await fetch(URL_APPS_SCRIPT_WEBAPP, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: "delete", rowIndex: rowIndex })
-                });
+async function excluirRegistro(rowIndex) {
+  const senha = prompt("Digite a senha de autorização para excluir este registro:");
+  if (senha === null) return;
 
-                alert("Registro excluído com sucesso!");
-                setTimeout(carregarDadosPlanilha, 1500);
-            } catch (erro) {
-                console.error("Erro ao excluir:", erro);
-                alert("Erro ao excluir o registro da planilha.");
-            }
-        }
+  if (senha !== SENHA_AUTORIZACAO) {
+    alert("Senha incorreta! Exclusão não autorizada.");
+    return;
+  }
 
-        async function carregarDadosPlanilha() {
-            const icon = document.getElementById('icon-sync');
-            if (icon) icon.classList.add('fa-spin');
+  if (!confirm("Tem certeza que deseja apagar este registro da planilha?")) return;
 
-            try {
-                const resposta = await fetch(`${URL_GOOGLE_SHEETS_CSV}&t=${new Date().getTime()}`);
-                if (!resposta.ok) throw new Error("Erro na requisição");
-                
-                const textoCsv = await resposta.text();
+  try {
+    await fetch(URL_APPS_SCRIPT_WEBAPP, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: "delete", rowIndex: rowIndex })
+    });
 
-                Papa.parse(textoCsv, {
-                    header: true,
-                    skipEmptyLines: true,
-                    complete: function(results) {
-                        dadosBrutos = results.data.map((row, index) => ({
-                            ...row,
-                            _rowIndex: index + 2
-                        }));
-                        preencherOpcoesFiltros(dadosBrutos);
-                        aplicarFiltros();
-                        const agora = new Date();
-                        document.getElementById('ultima-atualizacao').innerText = `Atualizado às ${agora.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}`;
-                    }
-                });
-            } catch (erro) {
-                console.error("Erro ao carregar dados:", erro);
-            } finally {
-                if (icon) icon.classList.remove('fa-spin');
-            }
-        }
+    alert("Registro excluído com sucesso!");
+    setTimeout(carregarDadosPlanilha, 1500);
+  } catch (erro) {
+    console.error("Erro ao excluir:", erro);
+    alert("Erro ao excluir o registro da planilha.");
+  }
+}
 
-        function preencherOpcoesFiltros(dados) {
-            if (dados.length === 0) return;
-            const chaves = Object.keys(dados[0]).filter(k => k !== '_rowIndex');
+async function carregarDadosPlanilha() {
+  try {
+    const resposta = await fetch(`${URL_GOOGLE_SHEETS_CSV}&t=${new Date().getTime()}`);
+    if (!resposta.ok) throw new Error("Erro na requisição");
 
-            const colModelo = chaves.find(k => k.toLowerCase().includes("modelo") || k.toLowerCase().includes("equipamento")) || chaves[0];
-            const colCliente = chaves.find(k => k.toLowerCase().includes("cliente")) || chaves[1];
-            const colDefeito = chaves.find(k => k.toLowerCase().includes("defeito") || k.toLowerCase().includes("falha")) || chaves[2];
-            const colComponente = chaves.find(k => k.toLowerCase().includes("componente") || k.toLowerCase().includes("peça")) || chaves[3];
+    const textoCsv = await resposta.text();
 
-            popularSelect('select-cliente', dados, colCliente, "Todos os Clientes", false);
-            popularSelect('select-equipamento', dados, colModelo, "Todos os Equipamentos", true);
-            popularSelect('select-defeito', dados, colDefeito, "Todos os Defeitos", false);
-            popularSelect('select-componente', dados, colComponente, "Todos os Componentes", false);
-        }
+    Papa.parse(textoCsv, {
+      header: true,
+      skipEmptyLines: true,
+      complete: function(results) {
+        dadosBrutos = results.data.map((row, index) => ({
+          ...row,
+          _rowIndex: index + 2
+        }));
+        preencherOpcoesFiltros(dadosBrutos);
+        aplicarFiltros();
+        const agora = new Date();
+        document.getElementById('ultima-atualizacao').innerText = `Atualizado às ${agora.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}`;
+      }
+    });
+  } catch (erro) {
+    console.error("Erro ao carregar dados:", erro);
+  }
+}
 
-        function popularSelect(idSelect, dados, coluna, placeholder, eModelo) {
-            const select = document.getElementById(idSelect);
-            if (!select || !coluna) return;
+function preencherOpcoesFiltros(dados) {
+  if (dados.length === 0) return;
+  const chaves = Object.keys(dados[0]).filter(k => k !== '_rowIndex');
 
-            const listaValores = new Set();
-            dados.forEach(d => {
-                const val = padronizarTexto(d[coluna]);
-                if (val) listaValores.add(val);
-            });
+  const colModelo = chaves.find(k => k.toLowerCase().includes("modelo") || k.toLowerCase().includes("equipamento")) || chaves[0];
+  const colCliente = chaves.find(k => k.toLowerCase().includes("cliente")) || chaves[1];
+  const colDefeito = chaves.find(k => k.toLowerCase().includes("defeito") || k.toLowerCase().includes("falha")) || chaves[2];
+  const colComponente = chaves.find(k => k.toLowerCase().includes("componente") || k.toLowerCase().includes("peça")) || chaves[3];
 
-            select.innerHTML = `<option value="">${placeholder}</option>`;
-            Array.from(listaValores).sort().forEach(item => {
-                select.innerHTML += `<option value="${item}">${item}</option>`;
-            });
-        }
+  popularSelect('select-cliente', dados, colCliente, "Todos os Clientes");
+  popularSelect('select-equipamento', dados, colModelo, "Todos os Equipamentos");
+  popularSelect('select-defeito', dados, colDefeito, "Todos os Defeitos");
+  popularSelect('select-componente', dados, colComponente, "Todos os Componentes");
+}
 
-        function aplicarFiltros() {
-            const termoBusca = document.getElementById('input-busca').value.toLowerCase().trim();
-            const clienteFiltro = document.getElementById('select-cliente').value;
-            const equipamentoFiltro = document.getElementById('select-equipamento').value;
-            const defeitoFiltro = document.getElementById('select-defeito').value;
-            const componenteFiltro = document.getElementById('select-componente').value;
+function popularSelect(idSelect, dados, coluna, placeholder) {
+  const select = document.getElementById(idSelect);
+  if (!select || !coluna) return;
+  const valorAtual = select.value;
 
-            const chaves = dadosBrutos.length > 0 ? Object.keys(dadosBrutos[0]).filter(k => k !== '_rowIndex') : [];
-            const colModelo = chaves.find(k => k.toLowerCase().includes("modelo") || k.toLowerCase().includes("equipamento")) || chaves[0];
-            const colCliente = chaves.find(k => k.toLowerCase().includes("cliente")) || chaves[1];
-            const colDefeito = chaves.find(k => k.toLowerCase().includes("defeito") || k.toLowerCase().includes("falha")) || chaves[2];
-            const colComponente = chaves.find(k => k.toLowerCase().includes("componente") || k.toLowerCase().includes("peça")) || chaves[3];
+  const listaValores = new Set();
+  dados.forEach(d => {
+    const val = padronizarTexto(d[coluna]);
+    if (val) listaValores.add(val);
+  });
 
-            const dadosFiltrados = dadosBrutos.filter(item => {
-                const atendeCliente = !clienteFiltro || padronizarTexto(item[colCliente]) === clienteFiltro;
-                const atendeEquipamento = !equipamentoFiltro || padronizarTexto(item[colModelo]) === equipamentoFiltro;
-                const atendeDefeito = !defeitoFiltro || padronizarTexto(item[colDefeito]) === defeitoFiltro;
-                const atendeComponente = !componenteFiltro || padronizarTexto(item[colComponente]) === componenteFiltro;
+  select.innerHTML = `<option value="">${placeholder}</option>`;
+  Array.from(listaValores).sort().forEach(item => {
+    select.innerHTML += `<option value="${item}">${item}</option>`;
+  });
+  select.value = valorAtual;
+}
 
-                const textoLinha = Object.values(item).join(" ").toLowerCase();
-                const atendeBusca = !termoBusca || textoLinha.includes(termoBusca);
+function aplicarFiltros() {
+  const termoBusca = document.getElementById('input-busca').value.toLowerCase().trim();
+  const clienteFiltro = document.getElementById('select-cliente').value;
+  const equipamentoFiltro = document.getElementById('select-equipamento').value;
+  const defeitoFiltro = document.getElementById('select-defeito').value;
+  const componenteFiltro = document.getElementById('select-componente').value;
 
-                return atendeCliente && atendeEquipamento && atendeDefeito && atendeComponente && atendeBusca;
-            });
+  const chaves = dadosBrutos.length > 0 ? Object.keys(dadosBrutos[0]).filter(k => k !== '_rowIndex') : [];
+  const colModelo = chaves.find(k => k.toLowerCase().includes("modelo") || k.toLowerCase().includes("equipamento")) || chaves[0];
+  const colCliente = chaves.find(k => k.toLowerCase().includes("cliente")) || chaves[1];
+  const colDefeito = chaves.find(k => k.toLowerCase().includes("defeito") || k.toLowerCase().includes("falha")) || chaves[2];
+  const colComponente = chaves.find(k => k.toLowerCase().includes("componente") || k.toLowerCase().includes("peça")) || chaves[3];
 
-            processarDados(dadosFiltrados);
-            renderizarTabela(dadosFiltrados);
-        }
+  const dadosFiltrados = dadosBrutos.filter(item => {
+    const atendeCliente = !clienteFiltro || padronizarTexto(item[colCliente]) === clienteFiltro;
+    const atendeEquipamento = !equipamentoFiltro || padronizarTexto(item[colModelo]) === equipamentoFiltro;
+    const atendeDefeito = !defeitoFiltro || padronizarTexto(item[colDefeito]) === defeitoFiltro;
+    const atendeComponente = !componenteFiltro || padronizarTexto(item[colComponente]) === componenteFiltro;
 
-        function limparFiltros() {
-            document.getElementById('input-busca').value = "";
-            document.getElementById('select-cliente').value = "";
-            document.getElementById('select-equipamento').value = "";
-            document.getElementById('select-defeito').value = "";
-            document.getElementById('select-componente').value = "";
-            aplicarFiltros();
-        }
+    const textoLinha = Object.values(item).join(" ").toLowerCase();
+    const atendeBusca = !termoBusca || textoLinha.includes(termoBusca);
 
-        function contarOcorrencias(dados, coluna) {
-            const contagem = {};
-            dados.forEach(item => {
-                const valor = padronizarTexto(item[coluna]);
-                if (valor) contagem[valor] = (contagem[valor] || 0) + 1;
-            });
-            return contagem;
-        }
+    return atendeCliente && atendeEquipamento && atendeDefeito && atendeComponente && atendeBusca;
+  });
 
-        function obterMaior(contagem) {
-            let maiorChave = "-", maiorValor = 0;
-            for (const [chave, valor] of Object.entries(contagem)) {
-                if (valor > maiorValor) {
-                    maiorValor = valor;
-                    maiorChave = chave;
-                }
-            }
-            return { chave: maiorChave, valor: maiorValor };
-        }
+  processarDados(dadosFiltrados);
+  renderizarTabela(dadosFiltrados);
+}
 
-        function ordenarEFiltrar(contagem, limite = 8) {
-            const ordenado = Object.entries(contagem).sort((a, b) => b[1] - a[1]);
-            const resultado = {};
-            ordenado.slice(0, limite).forEach(([k, v]) => resultado[k] = v);
-            return resultado;
-        }
+function limparFiltros() {
+  document.getElementById('input-busca').value = "";
+  document.getElementById('select-cliente').value = "";
+  document.getElementById('select-equipamento').value = "";
+  document.getElementById('select-defeito').value = "";
+  document.getElementById('select-componente').value = "";
+  aplicarFiltros();
+}
 
-        function processarDados(dados) {
-            const total = dados.length;
-            document.getElementById('card-total').innerText = total;
+function contarOcorrencias(dados, coluna) {
+  const contagem = {};
+  dados.forEach(item => {
+    const valor = padronizarTexto(item[coluna]);
+    if (valor) contagem[valor] = (contagem[valor] || 0) + 1;
+  });
+  return contagem;
+}
 
-            const chaves = total > 0 ? Object.keys(dados[0]).filter(k => k !== '_rowIndex') : [];
-            const colModelo = chaves.find(k => k.toLowerCase().includes("modelo") || k.toLowerCase().includes("equipamento")) || chaves[0];
-            const colCliente = chaves.find(k => k.toLowerCase().includes("cliente")) || chaves[1];
-            const colDefeito = chaves.find(k => k.toLowerCase().includes("defeito") || k.toLowerCase().includes("falha")) || chaves[2];
-            const colComponente = chaves.find(k => k.toLowerCase().includes("componente") || k.toLowerCase().includes("peça")) || chaves[3];
+function obterMaior(contagem) {
+  let maiorChave = "-", maiorValor = 0;
+  for (const [chave, valor] of Object.entries(contagem)) {
+    if (valor > maiorValor) { maiorValor = valor; maiorChave = chave; }
+  }
+  return { chave: maiorChave, valor: maiorValor };
+}
 
-            const contModelo = contarOcorrencias(dados, colModelo);
-            const contCliente = contarOcorrencias(dados, colCliente);
-            const contDefeito = contarOcorrencias(dados, colDefeito);
-            const contComponente = contarOcorrencias(dados, colComponente);
+function ordenarEFiltrar(contagem, limite = 8) {
+  const ordenado = Object.entries(contagem).sort((a, b) => b[1] - a[1]);
+  const resultado = {};
+  ordenado.slice(0, limite).forEach(([k, v]) => resultado[k] = v);
+  return resultado;
+}
 
-            const maiorDef = obterMaior(contDefeito);
-            const maiorComp = obterMaior(contComponente);
+function processarDados(dados) {
+  const total = dados.length;
+  document.getElementById('card-total').innerText = total;
 
-            if (total > 0 && maiorDef.valor > 0) {
-                const pctDef = ((maiorDef.valor / total) * 100).toFixed(0);
-                document.getElementById('card-defeito').innerHTML = `${maiorDef.chave.toUpperCase()} <span class="text-xs opacity-75 font-normal ml-1">(${pctDef}%)</span>`;
-            } else {
-                document.getElementById('card-defeito').innerText = "-";
-            }
+  const chaves = total > 0 ? Object.keys(dados[0]).filter(k => k !== '_rowIndex') : [];
+  const colModelo = chaves.find(k => k.toLowerCase().includes("modelo") || k.toLowerCase().includes("equipamento")) || chaves[0];
+  const colCliente = chaves.find(k => k.toLowerCase().includes("cliente")) || chaves[1];
+  const colDefeito = chaves.find(k => k.toLowerCase().includes("defeito") || k.toLowerCase().includes("falha")) || chaves[2];
+  const colComponente = chaves.find(k => k.toLowerCase().includes("componente") || k.toLowerCase().includes("peça")) || chaves[3];
 
-            if (total > 0 && maiorComp.valor > 0) {
-                const pctComp = ((maiorComp.valor / total) * 100).toFixed(0);
-                document.getElementById('card-componente').innerHTML = `${maiorComp.chave.toUpperCase()} <span class="text-xs opacity-75 font-normal ml-1">(${pctComp}%)</span>`;
-            } else {
-                document.getElementById('card-componente').innerText = "-";
-            }
+  const contModelo = contarOcorrencias(dados, colModelo);
+  const contCliente = contarOcorrencias(dados, colCliente);
+  const contDefeito = contarOcorrencias(dados, colDefeito);
+  const contComponente = contarOcorrencias(dados, colComponente);
 
-            renderizarGraficos(ordenarEFiltrar(contModelo, 8), contCliente, contDefeito, ordenarEFiltrar(contComponente, 8));
-        }
+  const maiorDef = obterMaior(contDefeito);
+  const maiorComp = obterMaior(contComponente);
 
-        /* RENDERIZA A TABELA COM TODAS AS COLUNAS EM MAIÚSCULAS */
-        function renderizarTabela(dados) {
-            const corpo = document.getElementById('tabela-corpo');
-            document.getElementById('contador-tabela').innerText = `${dados.length} registro(s)`;
-            corpo.innerHTML = "";
+  if (total > 0 && maiorDef.valor > 0) {
+    const pctDef = ((maiorDef.valor / total) * 100).toFixed(0);
+    document.getElementById('card-defeito').innerHTML = `${maiorDef.chave} <span style="font-size:.75rem;font-weight:600;opacity:.75;">(${pctDef}%)</span>`;
+  } else {
+    document.getElementById('card-defeito').innerText = "-";
+  }
 
-            if (dados.length === 0) {
-                corpo.innerHTML = `<tr><td colspan="8" class="p-4 text-center opacity-60">NENHUM REGISTRO ENCONTRADO.</td></tr>`;
-                return;
-            }
+  if (total > 0 && maiorComp.valor > 0) {
+    const pctComp = ((maiorComp.valor / total) * 100).toFixed(0);
+    document.getElementById('card-componente').innerHTML = `${maiorComp.chave} <span style="font-size:.75rem;font-weight:600;opacity:.75;">(${pctComp}%)</span>`;
+  } else {
+    document.getElementById('card-componente').innerText = "-";
+  }
 
-            dados.forEach(item => {
-                const { _rowIndex, ...colunas } = item;
-                const vals = Object.values(colunas);
-                corpo.innerHTML += `
-                    <tr class="transition-colors">
-                        <td class="p-3 font-medium">${padronizarTexto(vals[0]) || '-'}</td>
-                        <td class="p-3">${padronizarTexto(vals[1]) || '-'}</td>
-                        <td class="p-3 font-semibold text-blue-400">${padronizarTexto(vals[2]) || '-'}</td>
-                        <td class="p-3 text-rose-500 font-medium">${padronizarTexto(vals[3]) || '-'}</td>
-                        <td class="p-3">${padronizarTexto(vals[4]) || '-'}</td>
-                        <td class="p-3 text-amber-500 font-medium">${padronizarTexto(vals[5]) || '-'}</td>
-                        <td class="p-3">${padronizarTexto(vals[6]) || '-'}</td>
-                        <td class="p-3 text-center">
-                            <button onclick="excluirRegistro(${_rowIndex})" title="Excluir Registro" class="text-slate-400 hover:text-rose-500 p-1 transition-colors">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            });
-        }
+  renderizarGraficos(ordenarEFiltrar(contModelo, 8), contCliente, contDefeito, ordenarEFiltrar(contComponente, 8));
+}
 
-        function renderizarGraficos(modelos, clientes, defeitos, componentes) {
-            const cores = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#64748b'];
-            const eModoClaro = document.body.classList.contains('light-mode');
-            const corTexto = eModoClaro ? '#475569' : '#f8fafc';
+function escapeHtml(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
 
-            const opcoesPadrao = {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        labels: { color: corTexto, boxWidth: 12 }
-                    }
-                },
-                scales: {
-                    x: { ticks: { color: corTexto }, grid: { display: false } },
-                    y: { ticks: { color: corTexto }, grid: { color: eModoClaro ? '#e2e8f0' : '#334155' } }
-                }
-            };
+function renderizarTabela(dados) {
+  const corpo = document.getElementById('tabela-corpo');
+  document.getElementById('contador-tabela').innerText = `${dados.length} registro(s)`;
+  corpo.innerHTML = "";
 
-            if (chart1) chart1.destroy();
-            chart1 = new Chart(document.getElementById('chartModelos'), {
-                type: 'bar',
-                data: { labels: Object.keys(modelos), datasets: [{ label: 'Qtd', data: Object.values(modelos), backgroundColor: '#3b82f6', borderRadius: 6 }] },
-                options: { ...opcoesPadrao, indexAxis: 'y', plugins: { legend: { display: false } } }
-            });
+  if (dados.length === 0) {
+    corpo.innerHTML = `<tr><td colspan="8"><div class="empty-state">Nenhum registro encontrado com esses filtros.</div></td></tr>`;
+    return;
+  }
 
-            if (chart2) chart2.destroy();
-            chart2 = new Chart(document.getElementById('chartClientes'), {
-                type: 'pie',
-                data: { labels: Object.keys(clientes), datasets: [{ data: Object.values(clientes), backgroundColor: cores }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: corTexto, boxWidth: 12 } } } }
-            });
+  dados.forEach(item => {
+    const { _rowIndex, ...colunas } = item;
+    const vals = Object.values(colunas);
+    corpo.innerHTML += `
+      <tr>
+        <td class="cell-muted">${escapeHtml(padronizarTexto(vals[0])) || '—'}</td>
+        <td>${escapeHtml(padronizarTexto(vals[1])) || '—'}</td>
+        <td><span class="pill pill-blue">${escapeHtml(padronizarTexto(vals[2])) || '—'}</span></td>
+        <td><span class="pill pill-red">${escapeHtml(padronizarTexto(vals[3])) || '—'}</span></td>
+        <td class="cell-muted">${escapeHtml(padronizarTexto(vals[4])) || '—'}</td>
+        <td><span class="pill pill-amber">${escapeHtml(padronizarTexto(vals[5])) || '—'}</span></td>
+        <td class="cell-muted">${escapeHtml(padronizarTexto(vals[6])) || '—'}</td>
+        <td>
+          <button class="icon-btn" title="Excluir Registro" onclick="excluirRegistro(${_rowIndex})">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path></svg>
+          </button>
+        </td>
+      </tr>
+    `;
+  });
+}
 
-            if (chart3) chart3.destroy();
-            chart3 = new Chart(document.getElementById('chartDefeitos'), {
-                type: 'doughnut',
-                data: { labels: Object.keys(defeitos), datasets: [{ data: Object.values(defeitos), backgroundColor: cores }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: corTexto, boxWidth: 12 } } } }
-            });
+function renderizarGraficos(modelos, clientes, defeitos, componentes) {
+  const cores = ['#1B3B63', '#1E8074', '#DD8235', '#C0392B', '#6B4FBB', '#2E5FA3', '#1F8A4C', '#6B7280'];
+  const corTexto = '#6B7686';
+  const corGrid = '#E3E8EF';
 
-            if (chart4) chart4.destroy();
-            chart4 = new Chart(document.getElementById('chartComponentes'), {
-                type: 'bar',
-                data: { labels: Object.keys(componentes), datasets: [{ label: 'Qtd', data: Object.values(componentes), backgroundColor: '#f59e0b', borderRadius: 6 }] },
-                options: { ...opcoesPadrao, plugins: { legend: { display: false } } }
-            });
-        }
+  const opcoesPadrao = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { labels: { color: corTexto, boxWidth: 12, font: { family: 'Inter' } } } },
+    scales: {
+      x: { ticks: { color: corTexto, font: { family: 'Inter' } }, grid: { display: false } },
+      y: { ticks: { color: corTexto, font: { family: 'Inter' } }, grid: { color: corGrid } }
+    }
+  };
 
-        window.addEventListener('DOMContentLoaded', carregarDadosPlanilha);
-    </script>
+  if (chart1) chart1.destroy();
+  chart1 = new Chart(document.getElementById('chartModelos'), {
+    type: 'bar',
+    data: { labels: Object.keys(modelos), datasets: [{ label: 'Qtd', data: Object.values(modelos), backgroundColor: '#1B3B63', borderRadius: 6 }] },
+    options: { ...opcoesPadrao, indexAxis: 'y', plugins: { legend: { display: false } } }
+  });
+
+  if (chart2) chart2.destroy();
+  chart2 = new Chart(document.getElementById('chartClientes'), {
+    type: 'pie',
+    data: { labels: Object.keys(clientes), datasets: [{ data: Object.values(clientes), backgroundColor: cores }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: corTexto, boxWidth: 12, font: { family: 'Inter' } } } } }
+  });
+
+  if (chart3) chart3.destroy();
+  chart3 = new Chart(document.getElementById('chartDefeitos'), {
+    type: 'doughnut',
+    data: { labels: Object.keys(defeitos), datasets: [{ data: Object.values(defeitos), backgroundColor: cores }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: corTexto, boxWidth: 12, font: { family: 'Inter' } } } } }
+  });
+
+  if (chart4) chart4.destroy();
+  chart4 = new Chart(document.getElementById('chartComponentes'), {
+    type: 'bar',
+    data: { labels: Object.keys(componentes), datasets: [{ label: 'Qtd', data: Object.values(componentes), backgroundColor: '#DD8235', borderRadius: 6 }] },
+    options: { ...opcoesPadrao, plugins: { legend: { display: false } } }
+  });
+}
+
+window.addEventListener('DOMContentLoaded', carregarDadosPlanilha);
+</script>
 </body>
 </html>
