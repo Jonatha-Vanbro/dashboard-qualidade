@@ -660,6 +660,8 @@ async function enviarNovoRegistro(e) {
     imagemNome: imagemNomeAtual || ''
   };
 
+  console.log('[DIAGNÓSTICO] Tamanho do base64 da imagem sendo enviado:', payload.imagemBase64.length, '| Nome:', payload.imagemNome);
+
   try {
     await fetch(URL_APPS_SCRIPT_WEBAPP, {
       method: 'POST',
