@@ -503,6 +503,8 @@
     </div>
   </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 /* ============================================================================
    PAINEL DE CONTROLE - QUALIDADE — FRONTEND (visual alinhado ao ATA Engenharia)
@@ -514,9 +516,17 @@ const SENHA_AUTORIZACAO = "434";
 let dadosBrutos = [];
 let chart1 = null, chart2 = null, chart3 = null, chart4 = null;
 
-const modalRegistro = new bootstrap.Modal(document.getElementById('modalRegistro'));
-const modalVisualizar = new bootstrap.Modal(document.getElementById('modalVisualizar'));
-const modalEditar = new bootstrap.Modal(document.getElementById('modalEditar'));
+// Criadas dentro de try/catch: se o bootstrap.bundle.min.js não carregar por algum motivo
+// (bloqueio de rede, CDN fora do ar), a sincronização e a tabela continuam funcionando —
+// só os modais ficam indisponíveis, em vez de travar a página inteira.
+let modalRegistro, modalVisualizar, modalEditar;
+try {
+  modalRegistro = new bootstrap.Modal(document.getElementById('modalRegistro'));
+  modalVisualizar = new bootstrap.Modal(document.getElementById('modalVisualizar'));
+  modalEditar = new bootstrap.Modal(document.getElementById('modalEditar'));
+} catch (erro) {
+  console.error("Não foi possível iniciar os modais (Bootstrap JS não carregou):", erro);
+}
 
 let registrosPorLinha = {};
 
