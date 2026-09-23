@@ -210,46 +210,28 @@
   .modal-content{ border-radius:12px; }
   .modal-header{ background:var(--navy); color:#fff; border-radius:12px 12px 0 0; }
 </style>
-
-<!-- CABEÇALHO PADRÃO (cabecalho-padrao.css) -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-<style>
-  .cab-padrao{background:#1e2a4a;color:#fff;padding:.9rem 0;font-family:'Inter',system-ui,sans-serif}
-  .cab-padrao .cab-conteudo{max-width:1320px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;gap:1rem}
-  .cab-padrao .cab-logo{height:36px;background:#fff;border-radius:6px;padding:3px}
-  .cab-padrao .cab-textos{flex:1;min-width:0}
-  .cab-padrao .cab-titulo{font-size:1.15rem;font-weight:700;margin:0;line-height:1.3;color:#fff}
-  .cab-padrao .cab-subtitulo{font-size:.8rem;color:#b9c3dc}
-  .cab-padrao .cab-acoes{display:flex;gap:.5rem;flex-shrink:0}
-  .cab-padrao .cab-btn{display:inline-flex;align-items:center;justify-content:center;gap:.35rem;min-width:32px;height:32px;padding:0 .55rem;border:1px solid rgba(255,255,255,.85);border-radius:6px;background:transparent;color:#fff;font:500 .8rem 'Inter',system-ui,sans-serif;text-decoration:none;cursor:pointer;transition:background .15s,color .15s}
-  .cab-padrao .cab-btn:hover{background:#fff;color:#1e2a4a}
-  .cab-padrao .cab-btn:focus-visible{outline:2px solid #7dd3fc;outline-offset:2px}
-  @media (max-width:576px){.cab-padrao .cab-conteudo{padding:0 1rem}.cab-padrao .cab-titulo{font-size:1rem}.cab-padrao .cab-btn span{display:none}}
-  @media print{.cab-padrao{background:#fff;color:#000;border-bottom:2px solid #000}.cab-padrao .cab-titulo{color:#000}.cab-padrao .cab-subtitulo{color:#333}.cab-padrao .cab-acoes{display:none}}
-  /* Alinha o conteúdo do cabeçalho com os cards (mesmas medidas do .page desta página) */
-  .cab-padrao .cab-conteudo{max-width:min(1800px, 96vw);padding:0 1.25rem}
-</style>
 </head>
 <body>
 
-<!-- CABEÇALHO PADRÃO -->
-<header class="cab-padrao">
-  <div class="cab-conteudo">
-    <img class="cab-logo" src="Logo.png" alt="" onerror="this.remove()">
-    <div class="cab-textos">
-      <h1 class="cab-titulo">Painel de Controle - Qualidade</h1>
-      <div class="cab-subtitulo" id="ultima-atualizacao">Carregando…</div>
-    </div>
-    <div class="cab-acoes">
-      <button type="button" class="cab-btn" id="btnNovoRegistro" title="Novo registro"><i class="bi bi-plus-lg"></i><span>Novo registro</span></button>
-      <button type="button" class="cab-btn" id="btnSincronizar" title="Sincronizar dados"><i class="bi bi-arrow-clockwise"></i></button>
-      <button type="button" class="cab-btn" onclick="window.print()" title="Imprimir"><i class="bi bi-printer"></i></button>
-    </div>
-  </div>
-</header>
-
 <div class="page">
 
+  <header class="topbar">
+    <div class="icon-badge">
+      <img src="Logo.png" alt="Logo da Empresa">
+    </div>
+    <div>
+      <h1>Painel de Controle - Qualidade</h1>
+      <div class="subtitle">Acompanhamento e consulta de ocorrências</div>
+    </div>
+    <div class="area-acoes">
+      <span class="sync-info">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>
+        <span id="ultima-atualizacao">Atualizado recentemente</span>
+      </span>
+      <button class="btn btn-light-topo btn-sm" id="btnNovoRegistro">+ Novo Registro</button>
+      <button class="btn btn-light-topo btn-sm" id="btnSincronizar">↻ Sincronizar</button>
+    </div>
+  </header>
 
   <!-- FILTROS -->
   <div class="card">
@@ -349,6 +331,7 @@
             <th>Causa Raiz</th>
             <th>Componente</th>
             <th>Ação Tomada</th>
+            <th>Imagem</th>
             <th></th>
           </tr>
         </thead>
@@ -399,6 +382,14 @@
               <input type="text" id="add-acao" class="form-control" placeholder="Ex: Substituição efetuada">
             </div>
             <div class="col-12 mb-2">
+              <label class="field-label">Foto da Ocorrência (opcional)</label>
+              <input type="file" id="add-imagem" class="form-control" accept="image/*">
+              <div id="preview-imagem-wrap" class="mt-2" style="display:none;">
+                <img id="preview-imagem" src="" alt="Pré-visualização" style="max-height:120px; border-radius:8px; border:1px solid var(--border);">
+                <button type="button" class="btn btn-outline-secondary btn-sm ms-2" id="btnRemoverImagem">Remover</button>
+              </div>
+            </div>
+            <div class="col-12 mb-2">
               <label class="field-label">Senha de Autorização</label>
               <input type="password" id="add-senha" class="form-control" required placeholder="Digite a senha para salvar">
             </div>
@@ -421,7 +412,7 @@
    ============================================================================ */
 const URL_GOOGLE_SHEETS_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSaXyWBuLvG8G3VrwGcmMqk98vRk0V4L2Tv4rZnJispuDpLQIrjFmBC9UKLz0IrUDZxFhqqXZM-BB6s/pub?gid=0&single=true&output=csv";
 const URL_APPS_SCRIPT_WEBAPP = "https://script.google.com/macros/s/AKfycbxNRfqOPNrMq-iIotevwE3TTZbXCGBKma_r2BSh8LPXCrmpWkKTdIc1FjtOS9ay7e02Ow/exec";
-const SENHA_AUTORIZACAO = "vanbro@434";
+const SENHA_AUTORIZACAO = "434";
 
 let dadosBrutos = [];
 let chart1 = null, chart2 = null, chart3 = null, chart4 = null;
@@ -436,7 +427,48 @@ function padronizarTexto(texto) {
 document.getElementById('btnNovoRegistro').addEventListener('click', () => {
   document.getElementById('add-data').valueAsDate = new Date();
   document.getElementById('erroFormulario').textContent = '';
+  limparPreviewImagem();
   modalRegistro.show();
+});
+
+let imagemBase64Atual = null;
+let imagemNomeAtual = null;
+
+function limparPreviewImagem() {
+  imagemBase64Atual = null;
+  imagemNomeAtual = null;
+  document.getElementById('add-imagem').value = '';
+  document.getElementById('preview-imagem-wrap').style.display = 'none';
+  document.getElementById('preview-imagem').src = '';
+}
+
+document.getElementById('btnRemoverImagem').addEventListener('click', limparPreviewImagem);
+
+document.getElementById('add-imagem').addEventListener('change', function(e) {
+  const arquivo = e.target.files[0];
+  if (!arquivo) { limparPreviewImagem(); return; }
+
+  const leitor = new FileReader();
+  leitor.onload = function(ev) {
+    const img = new Image();
+    img.onload = function() {
+      // Redimensiona no navegador para não enviar fotos gigantes ao backend
+      const larguraMax = 1280;
+      const escala = Math.min(1, larguraMax / img.width);
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width * escala;
+      canvas.height = img.height * escala;
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      imagemBase64Atual = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
+      imagemNomeAtual = (arquivo.name || 'foto').replace(/\.[^/.]+$/, '') + '.jpg';
+
+      document.getElementById('preview-imagem').src = canvas.toDataURL('image/jpeg', 0.8);
+      document.getElementById('preview-imagem-wrap').style.display = 'block';
+    };
+    img.src = ev.target.result;
+  };
+  leitor.readAsDataURL(arquivo);
 });
 
 document.getElementById('btnSincronizar').addEventListener('click', carregarDadosPlanilha);
@@ -471,7 +503,9 @@ async function enviarNovoRegistro(e) {
     defeito: document.getElementById('add-defeito').value,
     causa: document.getElementById('add-causa').value,
     componente: document.getElementById('add-componente').value,
-    acao: document.getElementById('add-acao').value
+    acao: document.getElementById('add-acao').value,
+    imagemBase64: imagemBase64Atual || '',
+    imagemNome: imagemNomeAtual || ''
   };
 
   try {
@@ -484,6 +518,7 @@ async function enviarNovoRegistro(e) {
 
     modalRegistro.hide();
     document.getElementById('form-ocorrencia').reset();
+    limparPreviewImagem();
     setTimeout(carregarDadosPlanilha, 1500);
   } catch (erro) {
     console.error("Erro ao salvar:", erro);
@@ -539,12 +574,11 @@ async function carregarDadosPlanilha() {
         preencherOpcoesFiltros(dadosBrutos);
         aplicarFiltros();
         const agora = new Date();
-        document.getElementById('ultima-atualizacao').innerText = 'Atualizado em ' + agora.toLocaleString('pt-BR');
+        document.getElementById('ultima-atualizacao').innerText = `Atualizado às ${agora.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}`;
       }
     });
   } catch (erro) {
     console.error("Erro ao carregar dados:", erro);
-    document.getElementById('ultima-atualizacao').innerText = 'Falha ao carregar';
   }
 }
 
@@ -691,13 +725,24 @@ function renderizarTabela(dados) {
   corpo.innerHTML = "";
 
   if (dados.length === 0) {
-    corpo.innerHTML = `<tr><td colspan="8"><div class="empty-state">Nenhum registro encontrado com esses filtros.</div></td></tr>`;
+    corpo.innerHTML = `<tr><td colspan="9"><div class="empty-state">Nenhum registro encontrado com esses filtros.</div></td></tr>`;
     return;
   }
+
+  const chaves = Object.keys(dados[0]).filter(k => k !== '_rowIndex');
+  const colImagem = chaves.find(k => {
+    const kl = k.toLowerCase();
+    return kl.includes('imagem') || kl.includes('foto') || kl.includes('anexo');
+  });
 
   dados.forEach(item => {
     const { _rowIndex, ...colunas } = item;
     const vals = Object.values(colunas);
+    const urlImagem = colImagem ? (item[colImagem] || '').toString().trim() : '';
+    const celulaImagem = urlImagem
+      ? `<a href="${escapeHtml(urlImagem)}" target="_blank" rel="noopener"><img src="${escapeHtml(urlImagem)}" alt="Foto da ocorrência" style="width:48px;height:48px;object-fit:cover;border-radius:6px;border:1px solid var(--border);"></a>`
+      : '<span class="cell-muted">—</span>';
+
     corpo.innerHTML += `
       <tr>
         <td class="cell-muted">${escapeHtml(padronizarTexto(vals[0])) || '—'}</td>
@@ -707,6 +752,7 @@ function renderizarTabela(dados) {
         <td class="cell-muted">${escapeHtml(padronizarTexto(vals[4])) || '—'}</td>
         <td><span class="pill pill-amber">${escapeHtml(padronizarTexto(vals[5])) || '—'}</span></td>
         <td class="cell-muted">${escapeHtml(padronizarTexto(vals[6])) || '—'}</td>
+        <td>${celulaImagem}</td>
         <td>
           <button class="icon-btn" title="Excluir Registro" onclick="excluirRegistro(${_rowIndex})">
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path></svg>
