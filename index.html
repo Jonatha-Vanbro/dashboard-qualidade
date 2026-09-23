@@ -210,28 +210,46 @@
   .modal-content{ border-radius:12px; }
   .modal-header{ background:var(--navy); color:#fff; border-radius:12px 12px 0 0; }
 </style>
+
+<!-- CABEÇALHO PADRÃO (cabecalho-padrao.css) -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+  .cab-padrao{background:#1e2a4a;color:#fff;padding:.9rem 0;font-family:'Inter',system-ui,sans-serif}
+  .cab-padrao .cab-conteudo{max-width:1320px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;gap:1rem}
+  .cab-padrao .cab-logo{height:36px;background:#fff;border-radius:6px;padding:3px}
+  .cab-padrao .cab-textos{flex:1;min-width:0}
+  .cab-padrao .cab-titulo{font-size:1.15rem;font-weight:700;margin:0;line-height:1.3;color:#fff}
+  .cab-padrao .cab-subtitulo{font-size:.8rem;color:#b9c3dc}
+  .cab-padrao .cab-acoes{display:flex;gap:.5rem;flex-shrink:0}
+  .cab-padrao .cab-btn{display:inline-flex;align-items:center;justify-content:center;gap:.35rem;min-width:32px;height:32px;padding:0 .55rem;border:1px solid rgba(255,255,255,.85);border-radius:6px;background:transparent;color:#fff;font:500 .8rem 'Inter',system-ui,sans-serif;text-decoration:none;cursor:pointer;transition:background .15s,color .15s}
+  .cab-padrao .cab-btn:hover{background:#fff;color:#1e2a4a}
+  .cab-padrao .cab-btn:focus-visible{outline:2px solid #7dd3fc;outline-offset:2px}
+  @media (max-width:576px){.cab-padrao .cab-conteudo{padding:0 1rem}.cab-padrao .cab-titulo{font-size:1rem}.cab-padrao .cab-btn span{display:none}}
+  @media print{.cab-padrao{background:#fff;color:#000;border-bottom:2px solid #000}.cab-padrao .cab-titulo{color:#000}.cab-padrao .cab-subtitulo{color:#333}.cab-padrao .cab-acoes{display:none}}
+  /* Alinha o conteúdo do cabeçalho com os cards (mesmas medidas do .page desta página) */
+  .cab-padrao .cab-conteudo{max-width:min(1800px, 96vw);padding:0 1.25rem}
+</style>
 </head>
 <body>
 
+<!-- CABEÇALHO PADRÃO -->
+<header class="cab-padrao">
+  <div class="cab-conteudo">
+    <img class="cab-logo" src="Logo.png" alt="" onerror="this.remove()">
+    <div class="cab-textos">
+      <h1 class="cab-titulo">Painel de Controle - Qualidade</h1>
+      <div class="cab-subtitulo" id="ultima-atualizacao">Carregando…</div>
+    </div>
+    <div class="cab-acoes">
+      <button type="button" class="cab-btn" id="btnNovoRegistro" title="Novo registro"><i class="bi bi-plus-lg"></i><span>Novo registro</span></button>
+      <button type="button" class="cab-btn" id="btnSincronizar" title="Sincronizar dados"><i class="bi bi-arrow-clockwise"></i></button>
+      <button type="button" class="cab-btn" onclick="window.print()" title="Imprimir"><i class="bi bi-printer"></i></button>
+    </div>
+  </div>
+</header>
+
 <div class="page">
 
-  <header class="topbar">
-    <div class="icon-badge">
-      <img src="Logo.png" alt="Logo da Empresa">
-    </div>
-    <div>
-      <h1>Painel de Controle - Qualidade</h1>
-      <div class="subtitle">Acompanhamento e consulta de ocorrências</div>
-    </div>
-    <div class="area-acoes">
-      <span class="sync-info">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>
-        <span id="ultima-atualizacao">Atualizado recentemente</span>
-      </span>
-      <button class="btn btn-light-topo btn-sm" id="btnNovoRegistro">+ Novo Registro</button>
-      <button class="btn btn-light-topo btn-sm" id="btnSincronizar">↻ Sincronizar</button>
-    </div>
-  </header>
 
   <!-- FILTROS -->
   <div class="card">
@@ -521,11 +539,12 @@ async function carregarDadosPlanilha() {
         preencherOpcoesFiltros(dadosBrutos);
         aplicarFiltros();
         const agora = new Date();
-        document.getElementById('ultima-atualizacao').innerText = `Atualizado às ${agora.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}`;
+        document.getElementById('ultima-atualizacao').innerText = 'Atualizado em ' + agora.toLocaleString('pt-BR');
       }
     });
   } catch (erro) {
     console.error("Erro ao carregar dados:", erro);
+    document.getElementById('ultima-atualizacao').innerText = 'Falha ao carregar';
   }
 }
 
