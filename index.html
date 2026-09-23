@@ -405,7 +405,104 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- MODAL VISUALIZAR REGISTRO -->
+<div class="modal fade" id="modalVisualizar" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Detalhes da Ocorrência</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row" style="font-size:.88rem;">
+          <div class="col-md-6 mb-2"><strong>Data:</strong> <span id="ver-data"></span></div>
+          <div class="col-md-6 mb-2"><strong>Cliente:</strong> <span id="ver-cliente"></span></div>
+          <div class="col-md-6 mb-2"><strong>Equipamento:</strong> <span id="ver-equipamento"></span></div>
+          <div class="col-md-6 mb-2"><strong>Defeito:</strong> <span id="ver-defeito"></span></div>
+          <div class="col-md-6 mb-2"><strong>Causa Raiz:</strong> <span id="ver-causa"></span></div>
+          <div class="col-md-6 mb-2"><strong>Componente:</strong> <span id="ver-componente"></span></div>
+          <div class="col-12 mb-2"><strong>Ação Tomada:</strong> <span id="ver-acao"></span></div>
+          <div class="col-12" id="ver-imagem-wrap" style="display:none;">
+            <strong>Foto:</strong><br>
+            <a id="ver-imagem-link" href="" target="_blank" rel="noopener">
+              <img id="ver-imagem" src="" alt="Foto da ocorrência" style="max-width:100%; max-height:360px; border-radius:8px; border:1px solid var(--border); margin-top:.4rem;">
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDITAR REGISTRO -->
+<div class="modal fade" id="modalEditar" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Editar Ocorrência</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <form id="form-edicao">
+        <div class="modal-body">
+          <input type="hidden" id="edit-rowIndex">
+          <div class="row">
+            <div class="col-md-6 mb-2">
+              <label class="field-label">Data</label>
+              <input type="date" id="edit-data" class="form-control" required>
+            </div>
+            <div class="col-md-6 mb-2">
+              <label class="field-label">Cliente</label>
+              <input type="text" id="edit-cliente" class="form-control" required>
+            </div>
+            <div class="col-md-6 mb-2">
+              <label class="field-label">Equipamento / Modelo</label>
+              <input type="text" id="edit-equipamento" class="form-control" required>
+            </div>
+            <div class="col-md-6 mb-2">
+              <label class="field-label">Defeito</label>
+              <input type="text" id="edit-defeito" class="form-control" required>
+            </div>
+            <div class="col-md-6 mb-2">
+              <label class="field-label">Causa Raiz</label>
+              <input type="text" id="edit-causa" class="form-control">
+            </div>
+            <div class="col-md-6 mb-2">
+              <label class="field-label">Componente</label>
+              <input type="text" id="edit-componente" class="form-control" required>
+            </div>
+            <div class="col-12 mb-2">
+              <label class="field-label">Ação Tomada</label>
+              <input type="text" id="edit-acao" class="form-control">
+            </div>
+            <div class="col-12 mb-2">
+              <label class="field-label">Foto da Ocorrência</label>
+              <div id="edit-imagem-atual-wrap" class="mb-2" style="display:none;">
+                <img id="edit-imagem-atual" src="" alt="Foto atual" style="max-height:120px; border-radius:8px; border:1px solid var(--border);">
+                <button type="button" class="btn btn-outline-secondary btn-sm ms-2" id="btnRemoverImagemEdicao">Remover foto</button>
+              </div>
+              <input type="file" id="edit-imagem" class="form-control" accept="image/*">
+              <div id="edit-preview-imagem-wrap" class="mt-2" style="display:none;">
+                <img id="edit-preview-imagem" src="" alt="Pré-visualização" style="max-height:120px; border-radius:8px; border:1px solid var(--border);">
+              </div>
+            </div>
+            <div class="col-12 mb-2">
+              <label class="field-label">Senha de Autorização</label>
+              <input type="password" id="edit-senha" class="form-control" required placeholder="Digite a senha para salvar">
+            </div>
+          </div>
+          <div class="text-danger" style="font-size:.78rem;" id="erroEdicao"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" id="btn-salvar-edicao" class="btn btn-navy btn-sm">Salvar Alterações</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 <script>
 /* ============================================================================
    PAINEL DE CONTROLE - QUALIDADE — FRONTEND (visual alinhado ao ATA Engenharia)
@@ -418,6 +515,58 @@ let dadosBrutos = [];
 let chart1 = null, chart2 = null, chart3 = null, chart4 = null;
 
 const modalRegistro = new bootstrap.Modal(document.getElementById('modalRegistro'));
+const modalVisualizar = new bootstrap.Modal(document.getElementById('modalVisualizar'));
+const modalEditar = new bootstrap.Modal(document.getElementById('modalEditar'));
+
+let registrosPorLinha = {};
+
+function obterColunas(dados) {
+  if (!dados.length) return {};
+  const chaves = Object.keys(dados[0]).filter(k => k !== '_rowIndex');
+  const encontrar = (...termos) => chaves.find(k => termos.some(t => k.toLowerCase().includes(t)));
+
+  return {
+    data: encontrar('data') || chaves[0],
+    cliente: encontrar('cliente') || chaves[1],
+    equipamento: encontrar('modelo', 'equipamento') || chaves[2],
+    defeito: encontrar('defeito', 'falha') || chaves[3],
+    causa: encontrar('causa') || chaves[4],
+    componente: encontrar('componente', 'peça', 'peca') || chaves[5],
+    acao: encontrar('ação', 'acao') || chaves[6],
+    status: encontrar('status') || chaves[7],
+    imagem: encontrar('imagem', 'foto', 'anexo')
+  };
+}
+
+// Lê o arquivo de imagem, redimensiona (máx. 1280px de largura) e devolve uma Promise
+// com o base64 pronto para enviar — usado tanto no cadastro quanto na edição.
+function processarArquivoImagem(arquivo) {
+  return new Promise((resolve, reject) => {
+    if (!arquivo) { resolve(null); return; }
+    const leitor = new FileReader();
+    leitor.onload = function(ev) {
+      const img = new Image();
+      img.onload = function() {
+        const larguraMax = 1280;
+        const escala = Math.min(1, larguraMax / img.width);
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width * escala;
+        canvas.height = img.height * escala;
+        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+        resolve({
+          base64: dataUrl.split(',')[1],
+          nome: (arquivo.name || 'foto').replace(/\.[^/.]+$/, '') + '.jpg',
+          previewUrl: dataUrl
+        });
+      };
+      img.onerror = reject;
+      img.src = ev.target.result;
+    };
+    leitor.onerror = reject;
+    leitor.readAsDataURL(arquivo);
+  });
+}
 
 function padronizarTexto(texto) {
   if (!texto) return "";
@@ -433,10 +582,12 @@ document.getElementById('btnNovoRegistro').addEventListener('click', () => {
 
 let imagemBase64Atual = null;
 let imagemNomeAtual = null;
+let imagemProcessandoPromise = Promise.resolve();
 
 function limparPreviewImagem() {
   imagemBase64Atual = null;
   imagemNomeAtual = null;
+  imagemProcessandoPromise = Promise.resolve();
   document.getElementById('add-imagem').value = '';
   document.getElementById('preview-imagem-wrap').style.display = 'none';
   document.getElementById('preview-imagem').src = '';
@@ -446,29 +597,16 @@ document.getElementById('btnRemoverImagem').addEventListener('click', limparPrev
 
 document.getElementById('add-imagem').addEventListener('change', function(e) {
   const arquivo = e.target.files[0];
-  if (!arquivo) { limparPreviewImagem(); return; }
-
-  const leitor = new FileReader();
-  leitor.onload = function(ev) {
-    const img = new Image();
-    img.onload = function() {
-      // Redimensiona no navegador para não enviar fotos gigantes ao backend
-      const larguraMax = 1280;
-      const escala = Math.min(1, larguraMax / img.width);
-      const canvas = document.createElement('canvas');
-      canvas.width = img.width * escala;
-      canvas.height = img.height * escala;
-      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-
-      imagemBase64Atual = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
-      imagemNomeAtual = (arquivo.name || 'foto').replace(/\.[^/.]+$/, '') + '.jpg';
-
-      document.getElementById('preview-imagem').src = canvas.toDataURL('image/jpeg', 0.8);
-      document.getElementById('preview-imagem-wrap').style.display = 'block';
-    };
-    img.src = ev.target.result;
-  };
-  leitor.readAsDataURL(arquivo);
+  imagemProcessandoPromise = processarArquivoImagem(arquivo).then(resultado => {
+    if (!resultado) { limparPreviewImagem(); return; }
+    imagemBase64Atual = resultado.base64;
+    imagemNomeAtual = resultado.nome;
+    document.getElementById('preview-imagem').src = resultado.previewUrl;
+    document.getElementById('preview-imagem-wrap').style.display = 'block';
+  }).catch(erro => {
+    console.error("Erro ao processar imagem:", erro);
+    document.getElementById('erroFormulario').textContent = "Não foi possível processar essa imagem.";
+  });
 });
 
 document.getElementById('btnSincronizar').addEventListener('click', carregarDadosPlanilha);
@@ -494,6 +632,10 @@ async function enviarNovoRegistro(e) {
 
   const btn = document.getElementById('btn-salvar');
   btn.disabled = true;
+  btn.innerText = "Processando foto...";
+
+  await imagemProcessandoPromise;
+
   btn.innerText = "Salvando...";
 
   const payload = {
@@ -553,6 +695,155 @@ async function excluirRegistro(rowIndex) {
   } catch (erro) {
     console.error("Erro ao excluir:", erro);
     alert("Erro ao excluir o registro da planilha.");
+  }
+}
+
+function abrirVisualizacao(rowIndex) {
+  const item = registrosPorLinha[rowIndex];
+  if (!item) return;
+
+  document.getElementById('ver-data').innerText = item.data || '—';
+  document.getElementById('ver-cliente').innerText = item.cliente || '—';
+  document.getElementById('ver-equipamento').innerText = item.equipamento || '—';
+  document.getElementById('ver-defeito').innerText = item.defeito || '—';
+  document.getElementById('ver-causa').innerText = item.causa || '—';
+  document.getElementById('ver-componente').innerText = item.componente || '—';
+  document.getElementById('ver-acao').innerText = item.acao || '—';
+
+  const wrapImg = document.getElementById('ver-imagem-wrap');
+  if (item.imagem) {
+    document.getElementById('ver-imagem').src = item.imagem;
+    document.getElementById('ver-imagem-link').href = item.imagem;
+    wrapImg.style.display = 'block';
+  } else {
+    wrapImg.style.display = 'none';
+  }
+
+  modalVisualizar.show();
+}
+
+let imagemBase64Edicao = null;
+let imagemNomeEdicao = null;
+let removerImagemEdicao = false;
+let imagemProcessandoPromiseEdicao = Promise.resolve();
+
+function converterParaDataInput(dataTexto) {
+  if (!dataTexto) return '';
+  // Aceita tanto "AAAA-MM-DD" quanto "DD/MM/AAAA"
+  if (/^\d{4}-\d{2}-\d{2}/.test(dataTexto)) return dataTexto.slice(0, 10);
+  const partes = dataTexto.split('/');
+  if (partes.length === 3) return `${partes[2]}-${partes[1].padStart(2,'0')}-${partes[0].padStart(2,'0')}`;
+  return '';
+}
+
+function abrirEdicao(rowIndex) {
+  const item = registrosPorLinha[rowIndex];
+  if (!item) return;
+
+  document.getElementById('erroEdicao').textContent = '';
+  document.getElementById('edit-rowIndex').value = rowIndex;
+  document.getElementById('edit-data').value = converterParaDataInput(item.data);
+  document.getElementById('edit-cliente').value = item.cliente || '';
+  document.getElementById('edit-equipamento').value = item.equipamento || '';
+  document.getElementById('edit-defeito').value = item.defeito || '';
+  document.getElementById('edit-causa').value = item.causa || '';
+  document.getElementById('edit-componente').value = item.componente || '';
+  document.getElementById('edit-acao').value = item.acao || '';
+  document.getElementById('edit-senha').value = '';
+
+  imagemBase64Edicao = null;
+  imagemNomeEdicao = null;
+  removerImagemEdicao = false;
+  imagemProcessandoPromiseEdicao = Promise.resolve();
+  document.getElementById('edit-imagem').value = '';
+  document.getElementById('edit-preview-imagem-wrap').style.display = 'none';
+
+  const wrapAtual = document.getElementById('edit-imagem-atual-wrap');
+  if (item.imagem) {
+    document.getElementById('edit-imagem-atual').src = item.imagem;
+    wrapAtual.style.display = 'block';
+  } else {
+    wrapAtual.style.display = 'none';
+  }
+
+  modalEditar.show();
+}
+
+document.getElementById('btnRemoverImagemEdicao').addEventListener('click', () => {
+  removerImagemEdicao = true;
+  document.getElementById('edit-imagem-atual-wrap').style.display = 'none';
+});
+
+document.getElementById('edit-imagem').addEventListener('change', function(e) {
+  const arquivo = e.target.files[0];
+  imagemProcessandoPromiseEdicao = processarArquivoImagem(arquivo).then(resultado => {
+    if (!resultado) {
+      document.getElementById('edit-preview-imagem-wrap').style.display = 'none';
+      return;
+    }
+    imagemBase64Edicao = resultado.base64;
+    imagemNomeEdicao = resultado.nome;
+    removerImagemEdicao = false;
+    document.getElementById('edit-preview-imagem').src = resultado.previewUrl;
+    document.getElementById('edit-preview-imagem-wrap').style.display = 'block';
+  }).catch(erro => {
+    console.error("Erro ao processar imagem:", erro);
+    document.getElementById('erroEdicao').textContent = "Não foi possível processar essa imagem.";
+  });
+});
+
+document.getElementById('form-edicao').addEventListener('submit', salvarEdicao);
+
+async function salvarEdicao(e) {
+  e.preventDefault();
+  const erroEl = document.getElementById('erroEdicao');
+  erroEl.textContent = '';
+
+  const senhaDigitada = document.getElementById('edit-senha').value;
+  if (senhaDigitada !== SENHA_AUTORIZACAO) {
+    erroEl.textContent = "Senha incorreta! Edição não autorizada.";
+    return;
+  }
+
+  const btn = document.getElementById('btn-salvar-edicao');
+  btn.disabled = true;
+  btn.innerText = "Processando foto...";
+
+  await imagemProcessandoPromiseEdicao;
+
+  btn.innerText = "Salvando...";
+
+  const payload = {
+    action: "editar",
+    rowIndex: document.getElementById('edit-rowIndex').value,
+    data: document.getElementById('edit-data').value,
+    cliente: document.getElementById('edit-cliente').value,
+    equipamento: document.getElementById('edit-equipamento').value,
+    defeito: document.getElementById('edit-defeito').value,
+    causa: document.getElementById('edit-causa').value,
+    componente: document.getElementById('edit-componente').value,
+    acao: document.getElementById('edit-acao').value,
+    imagemBase64: imagemBase64Edicao || '',
+    imagemNome: imagemNomeEdicao || '',
+    removerImagem: removerImagemEdicao ? '1' : ''
+  };
+
+  try {
+    await fetch(URL_APPS_SCRIPT_WEBAPP, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    modalEditar.hide();
+    setTimeout(carregarDadosPlanilha, 1500);
+  } catch (erro) {
+    console.error("Erro ao salvar edição:", erro);
+    erroEl.textContent = "Erro ao gravar as alterações na planilha.";
+  } finally {
+    btn.disabled = false;
+    btn.innerText = "Salvar Alterações";
   }
 }
 
@@ -723,40 +1014,56 @@ function renderizarTabela(dados) {
   const corpo = document.getElementById('tabela-corpo');
   document.getElementById('contador-tabela').innerText = `${dados.length} registro(s)`;
   corpo.innerHTML = "";
+  registrosPorLinha = {};
 
   if (dados.length === 0) {
     corpo.innerHTML = `<tr><td colspan="9"><div class="empty-state">Nenhum registro encontrado com esses filtros.</div></td></tr>`;
     return;
   }
 
-  const chaves = Object.keys(dados[0]).filter(k => k !== '_rowIndex');
-  const colImagem = chaves.find(k => {
-    const kl = k.toLowerCase();
-    return kl.includes('imagem') || kl.includes('foto') || kl.includes('anexo');
-  });
+  const colunas = obterColunas(dados);
 
   dados.forEach(item => {
-    const { _rowIndex, ...colunas } = item;
-    const vals = Object.values(colunas);
-    const urlImagem = colImagem ? (item[colImagem] || '').toString().trim() : '';
+    const rowIndex = item._rowIndex;
+    const urlImagem = colunas.imagem ? (item[colunas.imagem] || '').toString().trim() : '';
+
+    registrosPorLinha[rowIndex] = {
+      data: (item[colunas.data] || '').toString().trim(),
+      cliente: (item[colunas.cliente] || '').toString().trim(),
+      equipamento: (item[colunas.equipamento] || '').toString().trim(),
+      defeito: (item[colunas.defeito] || '').toString().trim(),
+      causa: (item[colunas.causa] || '').toString().trim(),
+      componente: (item[colunas.componente] || '').toString().trim(),
+      acao: (item[colunas.acao] || '').toString().trim(),
+      imagem: urlImagem
+    };
+
     const celulaImagem = urlImagem
       ? `<a href="${escapeHtml(urlImagem)}" target="_blank" rel="noopener"><img src="${escapeHtml(urlImagem)}" alt="Foto da ocorrência" style="width:48px;height:48px;object-fit:cover;border-radius:6px;border:1px solid var(--border);"></a>`
       : '<span class="cell-muted">—</span>';
 
     corpo.innerHTML += `
       <tr>
-        <td class="cell-muted">${escapeHtml(padronizarTexto(vals[0])) || '—'}</td>
-        <td>${escapeHtml(padronizarTexto(vals[1])) || '—'}</td>
-        <td><span class="pill pill-blue">${escapeHtml(padronizarTexto(vals[2])) || '—'}</span></td>
-        <td><span class="pill pill-red">${escapeHtml(padronizarTexto(vals[3])) || '—'}</span></td>
-        <td class="cell-muted">${escapeHtml(padronizarTexto(vals[4])) || '—'}</td>
-        <td><span class="pill pill-amber">${escapeHtml(padronizarTexto(vals[5])) || '—'}</span></td>
-        <td class="cell-muted">${escapeHtml(padronizarTexto(vals[6])) || '—'}</td>
+        <td class="cell-muted">${escapeHtml(padronizarTexto(registrosPorLinha[rowIndex].data)) || '—'}</td>
+        <td>${escapeHtml(padronizarTexto(registrosPorLinha[rowIndex].cliente)) || '—'}</td>
+        <td><span class="pill pill-blue">${escapeHtml(padronizarTexto(registrosPorLinha[rowIndex].equipamento)) || '—'}</span></td>
+        <td><span class="pill pill-red">${escapeHtml(padronizarTexto(registrosPorLinha[rowIndex].defeito)) || '—'}</span></td>
+        <td class="cell-muted">${escapeHtml(padronizarTexto(registrosPorLinha[rowIndex].causa)) || '—'}</td>
+        <td><span class="pill pill-amber">${escapeHtml(padronizarTexto(registrosPorLinha[rowIndex].componente)) || '—'}</span></td>
+        <td class="cell-muted">${escapeHtml(padronizarTexto(registrosPorLinha[rowIndex].acao)) || '—'}</td>
         <td>${celulaImagem}</td>
         <td>
-          <button class="icon-btn" title="Excluir Registro" onclick="excluirRegistro(${_rowIndex})">
-            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path></svg>
-          </button>
+          <div class="d-flex gap-1">
+            <button class="icon-btn" title="Visualizar" onclick="abrirVisualizacao(${rowIndex})">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </button>
+            <button class="icon-btn" title="Editar" onclick="abrirEdicao(${rowIndex})">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>
+            </button>
+            <button class="icon-btn" title="Excluir Registro" onclick="excluirRegistro(${rowIndex})">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path></svg>
+            </button>
+          </div>
         </td>
       </tr>
     `;
