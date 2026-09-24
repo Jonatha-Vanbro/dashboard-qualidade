@@ -305,38 +305,6 @@
     </div>
   </div>
 
-  <!-- GRÁFICOS -->
-  <div class="graficos-grid">
-    <div class="card grafico-card">
-      <div class="card-title">
-        <span class="icone-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg></span>
-        Ocorrências por Modelo (Top 8)
-      </div>
-      <div class="grafico-area"><canvas id="chartModelos"></canvas></div>
-    </div>
-    <div class="card grafico-card">
-      <div class="card-title">
-        <span class="icone-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></span>
-        Ocorrências por Cliente
-      </div>
-      <div class="grafico-area"><canvas id="chartClientes"></canvas></div>
-    </div>
-    <div class="card grafico-card">
-      <div class="card-title">
-        <span class="icone-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"></path><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"></path><path d="M12 17h.01"></path></svg></span>
-        Tipos de Defeitos
-      </div>
-      <div class="grafico-area"><canvas id="chartDefeitos"></canvas></div>
-    </div>
-    <div class="card grafico-card">
-      <div class="card-title">
-        <span class="icone-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></span>
-        Componentes Afetados
-      </div>
-      <div class="grafico-area"><canvas id="chartComponentes"></canvas></div>
-    </div>
-  </div>
-
   <!-- TABELA -->
   <div class="card">
     <div class="table-header-row">
@@ -346,7 +314,7 @@
       </div>
       <span class="contador-tabela" id="contador-tabela"></span>
     </div>
-    <div style="overflow-x:auto; max-height:520px; overflow-y:auto;">
+    <div style="overflow-x:auto; max-height:340px; overflow-y:auto;">
       <table class="registros-table">
         <thead>
           <tr>
@@ -364,6 +332,38 @@
         </thead>
         <tbody id="tabela-corpo"></tbody>
       </table>
+    </div>
+  </div>
+
+  <!-- GRÁFICOS -->
+  <div class="graficos-grid">
+    <div class="card grafico-card">
+      <div class="card-title">
+        <span class="icone-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg></span>
+        Ocorrências por Modelo (Top 8)
+      </div>
+      <div class="grafico-area"><canvas id="chartModelos"></canvas></div>
+    </div>
+    <div class="card grafico-card">
+      <div class="card-title">
+        <span class="icone-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg></span>
+        Ocorrências por Causa Raiz
+      </div>
+      <div class="grafico-area"><canvas id="chartCausaRaiz"></canvas></div>
+    </div>
+    <div class="card grafico-card">
+      <div class="card-title">
+        <span class="icone-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"></path><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"></path><path d="M12 17h.01"></path></svg></span>
+        Tipos de Defeitos
+      </div>
+      <div class="grafico-area"><canvas id="chartDefeitos"></canvas></div>
+    </div>
+    <div class="card grafico-card">
+      <div class="card-title">
+        <span class="icone-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></span>
+        Componentes Afetados
+      </div>
+      <div class="grafico-area"><canvas id="chartComponentes"></canvas></div>
     </div>
   </div>
 
@@ -879,8 +879,39 @@ function aplicarFiltros() {
     return atendeCliente && atendeEquipamento && atendeDefeito && atendeComponente && atendeBusca;
   });
 
+  dadosFiltrados.sort(compararMaisRecentePrimeiro);
+
   processarDados(dadosFiltrados);
   renderizarTabela(dadosFiltrados);
+}
+
+// Converte "AAAA-MM-DD" ou "DD/MM/AAAA" num valor numérico comparável (timestamp); retorna null se não reconhecer.
+function paraDataComparavel(texto) {
+  if (!texto) return null;
+  texto = texto.toString().trim();
+  if (/^\d{4}-\d{2}-\d{2}/.test(texto)) {
+    const t = new Date(texto.slice(0, 10) + 'T00:00:00').getTime();
+    return isNaN(t) ? null : t;
+  }
+  const partes = texto.split('/');
+  if (partes.length === 3) {
+    const t = new Date(`${partes[2]}-${partes[1].padStart(2, '0')}-${partes[0].padStart(2, '0')}T00:00:00`).getTime();
+    return isNaN(t) ? null : t;
+  }
+  return null;
+}
+
+// Ordena do registro mais recente para o mais antigo: primeiro pela data (desc.),
+// e em caso de empate, pela ordem de cadastro na planilha (linha mais alta = mais recente).
+function compararMaisRecentePrimeiro(a, b) {
+  const colunas = obterColunas(dadosBrutos);
+  const dataA = colunas.data ? paraDataComparavel(a[colunas.data]) : null;
+  const dataB = colunas.data ? paraDataComparavel(b[colunas.data]) : null;
+
+  if (dataA !== null && dataB !== null && dataA !== dataB) {
+    return dataB - dataA;
+  }
+  return (b._rowIndex || 0) - (a._rowIndex || 0);
 }
 
 function limparFiltros() {
@@ -922,12 +953,12 @@ function processarDados(dados) {
 
   const chaves = total > 0 ? Object.keys(dados[0]).filter(k => k !== '_rowIndex') : [];
   const colModelo = chaves.find(k => k.toLowerCase().includes("modelo") || k.toLowerCase().includes("equipamento")) || chaves[0];
-  const colCliente = chaves.find(k => k.toLowerCase().includes("cliente")) || chaves[1];
+  const colCausa = chaves.find(k => k.toLowerCase().includes("causa")) || chaves[4];
   const colDefeito = chaves.find(k => k.toLowerCase().includes("defeito") || k.toLowerCase().includes("falha")) || chaves[2];
   const colComponente = chaves.find(k => k.toLowerCase().includes("componente") || k.toLowerCase().includes("peça")) || chaves[3];
 
   const contModelo = contarOcorrencias(dados, colModelo);
-  const contCliente = contarOcorrencias(dados, colCliente);
+  const contCausa = contarOcorrencias(dados, colCausa);
   const contDefeito = contarOcorrencias(dados, colDefeito);
   const contComponente = contarOcorrencias(dados, colComponente);
 
@@ -948,7 +979,7 @@ function processarDados(dados) {
     document.getElementById('card-componente').innerText = "-";
   }
 
-  renderizarGraficos(ordenarEFiltrar(contModelo, 8), contCliente, contDefeito, ordenarEFiltrar(contComponente, 8));
+  renderizarGraficos(ordenarEFiltrar(contModelo, 8), ordenarEFiltrar(contCausa, 8), contDefeito, ordenarEFiltrar(contComponente, 8));
 }
 
 function escapeHtml(str) {
@@ -1047,7 +1078,7 @@ const totalCentroPlugin = {
 };
 Chart.register(totalCentroPlugin);
 
-function renderizarGraficos(modelos, clientes, defeitos, componentes) {
+function renderizarGraficos(modelos, causas, defeitos, componentes) {
   const cores = ['#1B3B63', '#2E8B8B', '#F2994A', '#D64550', '#6B4FBB', '#3A6EA5', '#4C9A75', '#8A94A6'];
   const corTexto = '#6B7686';
   const corGrid = '#EEF1F5';
@@ -1096,9 +1127,9 @@ function renderizarGraficos(modelos, clientes, defeitos, componentes) {
   });
 
   if (chart2) chart2.destroy();
-  chart2 = new Chart(document.getElementById('chartClientes'), {
+  chart2 = new Chart(document.getElementById('chartCausaRaiz'), {
     type: 'doughnut',
-    data: { labels: Object.keys(clientes), datasets: [{ data: Object.values(clientes), backgroundColor: cores, borderColor: '#fff', borderWidth: 2 }] },
+    data: { labels: Object.keys(causas), datasets: [{ data: Object.values(causas), backgroundColor: cores, borderColor: '#fff', borderWidth: 2 }] },
     options: opcoesPizza
   });
 
