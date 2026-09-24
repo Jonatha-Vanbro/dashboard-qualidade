@@ -184,11 +184,12 @@
   /* Grid de gráficos */
   .graficos-grid{
     display:grid;
-    grid-template-columns:repeat(2, 1fr);
+    grid-template-columns:repeat(3, 1fr);
     gap:1.1rem;
   }
-  @media (max-width: 900px){ .graficos-grid{ grid-template-columns:1fr; } }
-  .grafico-card .grafico-area{ position:relative; height:260px; }
+  @media (max-width: 1100px){ .graficos-grid{ grid-template-columns:1fr 1fr; } }
+  @media (max-width: 700px){ .graficos-grid{ grid-template-columns:1fr; } }
+  .grafico-card .grafico-area{ position:relative; height:240px; }
 
   table.registros-table{
     width:100%;
@@ -344,13 +345,6 @@
         Ocorrências por Modelo (Top 8)
       </div>
       <div class="grafico-area"><canvas id="chartModelos"></canvas></div>
-    </div>
-    <div class="card grafico-card">
-      <div class="card-title">
-        <span class="icone-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg></span>
-        Ocorrências por Causa Raiz
-      </div>
-      <div class="grafico-area"><canvas id="chartCausaRaiz"></canvas></div>
     </div>
     <div class="card grafico-card">
       <div class="card-title">
@@ -541,7 +535,7 @@ const URL_APPS_SCRIPT_WEBAPP = "https://script.google.com/macros/s/AKfycbyiTizGR
 const SENHA_AUTORIZACAO = "434";
 
 let dadosBrutos = [];
-let chart1 = null, chart2 = null, chart3 = null, chart4 = null;
+let chart1 = null, chart2 = null, chart3 = null;
 
 // Criadas dentro de try/catch: se o bootstrap.bundle.min.js não carregar por algum motivo
 // (bloqueio de rede, CDN fora do ar), a sincronização e a tabela continuam funcionando —
@@ -954,12 +948,10 @@ function processarDados(dados) {
 
   const chaves = total > 0 ? Object.keys(dados[0]).filter(k => k !== '_rowIndex') : [];
   const colModelo = chaves.find(k => k.toLowerCase().includes("modelo") || k.toLowerCase().includes("equipamento")) || chaves[0];
-  const colCausa = chaves.find(k => k.toLowerCase().includes("causa")) || chaves[4];
   const colDefeito = chaves.find(k => k.toLowerCase().includes("defeito") || k.toLowerCase().includes("falha")) || chaves[2];
   const colComponente = chaves.find(k => k.toLowerCase().includes("componente") || k.toLowerCase().includes("peça")) || chaves[3];
 
   const contModelo = contarOcorrencias(dados, colModelo);
-  const contCausa = contarOcorrencias(dados, colCausa);
   const contDefeito = contarOcorrencias(dados, colDefeito);
   const contComponente = contarOcorrencias(dados, colComponente);
 
@@ -980,7 +972,7 @@ function processarDados(dados) {
     document.getElementById('card-componente').innerText = "-";
   }
 
-  renderizarGraficos(ordenarEFiltrar(contModelo, 8), ordenarEFiltrar(contCausa, 8), contDefeito, ordenarEFiltrar(contComponente, 8));
+  renderizarGraficos(ordenarEFiltrar(contModelo, 8), contDefeito, ordenarEFiltrar(contComponente, 8));
 }
 
 function escapeHtml(str) {
@@ -1081,7 +1073,7 @@ Chart.register(totalCentroPlugin);
 Chart.register(ChartDataLabels);
 Chart.defaults.set('plugins.datalabels', { display: false });
 
-function renderizarGraficos(modelos, causas, defeitos, componentes) {
+function renderizarGraficos(modelos, defeitos, componentes) {
   const cores = ['#1B3B63', '#2E8B8B', '#F2994A', '#D64550', '#6B4FBB', '#3A6EA5', '#4C9A75', '#8A94A6'];
   const corTexto = '#6B7686';
   const corGrid = '#EEF1F5';
@@ -1153,21 +1145,14 @@ function renderizarGraficos(modelos, causas, defeitos, componentes) {
   });
 
   if (chart2) chart2.destroy();
-  chart2 = new Chart(document.getElementById('chartCausaRaiz'), {
-    type: 'doughnut',
-    data: { labels: Object.keys(causas), datasets: [{ data: Object.values(causas), backgroundColor: cores, borderColor: '#fff', borderWidth: 2 }] },
-    options: opcoesPizza
-  });
-
-  if (chart3) chart3.destroy();
-  chart3 = new Chart(document.getElementById('chartDefeitos'), {
+  chart2 = new Chart(document.getElementById('chartDefeitos'), {
     type: 'doughnut',
     data: { labels: Object.keys(defeitos), datasets: [{ data: Object.values(defeitos), backgroundColor: cores, borderColor: '#fff', borderWidth: 2 }] },
     options: opcoesPizza
   });
 
-  if (chart4) chart4.destroy();
-  chart4 = new Chart(document.getElementById('chartComponentes'), {
+  if (chart3) chart3.destroy();
+  chart3 = new Chart(document.getElementById('chartComponentes'), {
     type: 'bar',
     data: { labels: labelsComponentes, datasets: [{ label: 'Qtd', data: Object.values(componentes), backgroundColor: coresPorIndice(labelsComponentes), borderRadius: 8, maxBarThickness: 46 }] },
     options: {
