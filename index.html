@@ -387,8 +387,8 @@
               <input type="text" id="add-numero" class="form-control" readonly style="background:var(--pill-gray-bg); font-weight:700;">
             </div>
             <div class="col-md-8 mb-2">
-              <label class="field-label">Link da Foto (opcional)</label>
-              <input type="url" id="add-imagemLink" class="form-control" placeholder="Cole aqui o link do Drive, depois de subir a foto">
+              <label class="field-label">Caminho/Link da Foto (opcional)</label>
+              <input type="text" id="add-imagemLink" class="form-control" placeholder="Ex: C:\Fotos\0009.jpg ou um link do Drive">
             </div>
             <div class="col-12 mb-2">
               <div class="card-subtitle" style="margin:0;">Salve a foto na pasta do Drive usando o número acima no nome do arquivo — o link pode ser colado agora ou depois, editando o registro.</div>
@@ -429,6 +429,7 @@
           <div class="col-12 mb-2"><strong>Ação Tomada:</strong> <span id="ver-acao"></span></div>
           <div class="col-12" id="ver-imagem-wrap" style="display:none;">
             <a id="ver-imagem-link" href="" target="_blank" rel="noopener" class="btn btn-outline-navy btn-sm">📎 Abrir foto</a>
+            <div id="ver-imagem-caminho" style="display:none; font-family:monospace; font-size:.82rem; background:var(--pill-gray-bg); padding:.5rem .75rem; border-radius:8px; word-break:break-all;"></div>
           </div>
         </div>
       </div>
@@ -484,8 +485,8 @@
               <input type="text" id="edit-numero" class="form-control" readonly style="background:var(--pill-gray-bg); font-weight:700;">
             </div>
             <div class="col-md-8 mb-2">
-              <label class="field-label">Link da Foto</label>
-              <input type="url" id="edit-imagemLink" class="form-control" placeholder="Link do Drive (deixe em branco para remover)">
+              <label class="field-label">Caminho/Link da Foto</label>
+              <input type="text" id="edit-imagemLink" class="form-control" placeholder="Ex: C:\Fotos\0009.jpg ou um link do Drive (deixe em branco para remover)">
             </div>
             <div class="col-12 mb-2">
               <label class="field-label">Senha de Autorização</label>
@@ -509,7 +510,7 @@
    PAINEL DE CONTROLE - QUALIDADE — FRONTEND (visual alinhado ao ATA Engenharia)
    ============================================================================ */
 const URL_GOOGLE_SHEETS_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSaXyWBuLvG8G3VrwGcmMqk98vRk0V4L2Tv4rZnJispuDpLQIrjFmBC9UKLz0IrUDZxFhqqXZM-BB6s/pub?gid=0&single=true&output=csv";
-const URL_APPS_SCRIPT_WEBAPP = "https://script.google.com/macros/s/AKfycbxNRfqOPNrMq-iIotevwE3TTZbXCGBKma_r2BSh8LPXCrmpWkKTdIc1FjtOS9ay7e02Ow/exec";
+const URL_APPS_SCRIPT_WEBAPP = "https://script.google.com/macros/s/AKfycbyiTizGRqFLu1d1Nx9EqL7NpBTmxH2q5EKTLqKn0LY7RJxI0vNMeL8y2FvOaa__O9t_fA/exec";
 const SENHA_AUTORIZACAO = "434";
 
 let dadosBrutos = [];
@@ -671,8 +672,17 @@ function abrirVisualizacao(rowIndex) {
   document.getElementById('ver-acao').innerText = item.acao || '—';
 
   const wrapImg = document.getElementById('ver-imagem-wrap');
+  const linkImg = document.getElementById('ver-imagem-link');
+  const caminhoImg = document.getElementById('ver-imagem-caminho');
   if (item.imagem) {
-    document.getElementById('ver-imagem-link').href = item.imagem;
+    const ehLink = /^https?:\/\//i.test(item.imagem);
+    linkImg.style.display = ehLink ? 'inline-block' : 'none';
+    caminhoImg.style.display = ehLink ? 'none' : 'block';
+    if (ehLink) {
+      linkImg.href = item.imagem;
+    } else {
+      caminhoImg.innerText = item.imagem;
+    }
     wrapImg.style.display = 'block';
   } else {
     wrapImg.style.display = 'none';
@@ -952,7 +962,9 @@ function renderizarTabela(dados) {
     };
 
     const celulaImagem = urlImagem
-      ? `<a href="${escapeHtml(urlImagem)}" target="_blank" rel="noopener" class="pill pill-mint">📎 Ver foto</a>`
+      ? (/^https?:\/\//i.test(urlImagem)
+          ? `<a href="${escapeHtml(urlImagem)}" target="_blank" rel="noopener" class="pill pill-mint">📎 Ver foto</a>`
+          : `<span class="pill pill-mint" title="${escapeHtml(urlImagem)}" style="cursor:default; max-width:180px; overflow:hidden; text-overflow:ellipsis; display:inline-block; vertical-align:middle;">📁 ${escapeHtml(urlImagem)}</span>`)
       : '<span class="cell-muted">—</span>';
 
     corpo.innerHTML += `
