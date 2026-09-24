@@ -115,13 +115,20 @@
     box-shadow:0 1px 3px rgba(15,35,60,0.06);
     padding:1.25rem;
     margin-bottom:1.1rem;
+    transition:box-shadow .2s ease, transform .2s ease;
   }
+  .grafico-card:hover{ box-shadow:0 10px 24px rgba(15,35,60,0.10); transform:translateY(-2px); }
   .card-title{
-    display:flex; align-items:center; gap:.5rem;
+    display:flex; align-items:center; gap:.6rem;
     font-weight:700; font-size:1rem; color:var(--ink); margin-bottom:.15rem;
   }
   .card-subtitle{ color:var(--muted); font-size:.8rem; margin-bottom:1rem; }
-  .card-title svg{ width:18px; height:18px; color:var(--navy); }
+  .card-title .icone-badge{
+    width:30px; height:30px; border-radius:9px;
+    background:linear-gradient(135deg, rgba(27,59,99,0.12), rgba(27,59,99,0.04));
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .card-title svg{ width:16px; height:16px; color:var(--navy); }
 
   label.field-label{ font-size:.8rem; font-weight:600; color:var(--ink); margin-bottom:.3rem; display:block; }
   .form-select, .form-control{ border-radius:8px; border-color:var(--border); font-size:.85rem; }
@@ -136,23 +143,42 @@
   }
   .filter-row .busca-wrap input{ padding-left:32px; }
 
-  /* Cards de métricas (mesmo padrão "resumo" do ATA Engenharia) */
+  /* Cards de métricas — visual "KPI": fundo branco, badge de ícone colorido, faixa de destaque e leve elevação no hover */
   .resumo-grid{
     display:grid;
     grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
-    gap:.75rem;
+    gap:.9rem;
   }
   .resumo-tile{
-    border-radius:10px;
-    padding:.85rem 1rem;
-    display:flex; flex-direction:column; gap:.15rem;
+    position:relative;
+    background:var(--card-bg);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:1.1rem 1.2rem 1rem;
+    display:flex; flex-direction:column; gap:.2rem;
+    overflow:hidden;
+    box-shadow:0 1px 2px rgba(15,35,60,0.04);
+    transition:box-shadow .2s ease, transform .2s ease;
   }
-  .resumo-tile svg{ width:16px; height:16px; opacity:.8; }
-  .resumo-tile .valor{ font-size:1.35rem; font-weight:800; line-height:1.2; margin-top:.3rem; word-break:break-word; }
-  .resumo-tile .rotulo{ font-size:.68rem; text-transform:uppercase; letter-spacing:.03em; opacity:.8; }
-  .resumo-tile.t-gray{ background:var(--pill-gray-bg); color:var(--pill-gray-txt); }
-  .resumo-tile.t-red{ background:var(--pill-red-bg); color:var(--pill-red-txt); }
-  .resumo-tile.t-amber{ background:var(--pill-amber-bg); color:var(--pill-amber-txt); }
+  .resumo-tile::before{
+    content:""; position:absolute; left:0; top:0; bottom:0; width:4px;
+  }
+  .resumo-tile:hover{ box-shadow:0 10px 22px rgba(15,35,60,0.10); transform:translateY(-2px); }
+  .resumo-tile .icone-tile{
+    width:38px; height:38px; border-radius:11px;
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom:.5rem;
+  }
+  .resumo-tile svg{ width:18px; height:18px; }
+  .resumo-tile .valor{ font-size:1.6rem; font-weight:800; line-height:1.15; word-break:break-word; color:var(--ink); }
+  .resumo-tile .rotulo{ font-size:.68rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:700; margin-top:.15rem; }
+  .resumo-tile.t-gray::before{ background:var(--pill-gray-txt); }
+  .resumo-tile.t-gray .icone-tile{ background:var(--pill-gray-bg); color:var(--pill-gray-txt); }
+  .resumo-tile.t-red::before{ background:var(--pill-red-txt); }
+  .resumo-tile.t-red .icone-tile{ background:var(--pill-red-bg); color:var(--pill-red-txt); }
+  .resumo-tile.t-amber::before{ background:var(--pill-amber-txt); }
+  .resumo-tile.t-amber .icone-tile{ background:var(--pill-amber-bg); color:var(--pill-amber-txt); }
+  .resumo-tile .valor span{ font-size:.78rem; font-weight:700; opacity:.7; }
 
   /* Grid de gráficos */
   .graficos-grid{
@@ -236,7 +262,7 @@
   <!-- FILTROS -->
   <div class="card">
     <div class="card-title">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16l-6 8v6l-4 2v-8L4 4z"></path></svg>
+      <span class="icone-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16l-6 8v6l-4 2v-8L4 4z"></path></svg></span>
       Filtros
     </div>
     <div class="card-subtitle">Busque e refine os registros de ocorrências</div>
@@ -256,23 +282,23 @@
   <!-- MÉTRICAS -->
   <div class="card">
     <div class="card-title">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M3 10h18"></path></svg>
+      <span class="icone-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M3 10h18"></path></svg></span>
       Resumo
     </div>
     <div class="card-subtitle">Panorama geral das ocorrências filtradas</div>
     <div class="resumo-grid">
       <div class="resumo-tile t-gray">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+        <div class="icone-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg></div>
         <div class="valor" id="card-total">0</div>
         <div class="rotulo">Total Registrado</div>
       </div>
       <div class="resumo-tile t-red">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"></path><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"></path><path d="M12 17h.01"></path></svg>
+        <div class="icone-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"></path><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"></path><path d="M12 17h.01"></path></svg></div>
         <div class="valor" id="card-defeito">-</div>
         <div class="rotulo">Principal Defeito</div>
       </div>
       <div class="resumo-tile t-amber">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        <div class="icone-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></div>
         <div class="valor" id="card-componente">-</div>
         <div class="rotulo">Componente Mais Afetado</div>
       </div>
@@ -283,28 +309,28 @@
   <div class="graficos-grid">
     <div class="card grafico-card">
       <div class="card-title">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        <span class="icone-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg></span>
         Ocorrências por Modelo (Top 8)
       </div>
       <div class="grafico-area"><canvas id="chartModelos"></canvas></div>
     </div>
     <div class="card grafico-card">
       <div class="card-title">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        <span class="icone-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></span>
         Ocorrências por Cliente
       </div>
       <div class="grafico-area"><canvas id="chartClientes"></canvas></div>
     </div>
     <div class="card grafico-card">
       <div class="card-title">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"></path><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"></path><path d="M12 17h.01"></path></svg>
+        <span class="icone-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"></path><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"></path><path d="M12 17h.01"></path></svg></span>
         Tipos de Defeitos
       </div>
       <div class="grafico-area"><canvas id="chartDefeitos"></canvas></div>
     </div>
     <div class="card grafico-card">
       <div class="card-title">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        <span class="icone-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></span>
         Componentes Afetados
       </div>
       <div class="grafico-area"><canvas id="chartComponentes"></canvas></div>
@@ -315,7 +341,7 @@
   <div class="card">
     <div class="table-header-row">
       <div class="card-title" style="margin-bottom:0;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M3 10h18"></path></svg>
+        <span class="icone-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M3 10h18"></path></svg></span>
         Registros Encontrados
       </div>
       <span class="contador-tabela" id="contador-tabela"></span>
@@ -996,47 +1022,105 @@ function renderizarTabela(dados) {
   });
 }
 
+const totalCentroPlugin = {
+  id: 'totalCentro',
+  afterDraw(chart) {
+    if (chart.config.type !== 'doughnut') return;
+    const { ctx, chartArea } = chart;
+    if (!chartArea) return;
+    const { width, height, left, top } = chartArea;
+    const total = chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+    const cx = left + width / 2;
+    const cy = top + height / 2;
+
+    ctx.save();
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#1F2A3A';
+    ctx.font = '800 22px Inter, sans-serif';
+    ctx.fillText(String(total), cx, cy - 8);
+    ctx.fillStyle = '#6B7686';
+    ctx.font = '700 10px Inter, sans-serif';
+    ctx.fillText('TOTAL', cx, cy + 12);
+    ctx.restore();
+  }
+};
+Chart.register(totalCentroPlugin);
+
 function renderizarGraficos(modelos, clientes, defeitos, componentes) {
-  const cores = ['#1B3B63', '#1E8074', '#DD8235', '#C0392B', '#6B4FBB', '#2E5FA3', '#1F8A4C', '#6B7280'];
+  const cores = ['#1B3B63', '#2E8B8B', '#F2994A', '#D64550', '#6B4FBB', '#3A6EA5', '#4C9A75', '#8A94A6'];
   const corTexto = '#6B7686';
-  const corGrid = '#E3E8EF';
+  const corGrid = '#EEF1F5';
 
   const opcoesPadrao = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: { legend: { labels: { color: corTexto, boxWidth: 12, font: { family: 'Inter' } } } },
     scales: {
-      x: { ticks: { color: corTexto, font: { family: 'Inter' } }, grid: { display: false } },
-      y: { ticks: { color: corTexto, font: { family: 'Inter' } }, grid: { color: corGrid } }
+      x: {
+        ticks: { color: corTexto, font: { family: 'Inter', size: 11 } },
+        grid: { display: false, drawBorder: false }
+      },
+      y: {
+        ticks: { color: corTexto, font: { family: 'Inter', size: 11 } },
+        grid: { color: corGrid, drawBorder: false, borderDash: [4, 4] }
+      }
+    }
+  };
+
+  const opcoesPizza = {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '68%',
+    plugins: {
+      legend: {
+        position: 'right',
+        labels: { usePointStyle: true, pointStyle: 'circle', boxWidth: 8, padding: 12, color: corTexto, font: { family: 'Inter', size: 11 } }
+      }
     }
   };
 
   if (chart1) chart1.destroy();
   chart1 = new Chart(document.getElementById('chartModelos'), {
     type: 'bar',
-    data: { labels: Object.keys(modelos), datasets: [{ label: 'Qtd', data: Object.values(modelos), backgroundColor: '#1B3B63', borderRadius: 6 }] },
-    options: { ...opcoesPadrao, indexAxis: 'y', plugins: { legend: { display: false } } }
+    data: { labels: Object.keys(modelos), datasets: [{ label: 'Qtd', data: Object.values(modelos), backgroundColor: '#1B3B63', borderRadius: 8, maxBarThickness: 28 }] },
+    options: {
+      ...opcoesPadrao,
+      indexAxis: 'y',
+      plugins: { legend: { display: false } },
+      scales: {
+        ...opcoesPadrao.scales,
+        x: { ...opcoesPadrao.scales.x, beginAtZero: true, ticks: { ...opcoesPadrao.scales.x.ticks, stepSize: 1, precision: 0 } }
+      }
+    }
   });
 
   if (chart2) chart2.destroy();
   chart2 = new Chart(document.getElementById('chartClientes'), {
-    type: 'pie',
-    data: { labels: Object.keys(clientes), datasets: [{ data: Object.values(clientes), backgroundColor: cores }] },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: corTexto, boxWidth: 12, font: { family: 'Inter' } } } } }
+    type: 'doughnut',
+    data: { labels: Object.keys(clientes), datasets: [{ data: Object.values(clientes), backgroundColor: cores, borderColor: '#fff', borderWidth: 2 }] },
+    options: opcoesPizza
   });
 
   if (chart3) chart3.destroy();
   chart3 = new Chart(document.getElementById('chartDefeitos'), {
     type: 'doughnut',
-    data: { labels: Object.keys(defeitos), datasets: [{ data: Object.values(defeitos), backgroundColor: cores }] },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: corTexto, boxWidth: 12, font: { family: 'Inter' } } } } }
+    data: { labels: Object.keys(defeitos), datasets: [{ data: Object.values(defeitos), backgroundColor: cores, borderColor: '#fff', borderWidth: 2 }] },
+    options: opcoesPizza
   });
 
   if (chart4) chart4.destroy();
   chart4 = new Chart(document.getElementById('chartComponentes'), {
     type: 'bar',
-    data: { labels: Object.keys(componentes), datasets: [{ label: 'Qtd', data: Object.values(componentes), backgroundColor: '#DD8235', borderRadius: 6 }] },
-    options: { ...opcoesPadrao, plugins: { legend: { display: false } } }
+    data: { labels: Object.keys(componentes), datasets: [{ label: 'Qtd', data: Object.values(componentes), backgroundColor: '#F2994A', borderRadius: 8, maxBarThickness: 46 }] },
+    options: {
+      ...opcoesPadrao,
+      plugins: { legend: { display: false } },
+      scales: {
+        ...opcoesPadrao.scales,
+        y: { ...opcoesPadrao.scales.y, beginAtZero: true, ticks: { ...opcoesPadrao.scales.y.ticks, stepSize: 1, precision: 0 } }
+      }
+    }
   });
 }
 
