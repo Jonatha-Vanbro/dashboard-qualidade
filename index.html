@@ -12,6 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 <!-- PapaParse -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 
@@ -1077,11 +1078,15 @@ const totalCentroPlugin = {
   }
 };
 Chart.register(totalCentroPlugin);
+Chart.register(ChartDataLabels);
+Chart.defaults.set('plugins.datalabels', { display: false });
 
 function renderizarGraficos(modelos, causas, defeitos, componentes) {
   const cores = ['#1B3B63', '#2E8B8B', '#F2994A', '#D64550', '#6B4FBB', '#3A6EA5', '#4C9A75', '#8A94A6'];
   const corTexto = '#6B7686';
   const corGrid = '#EEF1F5';
+  const coresPorIndice = (labels) => labels.map((_, i) => cores[i % cores.length]);
+  const pluralizar = (valor, singular, plural) => `${valor} ${valor === 1 ? singular : plural}`;
 
   const opcoesPadrao = {
     responsive: true,
@@ -1107,18 +1112,39 @@ function renderizarGraficos(modelos, causas, defeitos, componentes) {
       legend: {
         position: 'right',
         labels: { usePointStyle: true, pointStyle: 'circle', boxWidth: 8, padding: 12, color: corTexto, font: { family: 'Inter', size: 11 } }
+      },
+      datalabels: {
+        display: true,
+        color: '#fff',
+        font: { family: 'Inter', weight: '700', size: 11 },
+        formatter: (valor, ctx) => {
+          const total = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+          if (!total) return '';
+          return Math.round((valor / total) * 100) + '%';
+        }
       }
     }
   };
 
+  const labelsModelos = Object.keys(modelos);
+  const labelsComponentes = Object.keys(componentes);
+
   if (chart1) chart1.destroy();
   chart1 = new Chart(document.getElementById('chartModelos'), {
     type: 'bar',
-    data: { labels: Object.keys(modelos), datasets: [{ label: 'Qtd', data: Object.values(modelos), backgroundColor: '#1B3B63', borderRadius: 8, maxBarThickness: 28 }] },
+    data: { labels: labelsModelos, datasets: [{ label: 'Qtd', data: Object.values(modelos), backgroundColor: coresPorIndice(labelsModelos), borderRadius: 8, maxBarThickness: 28 }] },
     options: {
       ...opcoesPadrao,
       indexAxis: 'y',
-      plugins: { legend: { display: false } },
+      layout: { padding: { right: 60 } },
+      plugins: {
+        legend: { display: false },
+        datalabels: {
+          display: true, anchor: 'end', align: 'end', offset: 4, clamp: true,
+          color: '#1F2A3A', font: { family: 'Inter', weight: '700', size: 11 },
+          formatter: (valor) => pluralizar(valor, 'ocorrência', 'ocorrências')
+        }
+      },
       scales: {
         ...opcoesPadrao.scales,
         x: { ...opcoesPadrao.scales.x, beginAtZero: true, ticks: { ...opcoesPadrao.scales.x.ticks, stepSize: 1, precision: 0 } }
@@ -1143,10 +1169,18 @@ function renderizarGraficos(modelos, causas, defeitos, componentes) {
   if (chart4) chart4.destroy();
   chart4 = new Chart(document.getElementById('chartComponentes'), {
     type: 'bar',
-    data: { labels: Object.keys(componentes), datasets: [{ label: 'Qtd', data: Object.values(componentes), backgroundColor: '#F2994A', borderRadius: 8, maxBarThickness: 46 }] },
+    data: { labels: labelsComponentes, datasets: [{ label: 'Qtd', data: Object.values(componentes), backgroundColor: coresPorIndice(labelsComponentes), borderRadius: 8, maxBarThickness: 46 }] },
     options: {
       ...opcoesPadrao,
-      plugins: { legend: { display: false } },
+      layout: { padding: { top: 24 } },
+      plugins: {
+        legend: { display: false },
+        datalabels: {
+          display: true, anchor: 'end', align: 'end', offset: 2, clamp: true,
+          color: '#1F2A3A', font: { family: 'Inter', weight: '700', size: 11 },
+          formatter: (valor) => pluralizar(valor, 'falha', 'falhas')
+        }
+      },
       scales: {
         ...opcoesPadrao.scales,
         y: { ...opcoesPadrao.scales.y, beginAtZero: true, ticks: { ...opcoesPadrao.scales.y.ticks, stepSize: 1, precision: 0 } }
