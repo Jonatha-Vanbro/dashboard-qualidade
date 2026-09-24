@@ -324,6 +324,7 @@
       <table class="registros-table">
         <thead>
           <tr>
+            <th>Nº</th>
             <th>Data</th>
             <th>Cliente</th>
             <th>Equipamento</th>
@@ -381,13 +382,16 @@
               <label class="field-label">Ação Tomada</label>
               <input type="text" id="add-acao" class="form-control" placeholder="Ex: Substituição efetuada">
             </div>
+            <div class="col-md-4 mb-2">
+              <label class="field-label">Nº do Registro</label>
+              <input type="text" id="add-numero" class="form-control" readonly style="background:var(--pill-gray-bg); font-weight:700;">
+            </div>
+            <div class="col-md-8 mb-2">
+              <label class="field-label">Link da Foto (opcional)</label>
+              <input type="url" id="add-imagemLink" class="form-control" placeholder="Cole aqui o link do Drive, depois de subir a foto">
+            </div>
             <div class="col-12 mb-2">
-              <label class="field-label">Foto da Ocorrência (opcional)</label>
-              <input type="file" id="add-imagem" class="form-control" accept="image/*">
-              <div id="preview-imagem-wrap" class="mt-2" style="display:none;">
-                <img id="preview-imagem" src="" alt="Pré-visualização" style="max-height:120px; border-radius:8px; border:1px solid var(--border);">
-                <button type="button" class="btn btn-outline-secondary btn-sm ms-2" id="btnRemoverImagem">Remover</button>
-              </div>
+              <div class="card-subtitle" style="margin:0;">Salve a foto na pasta do Drive usando o número acima no nome do arquivo — o link pode ser colado agora ou depois, editando o registro.</div>
             </div>
             <div class="col-12 mb-2">
               <label class="field-label">Senha de Autorização</label>
@@ -415,6 +419,7 @@
       </div>
       <div class="modal-body">
         <div class="row" style="font-size:.88rem;">
+          <div class="col-md-6 mb-2"><strong>Nº do Registro:</strong> <span id="ver-numero"></span></div>
           <div class="col-md-6 mb-2"><strong>Data:</strong> <span id="ver-data"></span></div>
           <div class="col-md-6 mb-2"><strong>Cliente:</strong> <span id="ver-cliente"></span></div>
           <div class="col-md-6 mb-2"><strong>Equipamento:</strong> <span id="ver-equipamento"></span></div>
@@ -423,10 +428,7 @@
           <div class="col-md-6 mb-2"><strong>Componente:</strong> <span id="ver-componente"></span></div>
           <div class="col-12 mb-2"><strong>Ação Tomada:</strong> <span id="ver-acao"></span></div>
           <div class="col-12" id="ver-imagem-wrap" style="display:none;">
-            <strong>Foto:</strong><br>
-            <a id="ver-imagem-link" href="" target="_blank" rel="noopener">
-              <img id="ver-imagem" src="" alt="Foto da ocorrência" style="max-width:100%; max-height:360px; border-radius:8px; border:1px solid var(--border); margin-top:.4rem;">
-            </a>
+            <a id="ver-imagem-link" href="" target="_blank" rel="noopener" class="btn btn-outline-navy btn-sm">📎 Abrir foto</a>
           </div>
         </div>
       </div>
@@ -477,16 +479,13 @@
               <label class="field-label">Ação Tomada</label>
               <input type="text" id="edit-acao" class="form-control">
             </div>
-            <div class="col-12 mb-2">
-              <label class="field-label">Foto da Ocorrência</label>
-              <div id="edit-imagem-atual-wrap" class="mb-2" style="display:none;">
-                <img id="edit-imagem-atual" src="" alt="Foto atual" style="max-height:120px; border-radius:8px; border:1px solid var(--border);">
-                <button type="button" class="btn btn-outline-secondary btn-sm ms-2" id="btnRemoverImagemEdicao">Remover foto</button>
-              </div>
-              <input type="file" id="edit-imagem" class="form-control" accept="image/*">
-              <div id="edit-preview-imagem-wrap" class="mt-2" style="display:none;">
-                <img id="edit-preview-imagem" src="" alt="Pré-visualização" style="max-height:120px; border-radius:8px; border:1px solid var(--border);">
-              </div>
+            <div class="col-md-4 mb-2">
+              <label class="field-label">Nº do Registro</label>
+              <input type="text" id="edit-numero" class="form-control" readonly style="background:var(--pill-gray-bg); font-weight:700;">
+            </div>
+            <div class="col-md-8 mb-2">
+              <label class="field-label">Link da Foto</label>
+              <input type="url" id="edit-imagemLink" class="form-control" placeholder="Link do Drive (deixe em branco para remover)">
             </div>
             <div class="col-12 mb-2">
               <label class="field-label">Senha de Autorização</label>
@@ -536,6 +535,7 @@ function obterColunas(dados) {
   const encontrar = (...termos) => chaves.find(k => termos.some(t => k.toLowerCase().includes(t)));
 
   return {
+    numero: encontrar('número', 'numero', 'nº'),
     data: encontrar('data') || chaves[0],
     cliente: encontrar('cliente') || chaves[1],
     equipamento: encontrar('modelo', 'equipamento') || chaves[2],
@@ -548,34 +548,16 @@ function obterColunas(dados) {
   };
 }
 
-// Lê o arquivo de imagem, redimensiona (máx. 1280px de largura) e devolve uma Promise
-// com o base64 pronto para enviar — usado tanto no cadastro quanto na edição.
-function processarArquivoImagem(arquivo) {
-  return new Promise((resolve, reject) => {
-    if (!arquivo) { resolve(null); return; }
-    const leitor = new FileReader();
-    leitor.onload = function(ev) {
-      const img = new Image();
-      img.onload = function() {
-        const larguraMax = 1280;
-        const escala = Math.min(1, larguraMax / img.width);
-        const canvas = document.createElement('canvas');
-        canvas.width = img.width * escala;
-        canvas.height = img.height * escala;
-        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
-        resolve({
-          base64: dataUrl.split(',')[1],
-          nome: (arquivo.name || 'foto').replace(/\.[^/.]+$/, '') + '.jpg',
-          previewUrl: dataUrl
-        });
-      };
-      img.onerror = reject;
-      img.src = ev.target.result;
-    };
-    leitor.onerror = reject;
-    leitor.readAsDataURL(arquivo);
+// Calcula o próximo número de registro a partir do maior valor já usado na planilha
+function proximoNumeroRegistro() {
+  const colunas = obterColunas(dadosBrutos);
+  if (!colunas.numero) return 1;
+  let maior = 0;
+  dadosBrutos.forEach(item => {
+    const n = parseInt(item[colunas.numero], 10);
+    if (!isNaN(n) && n > maior) maior = n;
   });
+  return maior + 1;
 }
 
 function padronizarTexto(texto) {
@@ -586,37 +568,9 @@ function padronizarTexto(texto) {
 document.getElementById('btnNovoRegistro').addEventListener('click', () => {
   document.getElementById('add-data').valueAsDate = new Date();
   document.getElementById('erroFormulario').textContent = '';
-  limparPreviewImagem();
+  document.getElementById('add-numero').value = String(proximoNumeroRegistro()).padStart(4, '0');
+  document.getElementById('add-imagemLink').value = '';
   modalRegistro.show();
-});
-
-let imagemBase64Atual = null;
-let imagemNomeAtual = null;
-let imagemProcessandoPromise = Promise.resolve();
-
-function limparPreviewImagem() {
-  imagemBase64Atual = null;
-  imagemNomeAtual = null;
-  imagemProcessandoPromise = Promise.resolve();
-  document.getElementById('add-imagem').value = '';
-  document.getElementById('preview-imagem-wrap').style.display = 'none';
-  document.getElementById('preview-imagem').src = '';
-}
-
-document.getElementById('btnRemoverImagem').addEventListener('click', limparPreviewImagem);
-
-document.getElementById('add-imagem').addEventListener('change', function(e) {
-  const arquivo = e.target.files[0];
-  imagemProcessandoPromise = processarArquivoImagem(arquivo).then(resultado => {
-    if (!resultado) { limparPreviewImagem(); return; }
-    imagemBase64Atual = resultado.base64;
-    imagemNomeAtual = resultado.nome;
-    document.getElementById('preview-imagem').src = resultado.previewUrl;
-    document.getElementById('preview-imagem-wrap').style.display = 'block';
-  }).catch(erro => {
-    console.error("Erro ao processar imagem:", erro);
-    document.getElementById('erroFormulario').textContent = "Não foi possível processar essa imagem.";
-  });
 });
 
 document.getElementById('btnSincronizar').addEventListener('click', carregarDadosPlanilha);
@@ -642,13 +596,10 @@ async function enviarNovoRegistro(e) {
 
   const btn = document.getElementById('btn-salvar');
   btn.disabled = true;
-  btn.innerText = "Processando foto...";
-
-  await imagemProcessandoPromise;
-
   btn.innerText = "Salvando...";
 
   const payload = {
+    numero: document.getElementById('add-numero').value,
     data: document.getElementById('add-data').value,
     cliente: document.getElementById('add-cliente').value,
     equipamento: document.getElementById('add-equipamento').value,
@@ -656,11 +607,8 @@ async function enviarNovoRegistro(e) {
     causa: document.getElementById('add-causa').value,
     componente: document.getElementById('add-componente').value,
     acao: document.getElementById('add-acao').value,
-    imagemBase64: imagemBase64Atual || '',
-    imagemNome: imagemNomeAtual || ''
+    imagemLink: document.getElementById('add-imagemLink').value.trim()
   };
-
-  console.log('[DIAGNÓSTICO] Tamanho do base64 da imagem sendo enviado:', payload.imagemBase64.length, '| Nome:', payload.imagemNome);
 
   try {
     await fetch(URL_APPS_SCRIPT_WEBAPP, {
@@ -672,7 +620,6 @@ async function enviarNovoRegistro(e) {
 
     modalRegistro.hide();
     document.getElementById('form-ocorrencia').reset();
-    limparPreviewImagem();
     setTimeout(carregarDadosPlanilha, 1500);
   } catch (erro) {
     console.error("Erro ao salvar:", erro);
@@ -714,6 +661,7 @@ function abrirVisualizacao(rowIndex) {
   const item = registrosPorLinha[rowIndex];
   if (!item) return;
 
+  document.getElementById('ver-numero').innerText = item.numero || '—';
   document.getElementById('ver-data').innerText = item.data || '—';
   document.getElementById('ver-cliente').innerText = item.cliente || '—';
   document.getElementById('ver-equipamento').innerText = item.equipamento || '—';
@@ -724,7 +672,6 @@ function abrirVisualizacao(rowIndex) {
 
   const wrapImg = document.getElementById('ver-imagem-wrap');
   if (item.imagem) {
-    document.getElementById('ver-imagem').src = item.imagem;
     document.getElementById('ver-imagem-link').href = item.imagem;
     wrapImg.style.display = 'block';
   } else {
@@ -733,11 +680,6 @@ function abrirVisualizacao(rowIndex) {
 
   modalVisualizar.show();
 }
-
-let imagemBase64Edicao = null;
-let imagemNomeEdicao = null;
-let removerImagemEdicao = false;
-let imagemProcessandoPromiseEdicao = Promise.resolve();
 
 function converterParaDataInput(dataTexto) {
   if (!dataTexto) return '';
@@ -754,6 +696,7 @@ function abrirEdicao(rowIndex) {
 
   document.getElementById('erroEdicao').textContent = '';
   document.getElementById('edit-rowIndex').value = rowIndex;
+  document.getElementById('edit-numero').value = item.numero || '—';
   document.getElementById('edit-data').value = converterParaDataInput(item.data);
   document.getElementById('edit-cliente').value = item.cliente || '';
   document.getElementById('edit-equipamento').value = item.equipamento || '';
@@ -761,48 +704,11 @@ function abrirEdicao(rowIndex) {
   document.getElementById('edit-causa').value = item.causa || '';
   document.getElementById('edit-componente').value = item.componente || '';
   document.getElementById('edit-acao').value = item.acao || '';
+  document.getElementById('edit-imagemLink').value = item.imagem || '';
   document.getElementById('edit-senha').value = '';
-
-  imagemBase64Edicao = null;
-  imagemNomeEdicao = null;
-  removerImagemEdicao = false;
-  imagemProcessandoPromiseEdicao = Promise.resolve();
-  document.getElementById('edit-imagem').value = '';
-  document.getElementById('edit-preview-imagem-wrap').style.display = 'none';
-
-  const wrapAtual = document.getElementById('edit-imagem-atual-wrap');
-  if (item.imagem) {
-    document.getElementById('edit-imagem-atual').src = item.imagem;
-    wrapAtual.style.display = 'block';
-  } else {
-    wrapAtual.style.display = 'none';
-  }
 
   modalEditar.show();
 }
-
-document.getElementById('btnRemoverImagemEdicao').addEventListener('click', () => {
-  removerImagemEdicao = true;
-  document.getElementById('edit-imagem-atual-wrap').style.display = 'none';
-});
-
-document.getElementById('edit-imagem').addEventListener('change', function(e) {
-  const arquivo = e.target.files[0];
-  imagemProcessandoPromiseEdicao = processarArquivoImagem(arquivo).then(resultado => {
-    if (!resultado) {
-      document.getElementById('edit-preview-imagem-wrap').style.display = 'none';
-      return;
-    }
-    imagemBase64Edicao = resultado.base64;
-    imagemNomeEdicao = resultado.nome;
-    removerImagemEdicao = false;
-    document.getElementById('edit-preview-imagem').src = resultado.previewUrl;
-    document.getElementById('edit-preview-imagem-wrap').style.display = 'block';
-  }).catch(erro => {
-    console.error("Erro ao processar imagem:", erro);
-    document.getElementById('erroEdicao').textContent = "Não foi possível processar essa imagem.";
-  });
-});
 
 document.getElementById('form-edicao').addEventListener('submit', salvarEdicao);
 
@@ -819,10 +725,6 @@ async function salvarEdicao(e) {
 
   const btn = document.getElementById('btn-salvar-edicao');
   btn.disabled = true;
-  btn.innerText = "Processando foto...";
-
-  await imagemProcessandoPromiseEdicao;
-
   btn.innerText = "Salvando...";
 
   const payload = {
@@ -835,9 +737,7 @@ async function salvarEdicao(e) {
     causa: document.getElementById('edit-causa').value,
     componente: document.getElementById('edit-componente').value,
     acao: document.getElementById('edit-acao').value,
-    imagemBase64: imagemBase64Edicao || '',
-    imagemNome: imagemNomeEdicao || '',
-    removerImagem: removerImagemEdicao ? '1' : ''
+    imagemLink: document.getElementById('edit-imagemLink').value.trim()
   };
 
   try {
@@ -1029,7 +929,7 @@ function renderizarTabela(dados) {
   registrosPorLinha = {};
 
   if (dados.length === 0) {
-    corpo.innerHTML = `<tr><td colspan="9"><div class="empty-state">Nenhum registro encontrado com esses filtros.</div></td></tr>`;
+    corpo.innerHTML = `<tr><td colspan="10"><div class="empty-state">Nenhum registro encontrado com esses filtros.</div></td></tr>`;
     return;
   }
 
@@ -1040,6 +940,7 @@ function renderizarTabela(dados) {
     const urlImagem = colunas.imagem ? (item[colunas.imagem] || '').toString().trim() : '';
 
     registrosPorLinha[rowIndex] = {
+      numero: colunas.numero ? (item[colunas.numero] || '').toString().trim() : '',
       data: (item[colunas.data] || '').toString().trim(),
       cliente: (item[colunas.cliente] || '').toString().trim(),
       equipamento: (item[colunas.equipamento] || '').toString().trim(),
@@ -1051,11 +952,12 @@ function renderizarTabela(dados) {
     };
 
     const celulaImagem = urlImagem
-      ? `<a href="${escapeHtml(urlImagem)}" target="_blank" rel="noopener"><img src="${escapeHtml(urlImagem)}" alt="Foto da ocorrência" style="width:48px;height:48px;object-fit:cover;border-radius:6px;border:1px solid var(--border);"></a>`
+      ? `<a href="${escapeHtml(urlImagem)}" target="_blank" rel="noopener" class="pill pill-mint">📎 Ver foto</a>`
       : '<span class="cell-muted">—</span>';
 
     corpo.innerHTML += `
       <tr>
+        <td class="cell-muted">${escapeHtml(registrosPorLinha[rowIndex].numero) || '—'}</td>
         <td class="cell-muted">${escapeHtml(padronizarTexto(registrosPorLinha[rowIndex].data)) || '—'}</td>
         <td>${escapeHtml(padronizarTexto(registrosPorLinha[rowIndex].cliente)) || '—'}</td>
         <td><span class="pill pill-blue">${escapeHtml(padronizarTexto(registrosPorLinha[rowIndex].equipamento)) || '—'}</span></td>
