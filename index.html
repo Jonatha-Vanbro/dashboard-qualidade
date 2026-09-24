@@ -396,7 +396,7 @@
             </div>
             <div class="col-md-6 mb-2">
               <label class="field-label">Defeito</label>
-              <input type="text" id="add-defeito" class="form-control" required placeholder="Ex: Baixa Pressão">
+              <select id="add-defeito" class="form-select" required><option value="">Carregando...</option></select>
             </div>
             <div class="col-md-6 mb-2">
               <label class="field-label">Causa Raiz</label>
@@ -404,7 +404,7 @@
             </div>
             <div class="col-md-6 mb-2">
               <label class="field-label">Componente</label>
-              <input type="text" id="add-componente" class="form-control" required placeholder="Ex: Rotor">
+              <select id="add-componente" class="form-select" required><option value="">Carregando...</option></select>
             </div>
             <div class="col-12 mb-2">
               <label class="field-label">Ação Tomada</label>
@@ -494,7 +494,7 @@
             </div>
             <div class="col-md-6 mb-2">
               <label class="field-label">Defeito</label>
-              <input type="text" id="edit-defeito" class="form-control" required>
+              <select id="edit-defeito" class="form-select" required><option value="">Carregando...</option></select>
             </div>
             <div class="col-md-6 mb-2">
               <label class="field-label">Causa Raiz</label>
@@ -502,7 +502,7 @@
             </div>
             <div class="col-md-6 mb-2">
               <label class="field-label">Componente</label>
-              <input type="text" id="edit-componente" class="form-control" required>
+              <select id="edit-componente" class="form-select" required></select>
             </div>
             <div class="col-12 mb-2">
               <label class="field-label">Ação Tomada</label>
@@ -542,6 +542,8 @@ const URL_APPS_SCRIPT_WEBAPP = "https://script.google.com/macros/s/AKfycbyiTizGR
 const SENHA_AUTORIZACAO = "434";
 
 let dadosBrutos = [];
+let listaDefeitosPadrao = [];
+let listaComponentesPadrao = [];
 let chart1 = null, chart2 = null, chart3 = null;
 
 // Criadas dentro de try/catch: se o bootstrap.bundle.min.js não carregar por algum motivo
@@ -1181,7 +1183,38 @@ function renderizarGraficos(modelos, defeitos, componentes) {
   });
 }
 
-window.addEventListener('DOMContentLoaded', carregarDadosPlanilha);
+window.addEventListener('DOMContentLoaded', () => {
+  carregarDadosPlanilha();
+  carregarListasPadrao();
+});
+
+async function carregarListasPadrao() {
+  const erroFormulario = document.getElementById('erroFormulario');
+  try {
+    const resposta = await fetch(`${URL_APPS_SCRIPT_WEBAPP}?action=listas&t=${new Date().getTime()}`);
+    const json = await resposta.json();
+    if (json.ok) {
+      listaDefeitosPadrao = json.defeitos || [];
+      listaComponentesPadrao = json.componentes || [];
+    } else {
+      console.error('Não foi possível carregar as listas padrão:', json.erro);
+      if (erroFormulario) erroFormulario.textContent = "Não foi possível carregar a lista de defeitos/componentes. Verifique a aba 'Listas' na planilha.";
+    }
+  } catch (erro) {
+    console.error('Erro ao carregar listas padrão:', erro);
+  }
+  preencherSelectsPadrao();
+}
+
+function preencherSelectsPadrao() {
+  const montarOpcoes = (lista) => '<option value="">Selecione...</option>' + lista.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
+  const htmlDefeitos = montarOpcoes(listaDefeitosPadrao);
+  const htmlComponentes = montarOpcoes(listaComponentesPadrao);
+  document.getElementById('add-defeito').innerHTML = htmlDefeitos;
+  document.getElementById('add-componente').innerHTML = htmlComponentes;
+  document.getElementById('edit-defeito').innerHTML = htmlDefeitos;
+  document.getElementById('edit-componente').innerHTML = htmlComponentes;
+}
 </script>
 </body>
 </html>
