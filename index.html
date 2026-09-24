@@ -155,8 +155,8 @@
     background:var(--card-bg);
     border:1px solid var(--border);
     border-radius:14px;
-    padding:1.1rem 1.2rem 1rem;
-    display:flex; flex-direction:column; gap:.2rem;
+    padding:.75rem 1.1rem;
+    display:flex; flex-direction:row; align-items:center; gap:.75rem;
     overflow:hidden;
     box-shadow:0 1px 2px rgba(15,35,60,0.04);
     transition:box-shadow .2s ease, transform .2s ease;
@@ -166,20 +166,21 @@
   }
   .resumo-tile:hover{ box-shadow:0 10px 22px rgba(15,35,60,0.10); transform:translateY(-2px); }
   .resumo-tile .icone-tile{
-    width:38px; height:38px; border-radius:11px;
+    width:36px; height:36px; border-radius:10px;
     display:flex; align-items:center; justify-content:center;
-    margin-bottom:.5rem;
+    flex-shrink:0;
   }
-  .resumo-tile svg{ width:18px; height:18px; }
-  .resumo-tile .valor{ font-size:1.6rem; font-weight:800; line-height:1.15; word-break:break-word; color:var(--ink); }
-  .resumo-tile .rotulo{ font-size:.68rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:700; margin-top:.15rem; }
+  .resumo-tile svg{ width:17px; height:17px; }
+  .resumo-tile .texto-tile{ display:flex; flex-direction:column; gap:.1rem; min-width:0; }
+  .resumo-tile .valor{ font-size:1.3rem; font-weight:800; line-height:1.1; word-break:break-word; color:var(--ink); }
+  .resumo-tile .rotulo{ font-size:.66rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:700; }
   .resumo-tile.t-gray::before{ background:var(--pill-gray-txt); }
   .resumo-tile.t-gray .icone-tile{ background:var(--pill-gray-bg); color:var(--pill-gray-txt); }
   .resumo-tile.t-red::before{ background:var(--pill-red-txt); }
   .resumo-tile.t-red .icone-tile{ background:var(--pill-red-bg); color:var(--pill-red-txt); }
   .resumo-tile.t-amber::before{ background:var(--pill-amber-txt); }
   .resumo-tile.t-amber .icone-tile{ background:var(--pill-amber-bg); color:var(--pill-amber-txt); }
-  .resumo-tile .valor span{ font-size:.78rem; font-weight:700; opacity:.7; }
+  .resumo-tile .valor span{ font-size:.72rem; font-weight:700; opacity:.7; }
 
   /* Grid de gráficos */
   .graficos-grid{
@@ -291,18 +292,24 @@
     <div class="resumo-grid">
       <div class="resumo-tile t-gray">
         <div class="icone-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg></div>
-        <div class="valor" id="card-total">0</div>
-        <div class="rotulo">Total Registrado</div>
+        <div class="texto-tile">
+          <div class="valor" id="card-total">0</div>
+          <div class="rotulo">Total Registrado</div>
+        </div>
       </div>
       <div class="resumo-tile t-red">
         <div class="icone-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"></path><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"></path><path d="M12 17h.01"></path></svg></div>
-        <div class="valor" id="card-defeito">-</div>
-        <div class="rotulo">Principal Defeito</div>
+        <div class="texto-tile">
+          <div class="valor" id="card-defeito">-</div>
+          <div class="rotulo">Principal Defeito</div>
+        </div>
       </div>
       <div class="resumo-tile t-amber">
         <div class="icone-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></div>
-        <div class="valor" id="card-componente">-</div>
-        <div class="rotulo">Componente Mais Afetado</div>
+        <div class="texto-tile">
+          <div class="valor" id="card-componente">-</div>
+          <div class="rotulo">Componente Mais Afetado</div>
+        </div>
       </div>
     </div>
   </div>
